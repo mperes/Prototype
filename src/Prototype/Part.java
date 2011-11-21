@@ -233,12 +233,18 @@ public class Part {
 		return false;
 	}
 	
+	@SuppressWarnings("deprecation")
 	void drawPlane(Ratio pivot, Ratio size, PImage texture) {
-		  beginShape();
-		  vertex(-width*pivotX, -height*pivotY);
-		  vertex(width*(1-pivotX), -height*pivotY);
-		  vertex(width*(1-pivotX), height*(1-pivotY));
-		  vertex(-width*pivotX, height*(1-pivotY));
-		  endShape(CLOSE);
+		parentPApplet.pushStyle();
+		parentPApplet.textureMode(PConstants.NORMALIZED);
+		parentPApplet.noStroke();
+		parentPApplet.beginShape();
+		parentPApplet.texture(texture);
+		parentPApplet.vertex(-size.x*pivot.x, -size.y*pivot.y, 0, 0);
+		parentPApplet.vertex(size.x*(1-pivot.x), -size.y*pivot.y, 1, 0);
+		parentPApplet.vertex(size.x*(1-pivot.x), size.y*(1-pivot.y), 1, 1);
+		parentPApplet.vertex(-size.x*pivot.x, size.y*(1-pivot.y), 0, 1);
+		parentPApplet.endShape(PConstants.CLOSE);
+		parentPApplet.popStyle();
 	}
 }
