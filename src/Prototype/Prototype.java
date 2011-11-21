@@ -11,8 +11,10 @@ public class Prototype implements MouseWheelListener {
 	static PApplet stage;
 	private Tweener tweener;
 	private ArrayList<Part> parts;
+	
+	private static Prototype instance;
 
-	public Prototype(PApplet stage) {	
+	private Prototype(PApplet stage) {	
 		stage.registerPre(this);
 		stage.registerDraw(this);
 		stage.registerMouseEvent(this);
@@ -20,6 +22,13 @@ public class Prototype implements MouseWheelListener {
 
 		Prototype.stage = stage;
 		parts = new ArrayList<Part>();
+	}
+	
+	public static Prototype createPrototype(PApplet stage) {
+        if( instance == null ) {
+            instance = new Prototype(stage);
+        }
+         return instance;
 	}
 
 	public void installTweenMatrix(boolean remove) {
