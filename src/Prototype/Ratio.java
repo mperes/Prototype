@@ -4,7 +4,7 @@ import processing.core.PApplet;
 
 public class Ratio {
 	
-	PApplet parent;
+	PApplet stage;
 	public float x;
 	public float y;
 	private float minX = Float.MIN_VALUE  ;
@@ -19,11 +19,11 @@ public class Ratio {
 		set(x, y);
 	}
 	
-	public Ratio(PApplet parent, float x, float y, float minX, float maxX,  float minY, float maxY) {
-		this.parent = parent;
+	public Ratio(float x, float y, float minX, float maxX,  float minY, float maxY) {
+		stage = Prototype.stage;
 		setMixMax(minX, maxX, minY, maxY);
 		set(x, y);
-		parent.registerPre(this);
+		stage.registerPre(this);
 	}
 	
 	public float getRatio() {
@@ -36,7 +36,7 @@ public class Ratio {
 	}
 	
 	public void setMixMax(float minX, float maxX, float minY, float maxY) {
-		if(parent != null) {
+		if(stage != null) {
 			this.minX = minX;
 			this.maxX = maxX;
 			this.minY = minY;

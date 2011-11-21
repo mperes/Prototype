@@ -8,17 +8,17 @@ import processing.core.PApplet;
 
 
 public class Prototype implements MouseWheelListener {
-	private PApplet parent;
+	static PApplet stage;
 	private Tweener tweener;
 	private ArrayList<Part> parts;
 
-	public Prototype(PApplet parent) {	
-		parent.registerPre(this);
-		parent.registerDraw(this);
-		parent.registerMouseEvent(this);
-		parent.frame.addMouseWheelListener(this);
+	public Prototype(PApplet stage) {	
+		stage.registerPre(this);
+		stage.registerDraw(this);
+		stage.registerMouseEvent(this);
+		stage.frame.addMouseWheelListener(this);
 
-		this.parent = parent;
+		Prototype.stage = stage;
 		parts = new ArrayList<Part>();
 	}
 
@@ -31,13 +31,13 @@ public class Prototype implements MouseWheelListener {
 	}
 
 	public Part part(Blueprint blueprint) {
-		Part newPart = new Part(parent, blueprint);
+		Part newPart = new Part(stage, blueprint);
 		parts.add(newPart);
 		return newPart;
 	}
 	
 	public Part part(Blueprint blueprint, float x, float y) {
-		Part newPart = new Part(parent, blueprint, x, y);
+		Part newPart = new Part(stage, blueprint, x, y);
 		parts.add(newPart);
 		return newPart;
 	}

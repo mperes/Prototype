@@ -60,14 +60,14 @@ public class Part {
 	}
 
 	private void calcBox() {
-		left = this.pos.getX() - this.pivot.getX() * this.size.getX() * this.scale.getX();
-		top = pos.getY() - pivot.getY() * size.getY() * scale.getY();
+		left = this.pos.x - this.pivot.x * this.size.x * this.scale.x;
+		top = pos.y - pivot.y * size.y * scale.y;
 		if(parent != null) {
-			left += rel.getX() * parent.size.getX();
-			top += rel.getY() * parent.size.getY();
+			left += rel.x * parent.size.x;
+			top += rel.y * parent.size.y;
 		}
-		right =  left + size.getX() * scale.getX();
-		bottom = top + size.getY() * scale.getY();
+		right =  left + size.x * scale.x;
+		bottom = top + size.y * scale.y;
 	}
 
 	public void readBlueprint() {
@@ -137,9 +137,9 @@ public class Part {
 			int pixelX = parentPApplet.mouseX - (int) (shiftX+left);
 			int pixelY = parentPApplet.mouseY - (int) (shiftY+top);
 			PImage buffer = getBlueprint().get();
-			buffer.resize((int)size.getX() * (int)scale.getX(), (int)size.getY() * (int)scale.getY());
+			buffer.resize((int)size.x * (int)scale.x, (int)size.y * (int)scale.y);
 			buffer.loadPixels();
-			if (buffer.pixels[PApplet.constrain( pixelX + pixelY * (int)size.getX(), 0, buffer.pixels.length-1)] == 0x00000000) {
+			if (buffer.pixels[PApplet.constrain( pixelX + pixelY * (int)size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
 				buffer.updatePixels();
 				return false;
 			}
