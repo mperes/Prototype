@@ -18,10 +18,12 @@ class AnchorRecipe extends Blueprint {
   }
 
   void description() {
-    //noStroke();
-    //rect(0,0, 12, 12);
-    PImage anchor = loadImage("anchor.png");
-    this.image(anchor, 0, 0);
+    smooth();
+    ellipseMode(CORNER);
+    noStroke();
+    //I still have to investigate this, but when drawing a circle with the same size as the blueprint,
+    //the circle gets cropped.
+    ellipse(0, 0, 11, 11);
   }
 
   public void partEvent(PartEvent event) {

@@ -24,17 +24,8 @@ void setup() {
   imagePart.subpart(new AnchorRecipeTR());
   imagePart.subpart(new AnchorRecipeBR());
   imagePart.subpart(new AnchorRecipeBL());
-  
-  //prototype.addpart()
-  teste = createGraphics(12, 12, JAVA2D);
-  teste.beginDraw();
-  teste.colorMode(ARGB);
-      PImage anchor = loadImage("anchor.png");
-    teste.image(anchor, 0, 0);
-    teste.endDraw();
 }
 
 void draw() {
   background(40);
-  image(teste, 400, 400);
 }

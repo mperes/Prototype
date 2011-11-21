@@ -58,7 +58,7 @@ public class Part {
 	}
 
 	private void calcBox() {
-		left = this.pos.x - this.pivot.x * this.size.x * this.scale.x;
+		left = pos.x - pivot.x * size.x * scale.x;
 		top = pos.y - pivot.y * size.y * scale.y;
 		if(parent != null) {
 			left += rel.x * parent.size.x;
@@ -70,25 +70,19 @@ public class Part {
 
 	public void readBlueprint() {
 		getBlueprint().beginDraw();
-		getBlueprint().clearBlueprint();
-		//getBlueprint().background(0, 0);
 		getBlueprint().description();
 		getBlueprint().endDraw();
 	}
 
 	public void draw() {
 		if(visible) {
+			float translateX = (parent == null) ? pos.x : pos.x + parent.size.x * rel.x;
+			float translateY = (parent == null) ? pos.y : pos.y + parent.size.y * rel.y;
 			Prototype.stage.pushMatrix();
-			Prototype.stage.translate(left, top);
+			Prototype.stage.translate(translateX, translateY);
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
-			Prototype.stage.image(
-					getBlueprint(),
-					0,
-					0,
-					right-left,
-					bottom-top
-			);
+			drawPlane(size, pivot, blueprint);
 			if (showPivot) { 
 				drawPivot();
 			}
@@ -233,7 +227,7 @@ public class Part {
 	}
 	
 	@SuppressWarnings("deprecation")
-	void drawPlane(Ratio pivot, Ratio size, PImage texture) {
+	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
 		Prototype.stage.pushStyle();
 		Prototype.stage.textureMode(PConstants.NORMALIZED);
 		Prototype.stage.noStroke();
