@@ -32,7 +32,7 @@ class ImageRecipe extends Blueprint {
     case PartEvent.PART_CLICKED:
       break;
     case PartEvent.PART_DRAGGED:
-      event.part.pos.set( event.part.pos.getX() + mouseX-pmouseX, event.part.pos.getY() + mouseY-pmouseY);
+      event.part.pos.set( event.part.pos.x + mouseX-pmouseX, event.part.pos.y + mouseY-pmouseY);
       break;
     case PartEvent.PART_MOVED:
       break;

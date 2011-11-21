@@ -1,14 +1,16 @@
+import processing.opengl.*;
 import Prototype.*;
 
 Prototype prototype;
 Part imagePart;
 Part anchorTL;
+PGraphics teste;
 void setup() {
-  size(800, 600);
+  size(800, 600, OPENGL);
   
   //Its is necessary to initialize an Prototype instance before using the library.
   //Think of it like a canvas where your prototype is gonna run.
-  prototype = new Prototype(this);
+  prototype = Prototype.createPrototype(this);
   imagePart = prototype.part(new ImageRecipe());
   imagePart.pos.set(60, 60);
   //Could be done instead by, imagePart = prototype.part(new ImageRecipe(), 60, 60);
@@ -25,5 +27,5 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  background(40);
 }

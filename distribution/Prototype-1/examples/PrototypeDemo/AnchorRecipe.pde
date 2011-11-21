@@ -18,11 +18,10 @@ class AnchorRecipe extends Blueprint {
   }
 
   void description() {
-    smooth();
-    fill(255, 0, 0);
-    noStroke();
-    ellipseMode(CORNER);
-    ellipse(0, 0, 12, 12);
+    //noStroke();
+    //rect(0,0, 12, 12);
+    PImage anchor = loadImage("anchor.png");
+    this.image(anchor, 0, 0);
   }
 
   public void partEvent(PartEvent event) {
@@ -52,8 +51,8 @@ class AnchorRecipeTL extends AnchorRecipe {
   }
 
   void resizePic() {
-    imagePart.size.set( imagePart.size.getX() - (mouseX-pmouseX), imagePart.size.getY() - (mouseY-pmouseY));
-    imagePart.pos.set( imagePart.pos.getX() + (mouseX-pmouseX), imagePart.pos.getY() + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.x - (mouseX-pmouseX), imagePart.size.y - (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.x + (mouseX-pmouseX), imagePart.pos.y + (mouseY-pmouseY));
   }
 }
 
@@ -65,8 +64,8 @@ class AnchorRecipeTR extends AnchorRecipe {
   }
 
   void resizePic() {
-    imagePart.size.set( imagePart.size.getX() + (mouseX-pmouseX), imagePart.size.getY() - (mouseY-pmouseY));
-    imagePart.pos.set( imagePart.pos.getX(), imagePart.pos.getY() + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.x + (mouseX-pmouseX), imagePart.size.y - (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.x, imagePart.pos.y + (mouseY-pmouseY));
   }
 }
 
@@ -77,7 +76,7 @@ class AnchorRecipeBR extends AnchorRecipe {
   }
 
   void resizePic() {
-    imagePart.size.set( imagePart.size.getX() + (mouseX-pmouseX), imagePart.size.getY() + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.x + (mouseX-pmouseX), imagePart.size.y + (mouseY-pmouseY));
   }
 }
 
@@ -88,8 +87,8 @@ class AnchorRecipeBL extends AnchorRecipe {
   }
 
   void resizePic() {
-    imagePart.size.set( imagePart.size.getX() - (mouseX-pmouseX), imagePart.size.getY() + (mouseY-pmouseY));
-    imagePart.pos.set( imagePart.pos.getX() + (mouseX-pmouseX), imagePart.pos.getY());
+    imagePart.size.set( imagePart.size.x - (mouseX-pmouseX), imagePart.size.y + (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.x + (mouseX-pmouseX), imagePart.pos.y);
   }
 }
 

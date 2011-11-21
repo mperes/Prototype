@@ -70,7 +70,8 @@ public class Part {
 
 	public void readBlueprint() {
 		getBlueprint().beginDraw();
-		//getBlueprint().background(0);
+		getBlueprint().clearBlueprint();
+		//getBlueprint().background(0, 0);
 		getBlueprint().description();
 		getBlueprint().endDraw();
 	}

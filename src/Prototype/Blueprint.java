@@ -1,8 +1,8 @@
 package Prototype;
 
-import processing.core.PGraphics2D;
+import processing.core.PGraphicsJava2D;
 
-public abstract class Blueprint extends PGraphics2D {
+public abstract class Blueprint extends PGraphicsJava2D {
 	
 	final int initialWidth;
 	final int initialHeight;
@@ -31,5 +31,12 @@ public abstract class Blueprint extends PGraphics2D {
 	public abstract void description();
 	
 	public void partEvent(PartEvent event) {}
+	
+	void clearBlueprint() {
+		this.loadPixels();
+		for(int p = 0; p < this.pixels.length; p++) {
+			this.pixels[p] = 0x00000000;
+		}
+	}
 	
 }
