@@ -1,12 +1,10 @@
 package Prototype;
 
-import processing.core.PGraphics2D;
+import codeanticode.glgraphics.GLGraphicsOffScreen;
 
-public abstract class Blueprint extends PGraphics2D {
+public abstract class Blueprint extends GLGraphicsOffScreen {
 	
-	final int initialWidth;
-	final int initialHeight;
-	
+	public Ratio size = new Ratio(0, 0);
 	public Ratio pos = new Ratio(0, 0);
 	public Ratio rel = new Ratio(0, 0);
 	public Ratio scale = new Ratio(1, 1);
@@ -16,16 +14,9 @@ public abstract class Blueprint extends PGraphics2D {
 	public float alpha = 1;
 	public boolean showPivot = false;
 	
-	public Blueprint(int initialWidth, int initialHeight) {
-		this.initialWidth = initialWidth;
-		this.initialHeight = initialHeight;
-	}
-	
-	final void initBlueprint() {
-		setParent(Prototype.stage);
-		setPrimary(false);
-		setPath(null);
-		setSize(initialWidth, initialHeight);
+	public Blueprint(int width, int height) {
+		super(Prototype.stage, width, height, true);
+		size.set(width, height);
 	}
 	
 	public abstract void description();

@@ -40,7 +40,7 @@ public class Part {
 	private void initPart (Blueprint blueprint) {
 		this.setBlueprint(blueprint);
 		this.rel = this.getBlueprint().rel.get();
-		this.size = new Ratio(this.getBlueprint().initialWidth, this.getBlueprint().initialHeight);
+		this.size = this.getBlueprint().size.get();
 		this.scale = this.getBlueprint().scale.get();
 		this.pivot = this.getBlueprint().pivot.get();
 
@@ -50,7 +50,6 @@ public class Part {
 		showPivot = this.getBlueprint().showPivot;
 
 
-		this.getBlueprint().initBlueprint();
 		calcBox();
 		readBlueprint();
 
@@ -76,8 +75,8 @@ public class Part {
 
 	public void readBlueprint() {
 		getBlueprint().beginDraw();
-		//getBlueprint().background(0x00000000);
-		getBlueprint().clearBlueprint();
+		//getBlueprint().background(0, 0);
+		//getBlueprint().clearBlueprint();
 		getBlueprint().description();
 		getBlueprint().endDraw();
 	}
@@ -87,11 +86,12 @@ public class Part {
 			float translationX = (parent == null) ? pos.x : pos.x + rel.x * parent.size.x;
 			float translationY = (parent == null) ? pos.y : pos.y + rel.y * parent.size.y;
 			
-			Prototype.stage.pushMatrix();
-			Prototype.stage.translate(translationX, translationY);
-			Prototype.stage.pushStyle();
-			Prototype.stage.tint(255, 255*alpha);
-			drawPlane(size, pivot, blueprint.get());
+			//Prototype.stage.pushMatrix();
+			//Prototype.stage.translate(translationX, translationY);
+			//Prototype.stage.pushStyle();
+			//Prototype.stage.tint(255, 255*alpha);
+			Prototype.stage.image(blueprint.getTexture(), 0, 0);
+			//drawPlane(size, pivot, blueprint.getTexture());
 			/*
 			Prototype.stage.image(
 					getBlueprint(),
@@ -107,8 +107,8 @@ public class Part {
 			}
 			drawParts();
 			
-			Prototype.stage.popStyle();
-			Prototype.stage.popMatrix();
+			//Prototype.stage.popStyle();
+			//Prototype.stage.popMatrix();
 		}
 	}
 
@@ -146,10 +146,11 @@ public class Part {
 	}
 
 	public boolean mouseReallyInside(int shiftX, int shiftY) {
+		/*
 		if (mouseInside(shiftX, shiftY)) {
 			int pixelX = Prototype.stage.mouseX - (int) (shiftX+left);
 			int pixelY = Prototype.stage.mouseY - (int) (shiftY+top);
-			PImage buffer = getBlueprint().get();
+			PImage buffer = getBlueprint().getTexture();
 			buffer.resize((int)size.x * (int)scale.x, (int)size.y * (int)scale.y);
 			buffer.loadPixels();
 			if (buffer.pixels[PApplet.constrain( pixelX + pixelY * (int)size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
@@ -159,6 +160,7 @@ public class Part {
 			buffer.updatePixels();
 			return true;    
 		}
+		*/
 		return false;
 	}
 

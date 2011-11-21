@@ -92,4 +92,3 @@ class AnchorRecipeBL extends AnchorRecipe {
     imagePart.pos.set( imagePart.pos.x + (mouseX-pmouseX), imagePart.pos.y);
   }
 }
-

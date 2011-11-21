@@ -41,4 +41,3 @@ class ImageRecipe extends Blueprint {
     }
   }
 }
-
