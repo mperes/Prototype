@@ -28,7 +28,8 @@ public class Prototype implements MouseWheelListener {
         if( instance == null ) {
             instance = new Prototype(stage);
         }
-         return instance;
+        System.err.println("It is not possible to have more than one instace of Prototype in your Sketch.");
+        return instance;
 	}
 
 	public void installTweenMatrix(boolean remove) {
