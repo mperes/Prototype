@@ -2,13 +2,14 @@ class ImageRecipe extends Blueprint {
 
   ImageRecipe() {
     //This is mandatory. Call it to set the desired initial Width and Height of you Blueprint.
-    super(300, 200);
+    super(135, 118);
+    scaleGrid = new Box(15, 15, 15, 15);
     //pivot.set(.5,0);
   }
 
   //Describe you blueprint here by simple describing a drawing like you would in the main graphics.
   void description() {
-    PImage spider = loadImage("spider.jpg");
+    PImage spider = loadImage("roundsquare.png");
     this.image(spider, 0, 0);
   }
   public void partEvent(PartEvent event) {

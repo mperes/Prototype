@@ -7,10 +7,10 @@ public class Ratio {
 	PApplet stage;
 	public float x;
 	public float y;
-	private float minX = Float.MIN_VALUE  ;
-	private float maxX = Float.MAX_VALUE ;
-	private float minY = Float.MIN_VALUE ;
-	private float maxY = Float.MAX_VALUE ;
+	private float minX;
+	private float maxX;
+	private float minY;
+	private float maxY;
 	
 	public Ratio() {
 	}
@@ -31,8 +31,8 @@ public class Ratio {
 	}
 	
 	public void set(float x, float y) {
-		this.x = PApplet.constrain(x, minX, maxX);
-		this.y = PApplet.constrain(y, minY, maxY);
+		this.x = (stage == null) ? x : PApplet.constrain(x, minX, maxX);
+		this.y = (stage == null) ? y : PApplet.constrain(y, minY, maxY);
 	}
 	
 	public void setMixMax(float minX, float maxX, float minY, float maxY) {

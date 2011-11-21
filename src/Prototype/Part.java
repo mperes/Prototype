@@ -2,6 +2,7 @@ package Prototype;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -82,7 +83,11 @@ public class Part {
 			Prototype.stage.translate(translateX, translateY);
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
-			drawPlane(size, pivot, blueprint);
+			if(blueprint.scaleGrid != null) {
+				draw9SPlane(size, pivot, blueprint.scaleGrid, blueprint);
+			} else {
+				drawPlane(size, pivot, blueprint);
+			}
 			if (showPivot) { 
 				drawPivot();
 			}
@@ -240,4 +245,46 @@ public class Part {
 		Prototype.stage.endShape(PConstants.CLOSE);
 		Prototype.stage.popStyle();
 	}
+	
+	@SuppressWarnings("deprecation")
+	void draw9SPlane(Ratio size, Ratio pivot, Box box, PImage texture) {
+		
+		float relX = -size.x * pivot.x;
+		float relY = -size.y * pivot.y;
+		float[] dW = {box.left, size.x-(box.left+box.right), box.right};
+		float[] dH = {box.top, size.y-(box.top+box.bottom), box.bottom};
+		float[] textW = { dW[0]/texture.width, dW[1]/texture.width, dW[2]/texture.width };
+		float[] textH = { dH[0]/texture.height, dH[1]/texture.height, dH[2]/texture.height };
+		float textWI = 0;
+		float textHI = 0;
+		System.out.println(Arrays.toString(dW));
+		System.out.println(Arrays.toString(dH));
+		System.out.println(Arrays.toString(textW));
+		System.out.println(Arrays.toString(textH));
+		System.out.println("-----------------");
+		Prototype.stage.pushStyle();
+		Prototype.stage.textureMode(PConstants.NORMALIZED);
+		Prototype.stage.noStroke();
+		
+		for(int sectionW = 0; sectionW < 3; sectionW++) {
+		  for(int sectionH = 0; sectionH < 3; sectionH++) {
+			  Prototype.stage.beginShape();
+			  Prototype.stage.texture(texture);
+			  Prototype.stage.vertex(relX, relY, textWI, textHI);
+			  Prototype.stage.vertex(relX+dW[sectionW], relY, textW[sectionW], textHI);
+			  Prototype.stage.vertex(relX+dW[sectionW], relY+dH[sectionH], textW[sectionW], textH[sectionH]);
+			  Prototype.stage.vertex(relX, relY+dH[sectionH], textWI, textH[sectionH]);
+			  Prototype.stage.endShape(PConstants.CLOSE);
+		    relY += dH[sectionH];
+		    textHI += textH[sectionH];
+		  }
+		  relY = -size.y * pivot.y;
+		  relX += dW[sectionW];
+		  textHI = 0;
+		  textWI += textW[sectionW];
+		}
+		
+		Prototype.stage.popStyle();
+	}
+	
 }

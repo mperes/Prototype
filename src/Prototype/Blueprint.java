@@ -15,6 +15,7 @@ public abstract class Blueprint extends PGraphicsJava2D {
 	public boolean enabled = true;
 	public float alpha = 1;
 	public boolean showPivot = false;
+	public Box scaleGrid;
 	
 	public Blueprint(int initialWidth, int initialHeight) {
 		this.initialWidth = initialWidth;
