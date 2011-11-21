@@ -4,8 +4,9 @@ import processing.core.PApplet;
 
 public class Ratio {
 	
-	private float x;
-	private float y;
+	PApplet parent;
+	public float x;
+	public float y;
 	private float minX = Float.MIN_VALUE  ;
 	private float maxX = Float.MAX_VALUE ;
 	private float minY = Float.MIN_VALUE ;
@@ -18,17 +19,11 @@ public class Ratio {
 		set(x, y);
 	}
 	
-	public Ratio(float x, float y, float minX, float maxX,  float minY, float maxY) {
+	public Ratio(PApplet parent, float x, float y, float minX, float maxX,  float minY, float maxY) {
+		this.parent = parent;
 		setMixMax(minX, maxX, minY, maxY);
 		set(x, y);
-	}
-	
-	public float getX() {
-		return x;
-	}
-	
-	public float getY() {
-		return y;
+		parent.registerPre(this);
 	}
 	
 	public float getRatio() {
@@ -41,14 +36,23 @@ public class Ratio {
 	}
 	
 	public void setMixMax(float minX, float maxX, float minY, float maxY) {
-		this.minX = minX;
-		this.maxX = maxX;
-		this.minY = minY;
-		this.maxY = maxY;
+		if(parent != null) {
+			this.minX = minX;
+			this.maxX = maxX;
+			this.minY = minY;
+			this.maxY = maxY;
+		} else {
+			System.err.println("It is not possible to change the Min and Max values, in this Ratio Instance.");
+		}
 	}
 	
 	Ratio get() {
-		Ratio copy = new Ratio(getX(), getY());
+		Ratio copy = new Ratio(x, y);
 		return copy;
+	}
+	
+	void pre() {
+		this.x = PApplet.constrain(this.x, minX, maxX);
+		this.y = PApplet.constrain(this.y, minY, maxY);
 	}
 }

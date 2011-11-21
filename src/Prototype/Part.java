@@ -80,19 +80,9 @@ public class Part {
 	public void draw() {
 		if(visible) {
 			parentPApplet.pushMatrix();
-			//parentPApplet.translate(pos.getX(), pos.getY());
 			parentPApplet.translate(left, top);
 			parentPApplet.pushStyle();
 			parentPApplet.tint(255, 255*alpha);
-			//calcBox();
-			/*
-		parentPApplet.image(
-				getBlueprint(),
-				-pivot.getX() * size.getX() * scale.getX(),
-				-pivot.getY() * size.getY() * scale.getY(),
-				size.getX() * scale.getX(),
-				size.getY() * scale.getY()
-				);*/
 			parentPApplet.image(
 					getBlueprint(),
 					0,
@@ -241,5 +231,14 @@ public class Part {
 			}
 		}
 		return false;
+	}
+	
+	void drawPlane(Ratio pivot, Ratio size, PImage texture) {
+		  beginShape();
+		  vertex(-width*pivotX, -height*pivotY);
+		  vertex(width*(1-pivotX), -height*pivotY);
+		  vertex(width*(1-pivotX), height*(1-pivotY));
+		  vertex(-width*pivotX, height*(1-pivotY));
+		  endShape(CLOSE);
 	}
 }
