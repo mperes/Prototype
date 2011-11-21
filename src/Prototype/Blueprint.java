@@ -32,4 +32,12 @@ public abstract class Blueprint extends PGraphics2D {
 	
 	public void partEvent(PartEvent event) {}
 	
+	void clearBlueprint() {
+		this.loadPixels();
+		for (int p = 0; p < this.pixels.length; p++) {
+			this.pixels[p] = 0x00000000;
+		}
+		
+	}
+	
 }

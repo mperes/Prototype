@@ -66,21 +66,33 @@ public class Part {
 		}
 		right =  left + size.x * scale.x;
 		bottom = top + size.y * scale.y;
+		/*
+		left = (parent != null) ? pos.x : pos.x + rel.x * parent.size.x;
+		top = (parent != null) ? pos.y : pos.y + rel.y * parent.size.y;
+		right =  left + size.x * scale.x;
+		bottom = top + size.y * scale.y;
+		*/
 	}
 
 	public void readBlueprint() {
 		getBlueprint().beginDraw();
-		//getBlueprint().background(0);
+		//getBlueprint().background(0x00000000);
+		getBlueprint().clearBlueprint();
 		getBlueprint().description();
 		getBlueprint().endDraw();
 	}
 
 	public void draw() {
 		if(visible) {
+			float translationX = (parent == null) ? pos.x : pos.x + rel.x * parent.size.x;
+			float translationY = (parent == null) ? pos.y : pos.y + rel.y * parent.size.y;
+			
 			Prototype.stage.pushMatrix();
-			Prototype.stage.translate(left, top);
+			Prototype.stage.translate(translationX, translationY);
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
+			drawPlane(size, pivot, blueprint.get());
+			/*
 			Prototype.stage.image(
 					getBlueprint(),
 					0,
@@ -88,10 +100,13 @@ public class Part {
 					right-left,
 					bottom-top
 			);
+			*/
+			
 			if (showPivot) { 
 				drawPivot();
 			}
 			drawParts();
+			
 			Prototype.stage.popStyle();
 			Prototype.stage.popMatrix();
 		}
@@ -232,7 +247,7 @@ public class Part {
 	}
 	
 	@SuppressWarnings("deprecation")
-	void drawPlane(Ratio pivot, Ratio size, PImage texture) {
+	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
 		Prototype.stage.pushStyle();
 		Prototype.stage.textureMode(PConstants.NORMALIZED);
 		Prototype.stage.noStroke();
