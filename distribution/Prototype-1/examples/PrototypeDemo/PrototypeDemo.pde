@@ -1,21 +1,14 @@
-import processing.opengl.*;
-import codeanticode.glgraphics.*;
 import Prototype.*;
 
 Prototype prototype;
 Part imagePart;
 Part anchorTL;
-GLGraphicsOffScreen standard;
-
 void setup() {
-  size(800, 600, GLConstants.GLGRAPHICS);
-  smooth();
-   standard = new GLGraphicsOffScreen(this, 800, 200, true);
+  size(800, 600);
   
   //Its is necessary to initialize an Prototype instance before using the library.
   //Think of it like a canvas where your prototype is gonna run.
-  
-  prototype = Prototype.createPrototype(this);
+  prototype = new Prototype(this);
   imagePart = prototype.part(new ImageRecipe());
   imagePart.pos.set(60, 60);
   //Could be done instead by, imagePart = prototype.part(new ImageRecipe(), 60, 60);
@@ -29,26 +22,9 @@ void setup() {
   imagePart.subpart(new AnchorRecipeTR());
   imagePart.subpart(new AnchorRecipeBR());
   imagePart.subpart(new AnchorRecipeBL());
-    standard.beginDraw();
-  testDraw(standard);
-  standard.endDraw();  
-  image(standard.getTexture(), 0, 200);
-  
-  prototype.part(new BallRecipe(), 200, 200);
 }
 
 void draw() {
-  //background(0);
-}
-
-void testDraw(GLGraphicsOffScreen renderer) {
-  // draw ellipses
-  renderer.noStroke();
-  renderer.fill(255, 0, 0, 255);
-  renderer.ellipse(500, 100, 180, 180);  
-  // draw gradient
-  for(int i = 0; i < 200; i++) {
-    renderer.stroke(0, (i/200f)*255);
-    renderer.line(600+i, 0, 600+i, 200);
-  } 
+  rotate(radians(30));
+  background(0);
 }

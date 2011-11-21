@@ -51,7 +51,7 @@ public class Ratio {
 		return copy;
 	}
 	
-	public void pre() {
+	void pre() {
 		this.x = PApplet.constrain(this.x, minX, maxX);
 		this.y = PApplet.constrain(this.y, minY, maxY);
 	}

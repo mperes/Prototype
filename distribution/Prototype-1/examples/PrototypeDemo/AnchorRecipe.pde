@@ -52,8 +52,8 @@ class AnchorRecipeTL extends AnchorRecipe {
   }
 
   void resizePic() {
-    imagePart.size.set( imagePart.size.x - (mouseX-pmouseX), imagePart.size.y - (mouseY-pmouseY));
-    imagePart.pos.set( imagePart.pos.x + (mouseX-pmouseX), imagePart.pos.y + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.getX() - (mouseX-pmouseX), imagePart.size.getY() - (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.getX() + (mouseX-pmouseX), imagePart.pos.getY() + (mouseY-pmouseY));
   }
 }
 
@@ -65,8 +65,8 @@ class AnchorRecipeTR extends AnchorRecipe {
   }
 
   void resizePic() {
-    imagePart.size.set( imagePart.size.x + (mouseX-pmouseX), imagePart.size.y - (mouseY-pmouseY));
-    imagePart.pos.set( imagePart.pos.x, imagePart.pos.y + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.getX() + (mouseX-pmouseX), imagePart.size.getY() - (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.getX(), imagePart.pos.getY() + (mouseY-pmouseY));
   }
 }
 
@@ -77,7 +77,7 @@ class AnchorRecipeBR extends AnchorRecipe {
   }
 
   void resizePic() {
-    imagePart.size.set( imagePart.size.x + (mouseX-pmouseX), imagePart.size.y + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.getX() + (mouseX-pmouseX), imagePart.size.getY() + (mouseY-pmouseY));
   }
 }
 
@@ -88,7 +88,8 @@ class AnchorRecipeBL extends AnchorRecipe {
   }
 
   void resizePic() {
-    imagePart.size.set( imagePart.size.x - (mouseX-pmouseX), imagePart.size.y + (mouseY-pmouseY));
-    imagePart.pos.set( imagePart.pos.x + (mouseX-pmouseX), imagePart.pos.y);
+    imagePart.size.set( imagePart.size.getX() - (mouseX-pmouseX), imagePart.size.getY() + (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.getX() + (mouseX-pmouseX), imagePart.pos.getY());
   }
 }
+

@@ -40,7 +40,7 @@ public class Part {
 	private void initPart (Blueprint blueprint) {
 		this.setBlueprint(blueprint);
 		this.rel = this.getBlueprint().rel.get();
-		this.size = this.getBlueprint().size.get();
+		this.size = new Ratio(this.getBlueprint().initialWidth, this.getBlueprint().initialHeight);
 		this.scale = this.getBlueprint().scale.get();
 		this.pivot = this.getBlueprint().pivot.get();
 
@@ -50,6 +50,7 @@ public class Part {
 		showPivot = this.getBlueprint().showPivot;
 
 
+		this.getBlueprint().initBlueprint();
 		calcBox();
 		readBlueprint();
 
@@ -65,34 +66,21 @@ public class Part {
 		}
 		right =  left + size.x * scale.x;
 		bottom = top + size.y * scale.y;
-		/*
-		left = (parent != null) ? pos.x : pos.x + rel.x * parent.size.x;
-		top = (parent != null) ? pos.y : pos.y + rel.y * parent.size.y;
-		right =  left + size.x * scale.x;
-		bottom = top + size.y * scale.y;
-		*/
 	}
 
 	public void readBlueprint() {
 		getBlueprint().beginDraw();
-		//getBlueprint().background(0, 0);
-		//getBlueprint().clearBlueprint();
+		//getBlueprint().background(0);
 		getBlueprint().description();
 		getBlueprint().endDraw();
 	}
 
 	public void draw() {
 		if(visible) {
-			float translationX = (parent == null) ? pos.x : pos.x + rel.x * parent.size.x;
-			float translationY = (parent == null) ? pos.y : pos.y + rel.y * parent.size.y;
-			
-			//Prototype.stage.pushMatrix();
-			//Prototype.stage.translate(translationX, translationY);
-			//Prototype.stage.pushStyle();
-			//Prototype.stage.tint(255, 255*alpha);
-			Prototype.stage.image(blueprint.getTexture(), 0, 0);
-			//drawPlane(size, pivot, blueprint.getTexture());
-			/*
+			Prototype.stage.pushMatrix();
+			Prototype.stage.translate(left, top);
+			Prototype.stage.pushStyle();
+			Prototype.stage.tint(255, 255*alpha);
 			Prototype.stage.image(
 					getBlueprint(),
 					0,
@@ -100,15 +88,12 @@ public class Part {
 					right-left,
 					bottom-top
 			);
-			*/
-			
 			if (showPivot) { 
 				drawPivot();
 			}
 			drawParts();
-			
-			//Prototype.stage.popStyle();
-			//Prototype.stage.popMatrix();
+			Prototype.stage.popStyle();
+			Prototype.stage.popMatrix();
 		}
 	}
 
@@ -146,11 +131,10 @@ public class Part {
 	}
 
 	public boolean mouseReallyInside(int shiftX, int shiftY) {
-		/*
 		if (mouseInside(shiftX, shiftY)) {
 			int pixelX = Prototype.stage.mouseX - (int) (shiftX+left);
 			int pixelY = Prototype.stage.mouseY - (int) (shiftY+top);
-			PImage buffer = getBlueprint().getTexture();
+			PImage buffer = getBlueprint().get();
 			buffer.resize((int)size.x * (int)scale.x, (int)size.y * (int)scale.y);
 			buffer.loadPixels();
 			if (buffer.pixels[PApplet.constrain( pixelX + pixelY * (int)size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
@@ -160,7 +144,6 @@ public class Part {
 			buffer.updatePixels();
 			return true;    
 		}
-		*/
 		return false;
 	}
 
@@ -249,7 +232,7 @@ public class Part {
 	}
 	
 	@SuppressWarnings("deprecation")
-	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
+	void drawPlane(Ratio pivot, Ratio size, PImage texture) {
 		Prototype.stage.pushStyle();
 		Prototype.stage.textureMode(PConstants.NORMALIZED);
 		Prototype.stage.noStroke();
