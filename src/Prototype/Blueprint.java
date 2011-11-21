@@ -1,6 +1,5 @@
 package Prototype;
 
-import processing.core.PApplet;
 import processing.core.PGraphics2D;
 
 public abstract class Blueprint extends PGraphics2D {
@@ -22,8 +21,8 @@ public abstract class Blueprint extends PGraphics2D {
 		this.initialHeight = initialHeight;
 	}
 	
-	final void initBlueprint(PApplet parent) {
-		setParent(parent);
+	final void initBlueprint() {
+		setParent(Prototype.stage);
 		setPrimary(false);
 		setPath(null);
 		setSize(initialWidth, initialHeight);

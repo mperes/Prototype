@@ -41,13 +41,13 @@ public class Prototype implements MouseWheelListener {
 	}
 
 	public Part part(Blueprint blueprint) {
-		Part newPart = new Part(stage, blueprint);
+		Part newPart = new Part(blueprint);
 		parts.add(newPart);
 		return newPart;
 	}
 	
 	public Part part(Blueprint blueprint, float x, float y) {
-		Part newPart = new Part(stage, blueprint, x, y);
+		Part newPart = new Part(blueprint, x, y);
 		parts.add(newPart);
 		return newPart;
 	}

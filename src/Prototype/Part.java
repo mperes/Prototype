@@ -8,7 +8,6 @@ import processing.core.PConstants;
 import processing.core.PImage;
 
 public class Part {
-	private PApplet parentPApplet;
 	private Blueprint blueprint;
 	public Part parent;
 	ArrayList<Part> parts;
@@ -28,18 +27,17 @@ public class Part {
 	private float alpha;
 	public boolean showPivot;  
 
-	public Part (PApplet parentPApplet, Blueprint blueprint) {
+	public Part (Blueprint blueprint) {
 		this.pos = blueprint.pos.get();
-		initPart(parentPApplet, blueprint);
+		initPart(blueprint);
 	}
 
-	public Part (PApplet parentPApplet, Blueprint blueprint, float x, float y) {
+	public Part (Blueprint blueprint, float x, float y) {
 		this.pos = new Ratio(x, y);
-		initPart(parentPApplet, blueprint);
+		initPart(blueprint);
 	}
 
-	private void initPart (PApplet parentPApplet, Blueprint blueprint) {
-		this.parentPApplet = parentPApplet;
+	private void initPart (Blueprint blueprint) {
 		this.setBlueprint(blueprint);
 		this.rel = this.getBlueprint().rel.get();
 		this.size = new Ratio(this.getBlueprint().initialWidth, this.getBlueprint().initialHeight);
@@ -52,7 +50,7 @@ public class Part {
 		showPivot = this.getBlueprint().showPivot;
 
 
-		this.getBlueprint().initBlueprint(this.parentPApplet);
+		this.getBlueprint().initBlueprint();
 		calcBox();
 		readBlueprint();
 
@@ -79,11 +77,11 @@ public class Part {
 
 	public void draw() {
 		if(visible) {
-			parentPApplet.pushMatrix();
-			parentPApplet.translate(left, top);
-			parentPApplet.pushStyle();
-			parentPApplet.tint(255, 255*alpha);
-			parentPApplet.image(
+			Prototype.stage.pushMatrix();
+			Prototype.stage.translate(left, top);
+			Prototype.stage.pushStyle();
+			Prototype.stage.tint(255, 255*alpha);
+			Prototype.stage.image(
 					getBlueprint(),
 					0,
 					0,
@@ -94,8 +92,8 @@ public class Part {
 				drawPivot();
 			}
 			drawParts();
-			parentPApplet.popStyle();
-			parentPApplet.popMatrix();
+			Prototype.stage.popStyle();
+			Prototype.stage.popMatrix();
 		}
 	}
 
@@ -107,12 +105,12 @@ public class Part {
 	}
 
 	private void drawPivot() {
-		parentPApplet.pushStyle();
-		parentPApplet.fill(255, 0, 0);
-		parentPApplet.noStroke();
-		parentPApplet.rectMode(PConstants.CENTER);
-		parentPApplet.rect(0, 0, 5, 5);
-		parentPApplet.popStyle();
+		Prototype.stage.pushStyle();
+		Prototype.stage.fill(255, 0, 0);
+		Prototype.stage.noStroke();
+		Prototype.stage.rectMode(PConstants.CENTER);
+		Prototype.stage.rect(0, 0, 5, 5);
+		Prototype.stage.popStyle();
 	}
 
 	public void pre() {
@@ -129,13 +127,13 @@ public class Part {
 
 	private boolean mouseInside(int shiftX, int shiftY) {
 		calcBox();
-		return (parentPApplet.mouseX > shiftX+left && parentPApplet.mouseX < shiftX+right && parentPApplet.mouseY > shiftY+top && parentPApplet.mouseY < shiftY+bottom) ? true : false;
+		return (Prototype.stage.mouseX > shiftX+left && Prototype.stage.mouseX < shiftX+right && Prototype.stage.mouseY > shiftY+top && Prototype.stage.mouseY < shiftY+bottom) ? true : false;
 	}
 
 	public boolean mouseReallyInside(int shiftX, int shiftY) {
 		if (mouseInside(shiftX, shiftY)) {
-			int pixelX = parentPApplet.mouseX - (int) (shiftX+left);
-			int pixelY = parentPApplet.mouseY - (int) (shiftY+top);
+			int pixelX = Prototype.stage.mouseX - (int) (shiftX+left);
+			int pixelY = Prototype.stage.mouseY - (int) (shiftY+top);
 			PImage buffer = getBlueprint().get();
 			buffer.resize((int)size.x * (int)scale.x, (int)size.y * (int)scale.y);
 			buffer.loadPixels();
@@ -150,14 +148,14 @@ public class Part {
 	}
 
 	public Part subpart(Blueprint blueprint) {
-		Part newPart = new Part(parentPApplet, blueprint);
+		Part newPart = new Part(blueprint);
 		newPart.parent = this;
 		parts.add(newPart);
 		return newPart;
 	}
 
 	public Part subpart(Blueprint blueprint, float x, float y) {
-		Part newPart = new Part(parentPApplet, blueprint, x, y);
+		Part newPart = new Part(blueprint, x, y);
 		newPart.parent = this;
 		parts.add(newPart);
 		return newPart;
@@ -235,16 +233,16 @@ public class Part {
 	
 	@SuppressWarnings("deprecation")
 	void drawPlane(Ratio pivot, Ratio size, PImage texture) {
-		parentPApplet.pushStyle();
-		parentPApplet.textureMode(PConstants.NORMALIZED);
-		parentPApplet.noStroke();
-		parentPApplet.beginShape();
-		parentPApplet.texture(texture);
-		parentPApplet.vertex(-size.x*pivot.x, -size.y*pivot.y, 0, 0);
-		parentPApplet.vertex(size.x*(1-pivot.x), -size.y*pivot.y, 1, 0);
-		parentPApplet.vertex(size.x*(1-pivot.x), size.y*(1-pivot.y), 1, 1);
-		parentPApplet.vertex(-size.x*pivot.x, size.y*(1-pivot.y), 0, 1);
-		parentPApplet.endShape(PConstants.CLOSE);
-		parentPApplet.popStyle();
+		Prototype.stage.pushStyle();
+		Prototype.stage.textureMode(PConstants.NORMALIZED);
+		Prototype.stage.noStroke();
+		Prototype.stage.beginShape();
+		Prototype.stage.texture(texture);
+		Prototype.stage.vertex(-size.x*pivot.x, -size.y*pivot.y, 0, 0);
+		Prototype.stage.vertex(size.x*(1-pivot.x), -size.y*pivot.y, 1, 0);
+		Prototype.stage.vertex(size.x*(1-pivot.x), size.y*(1-pivot.y), 1, 1);
+		Prototype.stage.vertex(-size.x*pivot.x, size.y*(1-pivot.y), 0, 1);
+		Prototype.stage.endShape(PConstants.CLOSE);
+		Prototype.stage.popStyle();
 	}
 }
