@@ -2,7 +2,6 @@ package Prototype;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -247,44 +246,43 @@ public class Part {
 	}
 
 	void draw9SPlane(Ratio size, Ratio pivot, Box box, PImage texture) {
-        int roundSizeX = Math.round(size.x);
-        int roundSizeY = Math.round(size.y);
+		int roundSizeX = Math.round(size.x);
+		int roundSizeY = Math.round(size.y);
 		PImage img = Prototype.stage.createImage(roundSizeX, roundSizeY, PConstants.ARGB);
-img.loadPixels();
-int dW = roundSizeX - texture.width;
-int dH = roundSizeY - texture.height;
-for(int y = 0; y < texture.height; y++) {
-	for(int x = 0; x < texture.width; x++) {
-		if(x < box.left) {
-			if(y < box.top) {
-				System.out.println(y);
-				img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+y*texture.width];
-			} else if(y >= texture.height-box.bottom) {
-				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(y-dH)*texture.width];
-			} else {
-				img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(int)box.top*texture.width];
-			}
-		} else if(x >= texture.width-box.right) {
-			if(y < box.top) {
-				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+y*texture.width];
-			} else if(y >= texture.height-box.bottom) {
-				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(y-dH)*texture.width];
-			} else {
-				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(int)box.top*texture.width];
-			}
-		} else {
-			if(y < box.top) {
-				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+y*texture.width];
-			} else if(y >= texture.height-box.bottom) {
-				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(y-dH)*texture.width];
-			} else {
-				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(int)box.top*texture.width];
+		img.loadPixels();
+		int dW = roundSizeX - texture.width;
+		int dH = roundSizeY - texture.height;
+		for(int y = 0; y < roundSizeY; y++) {
+			for(int x = 0; x < roundSizeX; x++) {
+				if(x < box.left) {
+					if(y < box.top) {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+y*texture.width];
+					} else if(y >= roundSizeY-box.bottom) {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(y-dH)*texture.width];
+					} else {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(int)box.top*texture.width];
+					}
+				} else if(x >= roundSizeX-box.right) {
+					if(y < box.top) {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+y*texture.width];
+					} else if(y >= roundSizeY-box.bottom) {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(y-dH)*texture.width];
+					} else {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(int)box.top*texture.width];
+					}
+				} else {
+					if(y < box.top) {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+y*texture.width];
+					} else if(y >= roundSizeY-box.bottom) {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(y-dH)*texture.width];
+					} else {
+						img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(int)box.top*texture.width];
+					}
+				}
 			}
 		}
-	}
-}
-	img.updatePixels();
-	drawPlane(size, pivot, img);
+		img.updatePixels();
+		drawPlane(size, pivot, img);
 	}
 
 }

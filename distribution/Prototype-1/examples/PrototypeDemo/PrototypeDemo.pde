@@ -6,7 +6,7 @@ Part imagePart;
 Part anchorTL;
 PGraphics teste;
 void setup() {
-  size(800, 600, OPENGL);
+  size(800, 600, OPENGL);  
   
   //Its is necessary to initialize an Prototype instance before using the library.
   //Think of it like a canvas where your prototype is gonna run.
