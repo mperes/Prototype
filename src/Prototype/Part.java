@@ -76,14 +76,14 @@ public class Part {
 
 	public void draw() {
 		if(visible) {
-			float translateX = (parent == null) ? pos.x : pos.x + parent.size.x * rel.x;
-			float translateY = (parent == null) ? pos.y : pos.y + parent.size.y * rel.y;
+			float translateX = (parent == null) ? pos.x : (int)(pos.x + parent.size.x * rel.x);
+			float translateY = (parent == null) ? pos.y : (int)(pos.y + parent.size.y * rel.y);
 			Prototype.stage.pushMatrix();
 			Prototype.stage.translate(translateX, translateY);
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
 			if(blueprint.scaleGrid != null) {
-				draw9SPlane(this.size, this.pivot, this.blueprint.scaleGrid, this.blueprint);
+				scale9Grid(this.size, this.pivot, this.blueprint.scaleGrid, this.blueprint);
 			} else {
 				drawPlane(this.size, this.pivot, this.blueprint);
 			}
@@ -230,6 +230,8 @@ public class Part {
 		return false;
 	}
 
+	/*
+	//Old drawing functions using textured planes;
 	@SuppressWarnings("deprecation")
 	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
 		Prototype.stage.pushStyle();
@@ -244,8 +246,17 @@ public class Part {
 		Prototype.stage.endShape(PConstants.CLOSE);
 		Prototype.stage.popStyle();
 	}
+	*/
+	
+	//Drawing functions using planes
+	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
+		Prototype.stage.pushMatrix();
+		Prototype.stage.translate((int)(-size.x*pivot.x), (int)(-size.y*pivot.y));
+		Prototype.stage.image(texture, 0, 0, size.x, size.y);
+		Prototype.stage.popMatrix();
+	}
 
-	void draw9SPlane(Ratio size, Ratio pivot, Box box, PImage texture) {
+	void scale9Grid(Ratio size, Ratio pivot, Box box, PImage texture) {
 		int roundSizeX = Math.round(size.x);
 		int roundSizeY = Math.round(size.y);
 		PImage img = Prototype.stage.createImage(roundSizeX, roundSizeY, PConstants.ARGB);
