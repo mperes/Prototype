@@ -9,7 +9,7 @@ class ImageRecipe extends Blueprint {
 
   //Describe you blueprint here by simple describing a drawing like you would in the main graphics.
   void description() {
-    PImage spider = loadImage("roundsquare.png");
+    PImage spider = loadImage("roundsquare2.png");
     this.image(spider, 0, 0);
   }
   public void partEvent(PartEvent event) {

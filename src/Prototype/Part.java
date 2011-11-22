@@ -84,9 +84,9 @@ public class Part {
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
 			if(blueprint.scaleGrid != null) {
-				draw9SPlane(size, pivot, blueprint.scaleGrid, blueprint);
+				draw9SPlane(this.size, this.pivot, this.blueprint.scaleGrid, this.blueprint);
 			} else {
-				drawPlane(size, pivot, blueprint);
+				drawPlane(this.size, this.pivot, this.blueprint);
 			}
 			if (showPivot) { 
 				drawPivot();
@@ -230,7 +230,7 @@ public class Part {
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
 		Prototype.stage.pushStyle();
@@ -245,48 +245,46 @@ public class Part {
 		Prototype.stage.endShape(PConstants.CLOSE);
 		Prototype.stage.popStyle();
 	}
-	
-	@SuppressWarnings("deprecation")
-	void draw9SPlane(Ratio size, Ratio pivot, Box box, PImage texture) {
-		
-		float relX = -size.x * pivot.x;
-		float relY = -size.y * pivot.y;
-		float[] dW = {box.left, size.x-(box.left+box.right), box.right};
-		float[] dH = {box.top, size.y-(box.top+box.bottom), box.bottom};
-		float[] textW = { dW[0]/texture.width, dW[1]/texture.width, dW[2]/texture.width };
-		float[] textH = { dH[0]/texture.height, dH[1]/texture.height, dH[2]/texture.height };
-		float textWI = 0;
-		float textHI = 0;
-		System.out.println(Arrays.toString(dW));
-		System.out.println(Arrays.toString(dH));
-		System.out.println(Arrays.toString(textW));
-		System.out.println(Arrays.toString(textH));
-		System.out.println("-----------------");
-		Prototype.stage.pushStyle();
-		Prototype.stage.textureMode(PConstants.NORMALIZED);
-		Prototype.stage.noStroke();
-		
-		for(int sectionW = 0; sectionW < 3; sectionW++) {
-		  for(int sectionH = 0; sectionH < 3; sectionH++) {
-			  Prototype.stage.beginShape();
-			  Prototype.stage.texture(texture);
-			  Prototype.stage.vertex(relX, relY, textWI, textHI);
-			  Prototype.stage.vertex(relX+dW[sectionW], relY, textW[sectionW], textHI);
-			  Prototype.stage.vertex(relX+dW[sectionW], relY+dH[sectionH], textW[sectionW], textH[sectionH]);
-			  Prototype.stage.vertex(relX, relY+dH[sectionH], textWI, textH[sectionH]);
-			  Prototype.stage.endShape(PConstants.CLOSE);
-		    relY += dH[sectionH];
-		    textHI += textH[sectionH];
-		  }
-		  relY = -size.y * pivot.y;
-		  relX += dW[sectionW];
-		  textHI = 0;
-		  textWI += textW[sectionW];
-		}
-		
-		Prototype.stage.popStyle();
-	}
-	
-}
 
-//Comment
+	void draw9SPlane(Ratio size, Ratio pivot, Box box, PImage texture) {
+        int roundSizeX = Math.round(size.x);
+        int roundSizeY = Math.round(size.y);
+		PImage img = Prototype.stage.createImage(roundSizeX, roundSizeY, PConstants.ARGB);
+img.loadPixels();
+int dW = roundSizeX - texture.width;
+int dH = roundSizeY - texture.height;
+for(int y = 0; y < texture.height; y++) {
+	for(int x = 0; x < texture.width; x++) {
+		if(x < box.left) {
+			if(y < box.top) {
+				System.out.println(y);
+				img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+y*texture.width];
+			} else if(y >= texture.height-box.bottom) {
+				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(y-dH)*texture.width];
+			} else {
+				img.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(int)box.top*texture.width];
+			}
+		} else if(x >= texture.width-box.right) {
+			if(y < box.top) {
+				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+y*texture.width];
+			} else if(y >= texture.height-box.bottom) {
+				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(y-dH)*texture.width];
+			} else {
+				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(int)box.top*texture.width];
+			}
+		} else {
+			if(y < box.top) {
+				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+y*texture.width];
+			} else if(y >= texture.height-box.bottom) {
+				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(y-dH)*texture.width];
+			} else {
+				//img.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(int)box.top*texture.width];
+			}
+		}
+	}
+}
+	img.updatePixels();
+	drawPlane(size, pivot, img);
+	}
+
+}
