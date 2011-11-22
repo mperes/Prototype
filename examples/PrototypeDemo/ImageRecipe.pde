@@ -12,32 +12,27 @@ class ImageRecipe extends Blueprint {
     PImage spider = loadImage("roundsquare.png");
     this.image(spider, 0, 0);
   }
+
+  //Events that can be used at any part
+  //PartEvent.MOUSE_PRESSED
+  //PartEvent.MOUSE_RELEASED
+  //PartEvent.MOUSE_CLICKED:
+  //PartEvent.MOUSE_DRAGGED
+  //PartEvent.MOUSE_MOVED
+  //PartEvent.MOUSE_SCROLLED
+  //PartEvent.PART_PRESSED
+  //PartEvent.PART_RELEASED
+  //PartEvent.PART_CLICKED
+  //PartEvent.PART_DRAGGED
+  //PartEvent.PART_MOVED
+  //PartEvent.PART_SCROLLED
+  //PartEvent.PART_DRAGGED:
+  //PartEvent.PART_MOVED:
+  
   public void partEvent(PartEvent event) {
-    switch (event.getID()) {	
-    case PartEvent.MOUSE_PRESSED:
-      break;
-    case PartEvent.MOUSE_RELEASED:
-      break;
-    case PartEvent.MOUSE_CLICKED:
-      break;
-    case PartEvent.MOUSE_DRAGGED:
-      break;
-    case PartEvent.MOUSE_MOVED:
-      break;
-    case PartEvent.MOUSE_SCROLLED:
-      break;
-    case PartEvent.PART_PRESSED:
-      break;
-    case PartEvent.PART_RELEASED:
-      break;
-    case PartEvent.PART_CLICKED:
-      break;
+    switch (event.getID()) {
     case PartEvent.PART_DRAGGED:
       event.part.pos.set( event.part.pos.x + mouseX-pmouseX, event.part.pos.y + mouseY-pmouseY);
-      break;
-    case PartEvent.PART_MOVED:
-      break;
-    case PartEvent.PART_SCROLLED:
       break;
     }
   }
