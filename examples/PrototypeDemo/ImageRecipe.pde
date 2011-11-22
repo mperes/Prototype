@@ -10,29 +10,34 @@ class ImageRecipe extends Blueprint {
   //Describe you blueprint here by simple describing a drawing like you would in the main graphics.
   void description() {
     PImage spider = loadImage("roundsquare.png");
-    blueprint.image(spider, 0, 0);
+    this.image(spider, 0, 0);
   }
-
-  //Events that can be used at any part
-  //PartEvent.MOUSE_PRESSED
-  //PartEvent.MOUSE_RELEASED
-  //PartEvent.MOUSE_CLICKED:
-  //PartEvent.MOUSE_DRAGGED
-  //PartEvent.MOUSE_MOVED
-  //PartEvent.MOUSE_SCROLLED
-  //PartEvent.PART_PRESSED
-  //PartEvent.PART_RELEASED
-  //PartEvent.PART_CLICKED
-  //PartEvent.PART_DRAGGED
-  //PartEvent.PART_MOVED
-  //PartEvent.PART_SCROLLED
-  //PartEvent.PART_DRAGGED:
-  //PartEvent.PART_MOVED:
-  
   public void partEvent(PartEvent event) {
-    switch (event.getID()) {
+    switch (event.getID()) {	
+    case PartEvent.MOUSE_PRESSED:
+      break;
+    case PartEvent.MOUSE_RELEASED:
+      break;
+    case PartEvent.MOUSE_CLICKED:
+      break;
+    case PartEvent.MOUSE_DRAGGED:
+      break;
+    case PartEvent.MOUSE_MOVED:
+      break;
+    case PartEvent.MOUSE_SCROLLED:
+      break;
+    case PartEvent.PART_PRESSED:
+      break;
+    case PartEvent.PART_RELEASED:
+      break;
+    case PartEvent.PART_CLICKED:
+      break;
     case PartEvent.PART_DRAGGED:
       event.part.pos.set( event.part.pos.x + mouseX-pmouseX, event.part.pos.y + mouseY-pmouseY);
+      break;
+    case PartEvent.PART_MOVED:
+      break;
+    case PartEvent.PART_SCROLLED:
       break;
     }
   }
