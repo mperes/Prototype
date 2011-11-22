@@ -18,12 +18,12 @@ class AnchorRecipe extends Blueprint {
   }
 
   void description() {
-    blueprint.smooth();
-    blueprint.ellipseMode(CORNER);
-    blueprint.noStroke();
+    smooth();
+    ellipseMode(CORNER);
+    noStroke();
     //I still have to investigate this, but when drawing a circle with the same size as the blueprint,
     //the circle gets cropped.
-    blueprint.ellipse(0, 0, 11, 11);
+    ellipse(0, 0, 11, 11);
   }
 
   public void partEvent(PartEvent event) {
@@ -32,7 +32,7 @@ class AnchorRecipe extends Blueprint {
       this.dragging = true;
       break;
     case PartEvent.MOUSE_DRAGGED:
-      if (this.dragging) {
+      if(this.dragging) {
         resizePic();
       }
       break;
@@ -62,7 +62,7 @@ class AnchorRecipeTR extends AnchorRecipe {
   boolean dragging = false;
   AnchorRecipeTR() {
     super(); //Always call Super().
-    rel.set(1, 0); //Relative to the top right corner;
+    rel.set(1,0); //Relative to the top right corner;
   }
 
   void resizePic() {
@@ -74,7 +74,7 @@ class AnchorRecipeTR extends AnchorRecipe {
 class AnchorRecipeBR extends AnchorRecipe {
   AnchorRecipeBR() {
     super(); //Always call Super().
-    rel.set(1, 1); //Relative to the bottom right corner;
+    rel.set(1,1); //Relative to the bottom right corner;
   }
 
   void resizePic() {
@@ -85,7 +85,7 @@ class AnchorRecipeBR extends AnchorRecipe {
 class AnchorRecipeBL extends AnchorRecipe {
   AnchorRecipeBL() {
     super(); //Always call Super().
-    rel.set(0, 1); //Relative to the bottom left corner;
+    rel.set(0,1); //Relative to the bottom left corner;
   }
 
   void resizePic() {

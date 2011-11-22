@@ -1,8 +1,8 @@
 package Prototype;
 
-import processing.core.*;
+import processing.core.PGraphicsJava2D;
 
-public abstract class Blueprint {
+public abstract class Blueprint extends PGraphicsJava2D {
 	
 	final int initialWidth;
 	final int initialHeight;
@@ -17,19 +17,16 @@ public abstract class Blueprint {
 	public boolean showPivot = false;
 	public Box scaleGrid;
 	
-	public PGraphics blueprint;
-	
 	public Blueprint(int initialWidth, int initialHeight) {
 		this.initialWidth = initialWidth;
 		this.initialHeight = initialHeight;
-		blueprint = Prototype.stage.createGraphics(initialWidth, initialHeight, PConstants.JAVA2D);
 	}
 	
 	final void initBlueprint() {
-	//	setParent(Prototype.stage);
-	//	setPrimary(false);
-//		setPath(null);
-//		setSize(initialWidth, initialHeight);
+		setParent(Prototype.stage);
+		setPrimary(false);
+		setPath(null);
+		setSize(initialWidth, initialHeight);
 	}
 	
 	public abstract void description();
@@ -37,9 +34,9 @@ public abstract class Blueprint {
 	public void partEvent(PartEvent event) {}
 	
 	void clearBlueprint() {
-		blueprint.loadPixels();
-		for(int p = 0; p < blueprint.pixels.length; p++) {
-			blueprint.pixels[p] = 0x00000000;
+		this.loadPixels();
+		for(int p = 0; p < this.pixels.length; p++) {
+			this.pixels[p] = 0x00000000;
 		}
 	}
 	
