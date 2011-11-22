@@ -53,8 +53,8 @@ class AnchorRecipeTL extends AnchorRecipe {
   }
 
   void resizePic() {
-    buttonPart.size.set( buttonPart.size.x - (mouseX-pmouseX), buttonPart.size.y - (mouseY-pmouseY));
-    buttonPart.pos.set( buttonPart.pos.x + (mouseX-pmouseX), buttonPart.pos.y + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.x - (mouseX-pmouseX), imagePart.size.y - (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.x + (mouseX-pmouseX), imagePart.pos.y + (mouseY-pmouseY));
   }
 }
 
@@ -66,8 +66,8 @@ class AnchorRecipeTR extends AnchorRecipe {
   }
 
   void resizePic() {
-    buttonPart.size.set( buttonPart.size.x + (mouseX-pmouseX), buttonPart.size.y - (mouseY-pmouseY));
-    buttonPart.pos.set( buttonPart.pos.x, buttonPart.pos.y + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.x + (mouseX-pmouseX), imagePart.size.y - (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.x, imagePart.pos.y + (mouseY-pmouseY));
   }
 }
 
@@ -78,7 +78,7 @@ class AnchorRecipeBR extends AnchorRecipe {
   }
 
   void resizePic() {
-    buttonPart.size.set( buttonPart.size.x + (mouseX-pmouseX), buttonPart.size.y + (mouseY-pmouseY));
+    imagePart.size.set( imagePart.size.x + (mouseX-pmouseX), imagePart.size.y + (mouseY-pmouseY));
   }
 }
 
@@ -89,8 +89,8 @@ class AnchorRecipeBL extends AnchorRecipe {
   }
 
   void resizePic() {
-    buttonPart.size.set( buttonPart.size.x - (mouseX-pmouseX), buttonPart.size.y + (mouseY-pmouseY));
-    buttonPart.pos.set( buttonPart.pos.x + (mouseX-pmouseX), buttonPart.pos.y);
+    imagePart.size.set( imagePart.size.x - (mouseX-pmouseX), imagePart.size.y + (mouseY-pmouseY));
+    imagePart.pos.set( imagePart.pos.x + (mouseX-pmouseX), imagePart.pos.y);
   }
 }
 

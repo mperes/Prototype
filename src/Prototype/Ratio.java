@@ -26,7 +26,7 @@ public class Ratio {
 
 	public Ratio(float x, float y, float minX, float maxX,  float minY, float maxY) {
 		set(x, y);
-		setMixMax(minX, maxX, minY, maxY);
+		setMinMax(minX, maxX, minY, maxY);
 		stage = Prototype.stage;
 		stage.registerPre(this);
 		stage.registerMouseEvent(this);
@@ -44,10 +44,10 @@ public class Ratio {
 	public void set(float x, float y, float minX, float maxX,  float minY, float maxY) {
 		capped = true;
 		set(x, y);
-		setMixMax(minX, maxX, minY, maxY);
+		setMinMax(minX, maxX, minY, maxY);
 	}
 
-	public void setMixMax(float minX, float maxX, float minY, float maxY) {
+	public void setMinMax(float minX, float maxX, float minY, float maxY) {
 		capped = true;
 		this.minX = minX;
 		this.maxX = maxX;
