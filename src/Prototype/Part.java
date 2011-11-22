@@ -69,9 +69,9 @@ public class Part {
 	}
 
 	public void readBlueprint() {
-		getBlueprint().beginDraw();
+		getBlueprint().blueprint.beginDraw();
 		getBlueprint().description();
-		getBlueprint().endDraw();
+		getBlueprint().blueprint.endDraw();
 	}
 
 	public void draw() {
@@ -83,9 +83,9 @@ public class Part {
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
 			if(blueprint.scaleGrid != null) {
-				draw9SPlane(this.size, this.pivot, this.blueprint.scaleGrid, this.blueprint);
+				draw9SPlane(this.size, this.pivot, this.blueprint.scaleGrid, this.blueprint.blueprint);
 			} else {
-				drawPlane(this.size, this.pivot, this.blueprint);
+				drawPlane(this.size, this.pivot, this.blueprint.blueprint);
 			}
 			if (showPivot) { 
 				drawPivot();
@@ -133,7 +133,7 @@ public class Part {
 		if (mouseInside(shiftX, shiftY)) {
 			int pixelX = Prototype.stage.mouseX - (int) (shiftX+left);
 			int pixelY = Prototype.stage.mouseY - (int) (shiftY+top);
-			PImage buffer = getBlueprint().get();
+			PImage buffer = getBlueprint().blueprint.get();
 			buffer.resize((int)size.x * (int)scale.x, (int)size.y * (int)scale.y);
 			buffer.loadPixels();
 			if (buffer.pixels[PApplet.constrain( pixelX + pixelY * (int)size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
