@@ -230,7 +230,7 @@ public class Part {
 		return false;
 	}
 
-	/*
+	
 	//Old drawing functions using textured planes;
 	@SuppressWarnings("deprecation")
 	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
@@ -246,18 +246,18 @@ public class Part {
 		Prototype.stage.endShape(PConstants.CLOSE);
 		Prototype.stage.popStyle();
 	}
-	*/
+	
 	
 	//Drawing functions using planes
-	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
-		PImage resizedtexture = Prototype.stage.createImage(texture.width, texture.height, PConstants.ARGB); 
-		resizedtexture.set(0, 0, texture);
-		resizedtexture.resize((int)size.x, (int)size.y);
-		Prototype.stage.pushMatrix();
-		Prototype.stage.translate((int)(-size.x*pivot.x), (int)(-size.y*pivot.y));
-		Prototype.stage.image(resizedtexture, 0, 0);
-		Prototype.stage.popMatrix();
-	}
+//	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
+//		PImage resizedtexture = Prototype.stage.createImage(texture.width, texture.height, PConstants.ARGB); 
+//		resizedtexture.set(0, 0, texture);
+//		resizedtexture.resize((int)size.x, (int)size.y);
+//		Prototype.stage.pushMatrix();
+//		Prototype.stage.translate((int)(-size.x*pivot.x), (int)(-size.y*pivot.y));
+//		Prototype.stage.image(resizedtexture, 0, 0);
+//		Prototype.stage.popMatrix();
+//	}
 
 	void scale9Grid(Ratio size, Ratio pivot, Box box, PImage texture) {
 		int roundSizeX = Math.round(size.x);

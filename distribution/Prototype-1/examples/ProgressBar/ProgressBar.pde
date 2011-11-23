@@ -30,9 +30,9 @@ void setup() {
   prototype = Prototype.createPrototype(this);
   
   Part container = prototype.part(new Container(), 50, 50);
-  //progress = container.subpart(new Progress());
-  //Part knob = progress.subpart(new Knob());
-  //progress.size.x = 5;
+  progress = container.subpart(new Progress());
+  Part knob = progress.subpart(new Knob());
+  progress.size.x = 5;
   
 }
 

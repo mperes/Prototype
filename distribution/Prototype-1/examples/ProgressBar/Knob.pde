@@ -7,7 +7,7 @@ class Knob extends Blueprint {
     //Always call super(w, h)
     super(containerH/3, containerH);
     pivot.set(1, 0); // Sets the pivtor point to the top right corner.
-    //pos.setMinMax(containerH/3, containerW, 0, 0); //Contrains the knob to the area of the container.
+    pos.setMinMax(containerH/3, containerW, 0, 0); //Contrains the knob to the area of the container.
   }
   
   void description() {

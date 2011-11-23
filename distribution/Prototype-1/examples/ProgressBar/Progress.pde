@@ -4,8 +4,8 @@ class Progress extends Container {
   
   Progress() {
     super();
-    //scaleGrid = new Box(4, 4, 4, 4); //Some borders to preserve the transparency around the bar.
-    //size.setMinMax(0, 200, containerH, containerH);
+    scaleGrid = new Box(4, 4, 4, 4); //Some borders to preserve the transparency around the bar.
+    size.setMinMax(0, containerW, containerH, containerH);
   }
   
   void description() {
