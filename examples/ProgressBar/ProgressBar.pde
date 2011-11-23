@@ -1,39 +1,46 @@
 import processing.opengl.*;
+import javax.media.opengl.GL;
 import Prototype.*;
-
-       PFont myFont;
        
+//Necessary to make straight OpenGL calls.
+PGraphicsOpenGL pgl;
+GL gl;
+
 Prototype prototype;
-Part imagePart;
-Part anchorTL;
-Part bar;
-Part knob;
+
+int containerW = 300;
+int containerH = 30;
+
+Part progress;
+
 PGraphics teste;
 void setup() {
-  size(800, 600, OPENGL);  
-  //frameRate(2);
-//       myFont = createFont("Verdana-24",18);
+  size(800, 600, OPENGL);
+ 
+   //set vertical sync on to avoid tearing on the scrolling.  
+  //pgl = (PGraphicsOpenGL) g;
+  //gl = pgl.beginGL();
+  //gl.setSwapInterval(1); 
+  //pgl.endGL();
+ 
+ //hint(DISABLE_OPENGL_2X_SMOOTH);
+
   //Its is necessary to initialize an Prototype instance before using the library.
   //Think of it like a canvas where your prototype is gonna run.
   prototype = Prototype.createPrototype(this);
-  bar = prototype.part(new Bar(), 60, 60);
-  knob = bar.subpart(new Knob());
-  //imagePart = prototype.part(new ImageRecipe());
-  //imagePart.pos.set(60, 60);
-  //Could be done instead by, imagePart = prototype.part(new ImageRecipe(), 60, 60);
-  //Or by setting Blueprint.pos(x, y).
   
-  //A Part can have sbuparts. Subpart last added are drawn on top of the canvas.
- // Part anchorTL = imagePart.subpart(new AnchorRecipeTL());
-  //The second and third parameters are optional, they set the initial location of the Sbupart (Default is 0,0)
-  //according to the relation point 'Blueprint.rel' (Default is 0,0).
-  ////You should be aware that this location is is relation to the position of the parent bot.
-  //imagePart.subpart(new AnchorRecipeTR());
-  //imagePart.subpart(new AnchorRecipeBR());
-  //imagePart.subpart(new AnchorRecipeBL());
-  //prototype.part(new TextRecipe(), 100, 100);
+  Part container = prototype.part(new Container(), 50, 50);
+  progress = container.subpart(new Progress());
+  Part knob = progress.subpart(new Knob());
+  progress.size.x = 5;
+  
 }
 
 void draw() {
-  background(40);
+  background(16);
+  //println(progress.size.x);
+    //println(progress.size.y);
+    //println(progress.size.minY);
+    //println(progress.size.maxX);
+    //println("-----------------------");
 }

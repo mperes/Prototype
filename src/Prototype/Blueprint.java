@@ -7,7 +7,7 @@ public abstract class Blueprint extends PGraphicsJava2D {
 	final int initialWidth;
 	final int initialHeight;
 
-	public Ratio size = new Ratio();
+	public Ratio size;
 	public Ratio pos = new Ratio(0, 0);
 	public Ratio rel = new Ratio(0, 0);
 	public Ratio scale = new Ratio(1, 1);
@@ -19,9 +19,9 @@ public abstract class Blueprint extends PGraphicsJava2D {
 	public Box scaleGrid;
 	
 	public Blueprint(int initialWidth, int initialHeight) {
+		size = new Ratio(initialWidth, initialHeight);
 		this.initialWidth = initialWidth;
 		this.initialHeight = initialHeight;
-		this.size.set(initialWidth, initialWidth);
 	}
 	
 	final void initBlueprint() {

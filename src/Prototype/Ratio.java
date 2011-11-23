@@ -16,12 +16,19 @@ public class Ratio {
 	boolean capped = false;
 
 	public Ratio() {
+		set(0, 0);
+		stage = Prototype.stage;
+		stage.registerPre(this);
+		stage.registerMouseEvent(this);
+		stage.registerDraw(this);
 	}
 
 	public Ratio(float x, float y) {
 		set(x, y);
 		stage = Prototype.stage;
 		stage.registerPre(this);
+		stage.registerMouseEvent(this);
+		stage.registerDraw(this);
 	}
 
 	public Ratio(float x, float y, float minX, float maxX,  float minY, float maxY) {
@@ -30,6 +37,7 @@ public class Ratio {
 		stage = Prototype.stage;
 		stage.registerPre(this);
 		stage.registerMouseEvent(this);
+		stage.registerDraw(this);
 	}
 
 	public float getRatio() {
@@ -71,9 +79,18 @@ public class Ratio {
 			this.y = PApplet.constrain(this.y, minY, maxY);
 		}
 	}
-	
+
 	public void mouseEvent(MouseEvent e) {
-		this.x = PApplet.constrain(this.x, minX, maxX);
-		this.y = PApplet.constrain(this.y, minY, maxY);
+		if(capped) {
+			this.x = PApplet.constrain(this.x, minX, maxX);
+			this.y = PApplet.constrain(this.y, minY, maxY);
+		}
+	}
+
+	public void draw() {
+		if(capped) {
+			this.x = PApplet.constrain(this.x, minX, maxX);
+			this.y = PApplet.constrain(this.y, minY, maxY);
+		}
 	}
 }

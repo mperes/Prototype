@@ -40,7 +40,7 @@ public class Part {
 	private void initPart (Blueprint blueprint) {
 		this.setBlueprint(blueprint);
 		this.rel = this.getBlueprint().rel.get();
-		this.size = new Ratio(this.getBlueprint().initialWidth, this.getBlueprint().initialHeight);
+		this.size = this.getBlueprint().size.get();
 		this.scale = this.getBlueprint().scale.get();
 		this.pivot = this.getBlueprint().pivot.get();
 
@@ -250,9 +250,12 @@ public class Part {
 	
 	//Drawing functions using planes
 	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
+		PImage resizedtexture = Prototype.stage.createImage(texture.width, texture.height, PConstants.ARGB); 
+		resizedtexture.set(0, 0, texture);
+		resizedtexture.resize((int)size.x, (int)size.y);
 		Prototype.stage.pushMatrix();
 		Prototype.stage.translate((int)(-size.x*pivot.x), (int)(-size.y*pivot.y));
-		Prototype.stage.image(texture, 0, 0, size.x, size.y);
+		Prototype.stage.image(resizedtexture, 0, 0);
 		Prototype.stage.popMatrix();
 	}
 

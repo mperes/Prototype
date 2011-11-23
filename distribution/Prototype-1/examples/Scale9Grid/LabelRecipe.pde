@@ -9,10 +9,12 @@ class LabelRecipe extends Blueprint {
 
   //Describe you blueprint here by simple describing a drawing like you would in the main graphics.
   void description() {
-    //I am using a image to draw text here, as I did not manage to draw text properly. Even using JAVA2D
-    //The text display dis thin black line around it when in certain positions of the screen;
-    PImage label = loadImage("buttonLabel.png");
-    this.image(label, 0, 0);
+    smooth();
+    textAlign(CENTER, CENTER);
+    PFont font;
+    font = loadFont("Dialog-18.vlw"); 
+    textFont(font); 
+    text("Drag the anchors\nto resize", 82, 25);
   }
 }
 
