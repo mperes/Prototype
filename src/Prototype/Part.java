@@ -18,6 +18,7 @@ public class Part {
 	public RatioInt size;
 	public Ratio scale;
 	public Ratio pivot;
+	public float rotation;
 	public float left;
 	public float top;
 	public float right;
@@ -84,6 +85,9 @@ public class Part {
 			float translateY = (parent == null) ? pos.y : (int)(pos.y + parent.size.y * rel.y);
 			Prototype.stage.pushMatrix();
 			Prototype.stage.translate(translateX, translateY);
+			if(rotation != 0) {
+				Prototype.stage.rotate(PApplet.radians(rotation));
+			}
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
 			if(blueprint.scaleGrid != null) {
@@ -130,17 +134,24 @@ public class Part {
 
 	private boolean mouseInside(int shiftX, int shiftY) {
 		calcBox();
-		return (Prototype.stage.mouseX > shiftX+left && Prototype.stage.mouseX < shiftX+right && Prototype.stage.mouseY > shiftY+top && Prototype.stage.mouseY < shiftY+bottom) ? true : false;
+		float localMouseX = Prototype.stage.modelX(Prototype.stage.mouseX, Prototype.stage.mouseY, 0);
+		float localMouseY = Prototype.stage.modelY(Prototype.stage.mouseX, Prototype.stage.mouseY, 0);
+		//return (Prototype.stage.mouseX > shiftX+left && Prototype.stage.mouseX < shiftX+right && Prototype.stage.mouseY > shiftY+top && Prototype.stage.mouseY < shiftY+bottom) ? true : false;
+		return (localMouseX > shiftX+left && localMouseX < shiftX+right && localMouseY > shiftY+top && localMouseY < shiftY+bottom) ? true : false;
 	}
 
 	public boolean mouseReallyInside(int shiftX, int shiftY) {
+		float localMouseX = Prototype.stage.modelX(Prototype.stage.mouseX, Prototype.stage.mouseY, 0);
+		float localMouseY = Prototype.stage.modelY(Prototype.stage.mouseX, Prototype.stage.mouseY, 0);
 		if (mouseInside(shiftX, shiftY)) {
-			int pixelX = Prototype.stage.mouseX - (int) (shiftX+left);
-			int pixelY = Prototype.stage.mouseY - (int) (shiftY+top);
+			//int pixelX = Prototype.stage.mouseX - (int) (shiftX+left);
+			//int pixelY = Prototype.stage.mouseY - (int) (shiftY+top);
+			//int pixelX = Prototype.stage.mouseX - (int) (shiftX+left);
+			//int pixelY = Prototype.stage.mouseY - (int) (shiftY+top);
 			PImage buffer = this.diffuseMap.get();
 			buffer.resize(size.x * (int)scale.x, size.y * (int)scale.y);
 			buffer.loadPixels();
-			if (buffer.pixels[PApplet.constrain( pixelX + pixelY * size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
+			if (buffer.pixels[(int) PApplet.constrain( localMouseX + localMouseY * size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
 				buffer.updatePixels();
 				return false;
 			}
@@ -150,14 +161,14 @@ public class Part {
 		return false;
 	}
 
-	public Part subpart(Blueprint blueprint) {
+	public Part part(Blueprint blueprint) {
 		Part newPart = new Part(blueprint);
 		newPart.parent = this;
 		parts.add(newPart);
 		return newPart;
 	}
 
-	public Part subpart(Blueprint blueprint, float x, float y) {
+	public Part part(Blueprint blueprint, float x, float y) {
 		Part newPart = new Part(blueprint, x, y);
 		newPart.parent = this;
 		parts.add(newPart);

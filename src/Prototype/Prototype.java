@@ -80,7 +80,6 @@ public class Prototype implements MouseWheelListener {
 	}
 
 	public void draw(){
-		System.out.println(diffuseMaps.size());
 		drawParts();
 	}
 
