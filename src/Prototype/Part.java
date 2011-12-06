@@ -11,11 +11,11 @@ public class Part {
 	private Blueprint blueprint;
 	public Part parent;
 	ArrayList<Part> parts;
-
-
+	
+	public PImage diffuseMap;
 	public Ratio pos;
 	public Ratio rel;
-	public Ratio size;
+	public RatioInt size;
 	public Ratio scale;
 	public Ratio pivot;
 	public float left;
@@ -33,14 +33,20 @@ public class Part {
 	}
 
 	public Part (Blueprint blueprint, float x, float y) {
-		this.pos = new Ratio(x, y);
 		initPart(blueprint);
+		this.pos.set(x, y);
 	}
 
 	private void initPart (Blueprint blueprint) {
+		
+		if(blueprint.size.x == 0 || blueprint.size.y == 0) {
+			throw new RuntimeException("A Part's height or width cannnot be 0. Use size.set(w,h) on your class constructor to fix this.");
+		}
+		parts = new ArrayList<Part>();
+		
 		this.setBlueprint(blueprint);
-		this.rel = this.getBlueprint().rel.get();
 		this.size = this.getBlueprint().size.get();
+		this.rel = this.getBlueprint().rel.get();
 		this.scale = this.getBlueprint().scale.get();
 		this.pivot = this.getBlueprint().pivot.get();
 
@@ -48,13 +54,10 @@ public class Part {
 		enabled = this.getBlueprint().enabled;
 		alpha = alpha(this.getBlueprint().alpha);
 		showPivot = this.getBlueprint().showPivot;
-
-
+		
 		this.getBlueprint().initBlueprint();
-		calcBox();
 		readBlueprint();
-
-		parts = new ArrayList<Part>();
+		calcBox();
 	}
 
 	private void calcBox() {
@@ -69,9 +72,10 @@ public class Part {
 	}
 
 	public void readBlueprint() {
-		getBlueprint().beginDraw();
+		Prototype.offScreenBuffer.beginDraw();
 		getBlueprint().description();
-		getBlueprint().endDraw();
+		Prototype.offScreenBuffer.endDraw();
+		diffuseMap = Prototype.addDiffuseMap(this.blueprint, this.size.x, this.size.y);
 	}
 
 	public void draw() {
@@ -83,9 +87,9 @@ public class Part {
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
 			if(blueprint.scaleGrid != null) {
-				scale9Grid(this.size, this.pivot, this.blueprint.scaleGrid, this.blueprint);
+				scale9Grid(this.size, this.pivot, this.blueprint.scaleGrid, this.diffuseMap);
 			} else {
-				drawPlane(this.size, this.pivot, this.blueprint);
+				drawPlane(this.size, this.pivot, this.diffuseMap);
 			}
 			if (showPivot) { 
 				drawPivot();
@@ -133,10 +137,10 @@ public class Part {
 		if (mouseInside(shiftX, shiftY)) {
 			int pixelX = Prototype.stage.mouseX - (int) (shiftX+left);
 			int pixelY = Prototype.stage.mouseY - (int) (shiftY+top);
-			PImage buffer = getBlueprint().get();
-			buffer.resize((int)size.x * (int)scale.x, (int)size.y * (int)scale.y);
+			PImage buffer = this.diffuseMap.get();
+			buffer.resize(size.x * (int)scale.x, size.y * (int)scale.y);
 			buffer.loadPixels();
-			if (buffer.pixels[PApplet.constrain( pixelX + pixelY * (int)size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
+			if (buffer.pixels[PApplet.constrain( pixelX + pixelY * size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
 				buffer.updatePixels();
 				return false;
 			}
@@ -233,7 +237,7 @@ public class Part {
 	
 	//Old drawing functions using textured planes;
 	@SuppressWarnings("deprecation")
-	void drawPlane(Ratio size, Ratio pivot, PImage texture) {
+	void drawPlane(RatioInt size, Ratio pivot, PImage texture) {
 		Prototype.stage.pushStyle();
 		Prototype.stage.textureMode(PConstants.NORMALIZED);
 		Prototype.stage.noStroke();
@@ -259,9 +263,9 @@ public class Part {
 //		Prototype.stage.popMatrix();
 //	}
 
-	void scale9Grid(Ratio size, Ratio pivot, Box box, PImage texture) {
-		int roundSizeX = Math.round(size.x);
-		int roundSizeY = Math.round(size.y);
+	void scale9Grid(RatioInt size, Ratio pivot, Box box, PImage texture) {
+		int roundSizeX = size.x;
+		int roundSizeY = size.y;
 		PImage img = Prototype.stage.createImage(roundSizeX, roundSizeY, PConstants.ARGB);
 		img.loadPixels();
 		int dW = roundSizeX - texture.width;

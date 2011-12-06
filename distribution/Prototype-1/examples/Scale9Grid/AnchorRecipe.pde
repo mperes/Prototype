@@ -2,7 +2,7 @@ class AnchorRecipe extends Blueprint {
   boolean dragging = false;
   AnchorRecipe() {
     //This is mandatory. Call it to set the desired initial Width and Height of you Blueprint
-    super(12, 12);
+    size.set(12, 12);
     //Sets the pivot point to the center of the image. This can also be done at runtime,
     //Part.pivot.set(x, y)
     pivot.set(.5, .5);
@@ -18,12 +18,12 @@ class AnchorRecipe extends Blueprint {
   }
 
   void description() {
-    smooth();
-    ellipseMode(CORNER);
-    noStroke();
+    blueprint.smooth();
+    blueprint.ellipseMode(CORNER);
+    blueprint.noStroke();
     //I still have to investigate this, but when drawing a circle with the same size as the blueprint,
     //the circle gets cropped.
-    ellipse(0, 0, 11, 11);
+    blueprint.ellipse(0, 0, 11, 11);
   }
 
   public void partEvent(PartEvent event) {

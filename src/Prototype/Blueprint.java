@@ -1,13 +1,10 @@
 package Prototype;
 
-import processing.core.PGraphicsJava2D;
+import processing.core.PGraphics;
 
-public abstract class Blueprint extends PGraphicsJava2D {
+public abstract class Blueprint {
 	
-	final int initialWidth;
-	final int initialHeight;
-
-	public Ratio size;
+	public RatioInt size = new RatioInt(0, 0);
 	public Ratio pos = new Ratio(0, 0);
 	public Ratio rel = new Ratio(0, 0);
 	public Ratio scale = new Ratio(1, 1);
@@ -17,29 +14,19 @@ public abstract class Blueprint extends PGraphicsJava2D {
 	public float alpha = 1;
 	public boolean showPivot = false;
 	public Box scaleGrid;
+	public PGraphics blueprint;
+	public boolean makeUnique = false;
 	
-	public Blueprint(int initialWidth, int initialHeight) {
-		size = new Ratio(initialWidth, initialHeight);
-		this.initialWidth = initialWidth;
-		this.initialHeight = initialHeight;
+	public Blueprint() {
 	}
 	
 	final void initBlueprint() {
-		setParent(Prototype.stage);
-		setPrimary(false);
-		setPath(null);
-		setSize(initialWidth, initialHeight);
+		blueprint = Prototype.offScreenBuffer; 
 	}
 	
 	public abstract void description();
 	
 	public void partEvent(PartEvent event) {}
 	
-	void clearBlueprint() {
-		this.loadPixels();
-		for(int p = 0; p < this.pixels.length; p++) {
-			this.pixels[p] = 0x00000000;
-		}
-	}
 	
 }

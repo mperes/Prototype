@@ -2,14 +2,14 @@ class ButtonRecipe extends Blueprint {
 
   ButtonRecipe() {
     //This is mandatory. Call it to set the desired initial Width and Height of you Blueprint.
-    super(135, 118);
+    size.set(135, 118);
     scaleGrid = new Box(15, 15, 15, 15);
   }
 
   //Describe you blueprint here by simple describing a drawing like you would in the main graphics.
   void description() {
     PImage squareRound = loadImage("roundsquare.png");
-    this.image(squareRound, 0, 0);
+    blueprint.image(squareRound, 0, 0);
   }
   
   public void partEvent(PartEvent event) {
