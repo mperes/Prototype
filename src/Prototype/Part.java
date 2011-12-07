@@ -28,8 +28,7 @@ public class Part {
 	boolean enabled;
 	private float alpha;
 	public boolean showPivot; 
-	private float[] localMouse = {0, 0, 0};
-	private float[] plocalMouse = {0, 0, 0};
+	private float[] localMouse = {0, 0, 0, 0};
 	private PMatrix3D localModel = new PMatrix3D();
 
 	public Part (Blueprint blueprint) {
@@ -135,8 +134,6 @@ public class Part {
 	}
 	
 	void updateLocalMouse() {
-		plocalMouse[0] = localMouse[0];
-		plocalMouse[1] = localMouse[1];
 		localMouse = Coordinates.localMouse(localModel);
 	}
 
@@ -254,7 +251,7 @@ public class Part {
 				}
 			}
 			if(mouseReallyInside((int)shiftX, (int)shiftY)) {
-				//updateLocalMouse();
+				updateLocalMouse();
 				blueprint.partEvent(new PartEvent(this, event, event.getID()-500));
 				return true;
 			}
@@ -341,11 +338,11 @@ public class Part {
 	}
 	public int plocalMouseX() {
 		//return Math.round(plocalMouse[0]);
-		return (int)(plocalMouse[0]);
+		return (int)(localMouse[2]);
 	}
 	public int plocalMouseY() {
 		//return Math.round(plocalMouse[1]);
-		return (int)(plocalMouse[1]);
+		return (int)(localMouse[3]);
 	}
 
 }

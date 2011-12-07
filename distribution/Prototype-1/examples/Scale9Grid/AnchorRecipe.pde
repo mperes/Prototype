@@ -27,7 +27,6 @@ class AnchorRecipe extends Blueprint {
   public void partEvent(PartEvent event) {
     switch (event.getID()) {
     case PartEvent.PART_PRESSED:
-        println(1);
       this.dragging = true;
       break;
     case PartEvent.MOUSE_DRAGGED:
@@ -52,9 +51,16 @@ class AnchorRecipeTL extends AnchorRecipe {
   }
 
   void resizePic(PartEvent e) {
-    println(1);
-      buttonPart.size.set( buttonPart.size.x - (e.localMouseX-e.plocalMouseX), buttonPart.size.y - (e.localMouseY-e.plocalMouseY));
-      buttonPart.pos.set( buttonPart.pos.x + (e.localMouseX-e.plocalMouseX), buttonPart.pos.y + (e.localMouseY-e.plocalMouseY));
+    //int posX = 
+    int incX = e.localMouseX-e.plocalMouseX;
+    int incY = e.localMouseY-e.plocalMouseY;
+    println(incX);
+    println(incY);
+    println("-----------------");
+      //buttonPart.size.set( buttonPart.size.x - incX, buttonPart.size.y - incY);
+      //buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y + incY);
+      buttonPart.size.set( buttonPart.size.x - incX, buttonPart.size.y);
+      buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y);
     //buttonPart.size.set( buttonPart.size.x - (mouseX-pmouseX), buttonPart.size.y - (mouseY-pmouseY));
     //buttonPart.pos.set( buttonPart.pos.x + (mouseX-pmouseX), buttonPart.pos.y + (mouseY-pmouseY));
   }

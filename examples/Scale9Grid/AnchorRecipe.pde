@@ -51,18 +51,10 @@ class AnchorRecipeTL extends AnchorRecipe {
   }
 
   void resizePic(PartEvent e) {
-    //int posX = 
     int incX = e.localMouseX-e.plocalMouseX;
     int incY = e.localMouseY-e.plocalMouseY;
-    println(incX);
-    println(incY);
-    println("-----------------");
-      //buttonPart.size.set( buttonPart.size.x - incX, buttonPart.size.y - incY);
-      //buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y + incY);
-      buttonPart.size.set( buttonPart.size.x - incX, buttonPart.size.y);
-      buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y);
-    //buttonPart.size.set( buttonPart.size.x - (mouseX-pmouseX), buttonPart.size.y - (mouseY-pmouseY));
-    //buttonPart.pos.set( buttonPart.pos.x + (mouseX-pmouseX), buttonPart.pos.y + (mouseY-pmouseY));
+    buttonPart.size.set( buttonPart.size.x - incX, buttonPart.size.y - incY);
+    buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y + incY);
   }
 }
 
@@ -74,8 +66,10 @@ class AnchorRecipeTR extends AnchorRecipe {
   }
 
   void resizePic(PartEvent e) {
-    buttonPart.size.set( buttonPart.size.x + (mouseX-pmouseX), buttonPart.size.y - (mouseY-pmouseY));
-    buttonPart.pos.set( buttonPart.pos.x, buttonPart.pos.y + (mouseY-pmouseY));
+    int incX = e.localMouseX-e.plocalMouseX;
+    int incY = e.localMouseY-e.plocalMouseY;
+    buttonPart.size.set( buttonPart.size.x + incX, buttonPart.size.y - incY);
+    buttonPart.pos.set( buttonPart.pos.x, buttonPart.pos.y + incY);
   }
 }
 
@@ -86,7 +80,9 @@ class AnchorRecipeBR extends AnchorRecipe {
   }
 
   void resizePic(PartEvent e) {
-    buttonPart.size.set( buttonPart.size.x + (mouseX-pmouseX), buttonPart.size.y + (mouseY-pmouseY));
+    int incX = e.localMouseX-e.plocalMouseX;
+    int incY = e.localMouseY-e.plocalMouseY;
+    buttonPart.size.set( buttonPart.size.x + incX, buttonPart.size.y + incY);
   }
 }
 
@@ -97,8 +93,10 @@ class AnchorRecipeBL extends AnchorRecipe {
   }
 
   void resizePic(PartEvent e) {
-    buttonPart.size.set( buttonPart.size.x - (mouseX-pmouseX), buttonPart.size.y + (mouseY-pmouseY));
-    buttonPart.pos.set( buttonPart.pos.x + (mouseX-pmouseX), buttonPart.pos.y);
+    int incX = e.localMouseX-e.plocalMouseX;
+    int incY = e.localMouseY-e.plocalMouseY;
+    buttonPart.size.set( buttonPart.size.x - incX, buttonPart.size.y + incY);
+    buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y);
   }
 }
 

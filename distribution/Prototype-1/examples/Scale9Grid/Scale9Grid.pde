@@ -54,8 +54,7 @@ void draw() {
   //println(buttonPart.right);
   //println(buttonPart.bottom);
   //println(buttonPart.bottom);
-  println(anchorTL.mouseInside(0, 0));
-  println(anchorTL.mouseReallyInside(0, 0));
-  println("------------");
-  
+  //println(anchorTL.mouseInside(0, 0));
+  //println(anchorTL.mouseReallyInside(0, 0));
+  //println("------------");
 }

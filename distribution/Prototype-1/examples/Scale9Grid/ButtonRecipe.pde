@@ -15,6 +15,11 @@ class ButtonRecipe extends Blueprint {
   public void partEvent(PartEvent event) {
     switch (event.getID()) {	
     case PartEvent.PART_DRAGGED:
+        int incX = event.localMouseX-event.plocalMouseX;
+    int incY = event.localMouseY-event.plocalMouseY;
+    println(incX);
+    println(incY);
+    println("---------------");
       //event.part.pos.set( event.part.pos.x + mouseX-pmouseX, event.part.pos.y + mouseY-pmouseY);
       event.part.pos.set( event.part.pos.x + event.localMouseX-event.plocalMouseX, event.part.pos.y + event.localMouseY-event.plocalMouseY);
       break;
