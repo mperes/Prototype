@@ -26,7 +26,9 @@ public class Part {
 	boolean visible;
 	boolean enabled;
 	private float alpha;
-	public boolean showPivot;  
+	public boolean showPivot; 
+	private float[] localMouse;
+	private float[] plocalMouse; 
 
 	public Part (Blueprint blueprint) {
 		this.pos = blueprint.pos.get();
@@ -62,14 +64,14 @@ public class Part {
 	}
 
 	private void calcBox() {
-		left = pos.x - pivot.x * size.x * scale.x;
-		top = pos.y - pivot.y * size.y * scale.y;
+		left = -pivot.x * size.x;//pos.x - pivot.x * size.x * scale.x;
+		top = -pivot.y * size.y;//pos.y - pivot.y * size.y * scale.y;
 		if(parent != null) {
-			left += rel.x * parent.size.x;
-			top += rel.y * parent.size.y;
+			//left += rel.x * parent.size.x;
+			//top += rel.y * parent.size.y;
 		}
-		right =  left + size.x * scale.x;
-		bottom = top + size.y * scale.y;
+		right =  left + size.x; //* scale.x;
+		bottom = top + size.y; //* scale.y;
 	}
 
 	public void readBlueprint() {
@@ -88,6 +90,9 @@ public class Part {
 			if(rotation != 0) {
 				Prototype.stage.rotate(PApplet.radians(rotation));
 			}
+			plocalMouse[0] = localMouse[0];
+			plocalMouse[1] = localMouse[1];
+			localMouse = Coordinates.localMouse();
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
 			if(blueprint.scaleGrid != null) {
@@ -134,18 +139,17 @@ public class Part {
 
 	private boolean mouseInside(int shiftX, int shiftY) {
 		calcBox();
-		float[] localMouse = Coordinates.localMouse();
 		return (
-			localMouse[0] > shiftX+left &&
-			localMouse[0] < shiftX+right &&
-			localMouse[1] > shiftY+top &&
-			localMouse[1] < shiftY+bottom
+			localMouse[0] > left &&
+			localMouse[0] < right &&
+			localMouse[1] > top &&
+			localMouse[1] < bottom
 		)
 		? true : false;
 	}
 
 	public boolean mouseReallyInside(int shiftX, int shiftY) {
-		float[] localMouse = Coordinates.localMouse();
+		//float[] localMouse = Coordinates.localMouse();
 		if (mouseInside(shiftX, shiftY)) {
 			PImage buffer = this.diffuseMap.get();
 			buffer.resize(size.x * (int)scale.x, size.y * (int)scale.y);
@@ -218,7 +222,7 @@ public class Part {
 				found = part.partEvent(event, left+shiftX, top+shiftY);
 			}
 			if(!found) {
-				if(mouseReallyInside((int)shiftX, (int)shiftY)) {
+				if(mouseInside((int)shiftX, (int)shiftY)) {
 					blueprint.partEvent(new PartEvent(this, event, event.getID()-500));
 					return true;
 				}
@@ -311,6 +315,19 @@ public class Part {
 		}
 		img.updatePixels();
 		drawPlane(size, pivot, img);
+	}
+	
+	public float localMouseX() {
+		return localMouse[0];
+	}
+	public float localMouseY() {
+		return localMouse[1];
+	}
+	public float plocalMouseX() {
+		return plocalMouse[0];
+	}
+	public float plocalMouseY() {
+		return plocalMouse[1];
 	}
 
 }

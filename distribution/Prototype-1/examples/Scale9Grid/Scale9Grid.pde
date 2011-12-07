@@ -41,9 +41,14 @@ void setup() {
   buttonPart.part(new LabelRecipe());
   buttonPart.size.setMinMax(220, 400, 70, 400); //Sets the MIN/Max values for the part width and height.
   
-  buttonPart.rotation = 0;
+  buttonPart.rotation = 40;
 }
 
 void draw() {
   background(40);
+  println(anchorTL.localMouseX());
+  println(anchorTL.localMouseY());
+  println(anchorTL.left);
+  println(anchorTL.top);
+  println("------------");
 }

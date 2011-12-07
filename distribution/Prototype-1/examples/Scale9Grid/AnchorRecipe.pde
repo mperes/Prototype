@@ -30,6 +30,7 @@ class AnchorRecipe extends Blueprint {
     switch (event.getID()) {
     case PartEvent.PART_PRESSED:
       this.dragging = true;
+          println(1);
       break;
     case PartEvent.MOUSE_DRAGGED:
       if(this.dragging) {
