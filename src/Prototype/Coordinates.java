@@ -20,5 +20,23 @@ abstract public class Coordinates {
 		
 		return new float[] {modelX, modelY, 0};
 	}
+	
+	public static float[] localMouse(PMatrix3D localModel) {
+		PMatrix3D cam = world.camera;
+		PMatrix3D mvi = localModel;  
+		// First, transform along the camera matrix.
+		float z = 0;
+		float aX = Prototype.stage.mouseX*cam.m00 + Prototype.stage.mouseY*cam.m01 + z*cam.m02 + cam.m03;
+		float aY = Prototype.stage.mouseX*cam.m10 + Prototype.stage.mouseY*cam.m11 + z*cam.m12 + cam.m13;
+		// Next, transform along the modelviewInv matrix.
+		float modelX = aX*mvi.m00 + aY*mvi.m01 + z*mvi.m02 + mvi.m03;
+		float modelY = aX*mvi.m10 + aY*mvi.m11 + z*mvi.m12 + mvi.m13;
+		
+		return new float[] {modelX, modelY, 0};
+	}
+	
+	public static PMatrix3D getCurrentModel() {
+		return world.modelviewInv;
+	}
 
 }

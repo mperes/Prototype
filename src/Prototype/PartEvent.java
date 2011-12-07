@@ -6,8 +6,12 @@ import java.awt.event.MouseWheelEvent;
 public class PartEvent {
 	public Part part;
 	private int step;
-	private int x;
-	private int y;
+	public int x;
+	public int y;
+	public int localMouseX;
+	public int localMouseY;
+	public int plocalMouseX;
+	public int plocalMouseY;
 	private int id;
 	
 	public final static int MOUSE_CLICKED = 500;
@@ -27,6 +31,10 @@ public class PartEvent {
 		this.part = part;
 		x = event.getX();
 		y = event.getX();
+		localMouseX = part.localMouseX();
+		localMouseY = part.localMouseY();
+		plocalMouseX = part.plocalMouseX();
+		plocalMouseY = part.plocalMouseY();
 		id = event.getID();
 	}
 	
@@ -35,6 +43,10 @@ public class PartEvent {
 		step =  event.getWheelRotation();
 		x = event.getX();
 		y = event.getX();
+		localMouseX = part.localMouseX();
+		localMouseY = part.localMouseY();
+		plocalMouseX = part.plocalMouseX();
+		plocalMouseY = part.plocalMouseY();
 		id = 507;
 	}
 	
@@ -42,6 +54,10 @@ public class PartEvent {
 		this.part = part;
 		x = event.getX();
 		y = event.getX();
+		localMouseX = part.localMouseX();
+		localMouseY = part.localMouseY();
+		plocalMouseX = part.plocalMouseX();
+		plocalMouseY = part.plocalMouseY();
 		this.id = id;
 	}
 	
@@ -50,6 +66,10 @@ public class PartEvent {
 		step =  event.getWheelRotation();
 		x = event.getX();
 		y = event.getX();
+		localMouseX = part.localMouseX();
+		localMouseY = part.localMouseY();
+		plocalMouseX = part.plocalMouseX();
+		plocalMouseY = part.plocalMouseY();
 		this.id = id;
 	}
 	

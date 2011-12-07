@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
+import processing.core.PMatrix3D;
 
 public class Part {
 	private Blueprint blueprint;
@@ -27,8 +28,9 @@ public class Part {
 	boolean enabled;
 	private float alpha;
 	public boolean showPivot; 
-	private float[] localMouse;
-	private float[] plocalMouse; 
+	private float[] localMouse = {0, 0, 0};
+	private float[] plocalMouse = {0, 0, 0};
+	private PMatrix3D localModel = new PMatrix3D();
 
 	public Part (Blueprint blueprint) {
 		this.pos = blueprint.pos.get();
@@ -90,9 +92,10 @@ public class Part {
 			if(rotation != 0) {
 				Prototype.stage.rotate(PApplet.radians(rotation));
 			}
-			plocalMouse[0] = localMouse[0];
-			plocalMouse[1] = localMouse[1];
-			localMouse = Coordinates.localMouse();
+			localModel = Coordinates.getCurrentModel().get();
+			//plocalMouse[0] = localMouse[0];
+			//plocalMouse[1] = localMouse[1];
+			//localMouse = Coordinates.localMouse();
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*alpha);
 			if(blueprint.scaleGrid != null) {
@@ -128,6 +131,13 @@ public class Part {
 	public void pre() {
 		calcBox();
 		updateParts();
+		updateLocalMouse();
+	}
+	
+	void updateLocalMouse() {
+		plocalMouse[0] = localMouse[0];
+		plocalMouse[1] = localMouse[1];
+		localMouse = Coordinates.localMouse(localModel);
 	}
 
 	void updateParts() {
@@ -137,13 +147,13 @@ public class Part {
 		}
 	}
 
-	private boolean mouseInside(int shiftX, int shiftY) {
+	public boolean mouseInside(int shiftX, int shiftY) {
 		calcBox();
 		return (
-			localMouse[0] > left &&
-			localMouse[0] < right &&
-			localMouse[1] > top &&
-			localMouse[1] < bottom
+			localMouseX() > left &&
+			localMouseX() < right &&
+			localMouseY() > top &&
+			localMouseY() < bottom
 		)
 		? true : false;
 	}
@@ -151,10 +161,12 @@ public class Part {
 	public boolean mouseReallyInside(int shiftX, int shiftY) {
 		//float[] localMouse = Coordinates.localMouse();
 		if (mouseInside(shiftX, shiftY)) {
+			int offSetMouseX = localMouseX() + Math.round(size.x * pivot.x);
+			int offSetMouseY = localMouseY() + Math.round(size.y * pivot.y);
 			PImage buffer = this.diffuseMap.get();
 			buffer.resize(size.x * (int)scale.x, size.y * (int)scale.y);
 			buffer.loadPixels();
-			if (buffer.pixels[(int) PApplet.constrain( localMouse[0] + localMouse[1] * size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
+			if (buffer.pixels[(int) PApplet.constrain( offSetMouseX + offSetMouseY * size.x, 0, buffer.pixels.length-1)] == 0x00000000) {
 				buffer.updatePixels();
 				return false;
 			}
@@ -218,11 +230,12 @@ public class Part {
 		if(enabled && visible) {
 			boolean found = false;
 			for(int p=parts.size()-1; p >= 0 ; p--) {
-				Part part = parts.get(p);		
+				Part part = parts.get(p);	
 				found = part.partEvent(event, left+shiftX, top+shiftY);
 			}
 			if(!found) {
-				if(mouseInside((int)shiftX, (int)shiftY)) {
+				if(mouseReallyInside((int)shiftX, (int)shiftY)) {
+					updateLocalMouse();
 					blueprint.partEvent(new PartEvent(this, event, event.getID()-500));
 					return true;
 				}
@@ -241,6 +254,7 @@ public class Part {
 				}
 			}
 			if(mouseReallyInside((int)shiftX, (int)shiftY)) {
+				//updateLocalMouse();
 				blueprint.partEvent(new PartEvent(this, event, event.getID()-500));
 				return true;
 			}
@@ -317,17 +331,21 @@ public class Part {
 		drawPlane(size, pivot, img);
 	}
 	
-	public float localMouseX() {
-		return localMouse[0];
+	public int localMouseX() {
+		//return Math.round(localMouse[0]);
+		return (int)(localMouse[0]);
 	}
-	public float localMouseY() {
-		return localMouse[1];
+	public int localMouseY() {
+		//return Math.round(localMouse[1]);
+		return (int)(localMouse[1]);
 	}
-	public float plocalMouseX() {
-		return plocalMouse[0];
+	public int plocalMouseX() {
+		//return Math.round(plocalMouse[0]);
+		return (int)(plocalMouse[0]);
 	}
-	public float plocalMouseY() {
-		return plocalMouse[1];
+	public int plocalMouseY() {
+		//return Math.round(plocalMouse[1]);
+		return (int)(plocalMouse[1]);
 	}
 
 }
