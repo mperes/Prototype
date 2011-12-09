@@ -53,13 +53,33 @@ public class Prototype implements MouseWheelListener {
 	}
 
 	public Part part(Blueprint blueprint) {
-		Part newPart = new Part(blueprint);
+		Part newPart;
+		switch(blueprint.type) {
+		case Part.IMAGE:
+			newPart = new ImagePart(blueprint);
+			break;
+		case Part.SHAPE:
+			newPart = new ShapePart(blueprint);
+			break;
+		default:
+			throw new RuntimeException("The declared part type is not valid.");
+		}
 		parts.add(newPart);
 		return newPart;
 	}
 	
 	public Part part(Blueprint blueprint, float x, float y) {
-		Part newPart = new Part(blueprint, x, y);
+		Part newPart;
+		switch(blueprint.type) {
+		case Part.IMAGE:
+			newPart = new ImagePart(blueprint, x, y);
+			break;
+		case Part.SHAPE:
+			newPart = new ShapePart(blueprint, x, y);
+			break;
+		default:
+			throw new RuntimeException("The declared part type is not valid.");
+		}
 		parts.add(newPart);
 		return newPart;
 	}
@@ -125,7 +145,7 @@ public class Prototype implements MouseWheelListener {
 	}
 	
 	public static PImage addDiffuseMap(Blueprint blueprint, int w, int h) {
-		if(blueprint.makeUnique) {
+		if(blueprint.unique) {
 			PImage newImg = Prototype.stage.createImage(w, h, PConstants.ARGB);
 			newImg.set(0, 0, offScreenBuffer);
 			String randUID = UUID.randomUUID().toString();

@@ -2,8 +2,14 @@ class ButtonRecipe extends Blueprint {
 
   boolean dragging = false;
   ButtonRecipe() {
+    //As a rule of a thumb, always call super() as your first line of the constructor.
+    super();
+    
     //This is mandatory. Call it to set the desired initial Width and Height of you Blueprint.
-    size.set(135, 118);
+    width = 135;
+    height = 118;
+    
+    //This configures the 0 scale grid box (left, top, right, bottom).
     scaleGrid = new Box(15, 15, 15, 15);
   }
 
@@ -13,38 +19,27 @@ class ButtonRecipe extends Blueprint {
     blueprint.image(squareRound, 0, 0);
   }
 
-  public void partEvent(PartEvent event) {
-<<<<<<< HEAD
-    switch (event.getID()) {	
-    case PartEvent.PART_DRAGGED:
-        int incX = event.localMouseX-event.plocalMouseX;
-    int incY = event.localMouseY-event.plocalMouseY;
-    println(incX);
-    println(incY);
-    println("---------------");
-      //event.part.pos.set( event.part.pos.x + mouseX-pmouseX, event.part.pos.y + mouseY-pmouseY);
-      event.part.pos.set( event.part.pos.x + event.localMouseX-event.plocalMouseX, event.part.pos.y + event.localMouseY-event.plocalMouseY);
-=======
-    switch (event.getID()) {
+  public void partEvent(PartEvent e) {
+    switch (e.getID()) {
     case PartEvent.PART_PRESSED:
       this.dragging = true;
       break;
     case PartEvent.MOUSE_DRAGGED:
+    //println(e.part);
       if(this.dragging) {
-        //int incX = event.localMouseX-event.plocalMouseX;
-        //int incY = event.localMouseY-event.plocalMouseY;
-        int incX = mouseX-pmouseX;
-        int incY = mouseY-pmouseY;
-        println(incX);
-        println(incY);
-        println("--------------");
-        buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y + incY);
-        //event.part.pos.set( event.part.pos.x + incX, event.part.pos.y + incY);
+        int modX = e.screenX - e.pscreenX;
+        int modY = e.screenY - e.pscreenY;
+        //println(modX);
+         //println("e :" + e.part + " " + e.part);
+         //println("o :" + buttonPart + " " +buttonPart.pos);
+         //println("-------------------------------------------");
+           e.part.setX(e.part.getX() + modX);
+           e.part.setY(e.part.getY() + modY);
+         //e.part.pos.set( 200, 200);
       }
       break;
     case PartEvent.MOUSE_RELEASED:
       dragging = false;
->>>>>>> Mouse Local Fixed
       break;
     }
   }

@@ -1,14 +1,20 @@
 class LabelRecipe extends Blueprint {
 
   LabelRecipe() {
+    //As a rule of a thumb, always call super() as your first line of the constructor.
+    super();
+
     //This is mandatory. Call it to set the desired initial Width and Height of you Blueprint.
-    size.set(165, 50);
-    
+    width = 165;
+    height = 50;
+
     //Sets the pivot point to the center of the blueprint.
-    pivot.set(.5, .5); 
-    
+    pivotX = .5;
+    pivotY = .5;
+
     //Sets the this blueprint relative to the center of its parent;
-    rel.set(.5, .5); 
+    relX = .5;
+    relY = .5;
   }
 
   //Describe you blueprint here by simple describing a drawing like you would in the main graphics.

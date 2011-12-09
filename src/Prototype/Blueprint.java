@@ -4,20 +4,38 @@ import processing.core.PGraphics;
 
 public abstract class Blueprint {
 	
-	public RatioInt size = new RatioInt(0, 0);
-	public Ratio pos = new Ratio(0, 0);
-	public Ratio rel = new Ratio(0, 0);
-	public Ratio scale = new Ratio(1, 1);
-	public Ratio pivot = new Ratio(0, 0, 0, 1, 0, 1);
-	public boolean visible = true;
-	public boolean enabled = true;
-	public float alpha = 1;
-	public boolean showPivot = false;
-	public Box scaleGrid;
+	public int type = Part.IMAGE;
 	public PGraphics blueprint;
-	public boolean makeUnique = false;
+	
+	public int x;
+	public int y;
+	public float relX;
+	public float relY;
+	public int width;
+	public int height;
+	public float scaleX;
+	public float scaleY;
+	public float pivotX;
+	public float pivotY;
+	public float rotation;
+	public float alpha;
+	
+	public boolean visible;
+	public boolean enabled;
+	public boolean showPivot;
+	public boolean unique ;
+	
+	public Box scaleGrid;
 	
 	public Blueprint() {
+		type = Part.IMAGE;
+		scaleX = 1;
+		scaleY = 1;
+		alpha = 1;	
+		visible = true;
+		enabled = true;
+		showPivot = false;
+		unique = false;
 	}
 	
 	final void initBlueprint() {
