@@ -6,12 +6,14 @@ import java.awt.event.MouseWheelEvent;
 public class PartEvent {
 	public Part part;
 	private int step;
-	public int x;
-	public int y;
-	public int localMouseX;
-	public int localMouseY;
-	public int plocalMouseX;
-	public int plocalMouseY;
+	public int screenX;
+	public int screenY;
+	public int pscreenX;
+	public int pscreenY;
+	public int localX;
+	public int localY;
+	public int plocalX;
+	public int plocalY;
 	private int id;
 	
 	public final static int MOUSE_CLICKED = 500;
@@ -29,56 +31,47 @@ public class PartEvent {
 
 	public PartEvent(Part part, MouseEvent event) {
 		this.part = part;
-		x = event.getX();
-		y = event.getX();
-		localMouseX = part.localMouseX();
-		localMouseY = part.localMouseY();
-		plocalMouseX = part.plocalMouseX();
-		plocalMouseY = part.plocalMouseY();
+		screenAndLocal();
 		id = event.getID();
 	}
 	
 	public PartEvent(Part part, MouseWheelEvent event) {
 		this.part = part;
 		step =  event.getWheelRotation();
-		x = event.getX();
-		y = event.getX();
-		localMouseX = part.localMouseX();
-		localMouseY = part.localMouseY();
-		plocalMouseX = part.plocalMouseX();
-		plocalMouseY = part.plocalMouseY();
+		screenAndLocal();
 		id = 507;
 	}
 	
 	public PartEvent(Part part, MouseEvent event, int id) {
 		this.part = part;
-		x = event.getX();
-		y = event.getX();
-		localMouseX = part.localMouseX();
-		localMouseY = part.localMouseY();
-		plocalMouseX = part.plocalMouseX();
-		plocalMouseY = part.plocalMouseY();
+		screenAndLocal();
 		this.id = id;
 	}
 	
 	public PartEvent(Part part, MouseWheelEvent event, int id) {
 		this.part = part;
 		step =  event.getWheelRotation();
-		x = event.getX();
-		y = event.getX();
-		localMouseX = part.localMouseX();
-		localMouseY = part.localMouseY();
-		plocalMouseX = part.plocalMouseX();
-		plocalMouseY = part.plocalMouseY();
+		screenAndLocal();
 		this.id = id;
 	}
 	
+	private void screenAndLocal() {
+		screenX = Prototype.stage.mouseX;//event.getX();
+		screenY = Prototype.stage.mouseY;//event.getY();
+		pscreenX= Prototype.stage.pmouseX;
+		pscreenY = Prototype.stage.pmouseY;
+		localX = part.localMouseX();
+		localY = part.localMouseY();
+		plocalX = part.plocalMouseX();
+		plocalY = part.plocalMouseY();
+	}
+	
 	public int getX() {
-		return x;
+		return screenX;
 	}
 	
 	public int getY() {
-		return y;
+		return screenY;
 	}
 	
 	public int getStep() {

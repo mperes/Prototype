@@ -1,5 +1,6 @@
 class ButtonRecipe extends Blueprint {
 
+  boolean dragging = false;
   ButtonRecipe() {
     //This is mandatory. Call it to set the desired initial Width and Height of you Blueprint.
     size.set(135, 118);
@@ -11,8 +12,9 @@ class ButtonRecipe extends Blueprint {
     PImage squareRound = loadImage("roundsquare.png");
     blueprint.image(squareRound, 0, 0);
   }
-  
+
   public void partEvent(PartEvent event) {
+<<<<<<< HEAD
     switch (event.getID()) {	
     case PartEvent.PART_DRAGGED:
         int incX = event.localMouseX-event.plocalMouseX;
@@ -22,10 +24,31 @@ class ButtonRecipe extends Blueprint {
     println("---------------");
       //event.part.pos.set( event.part.pos.x + mouseX-pmouseX, event.part.pos.y + mouseY-pmouseY);
       event.part.pos.set( event.part.pos.x + event.localMouseX-event.plocalMouseX, event.part.pos.y + event.localMouseY-event.plocalMouseY);
+=======
+    switch (event.getID()) {
+    case PartEvent.PART_PRESSED:
+      this.dragging = true;
+      break;
+    case PartEvent.MOUSE_DRAGGED:
+      if(this.dragging) {
+        //int incX = event.localMouseX-event.plocalMouseX;
+        //int incY = event.localMouseY-event.plocalMouseY;
+        int incX = mouseX-pmouseX;
+        int incY = mouseY-pmouseY;
+        println(incX);
+        println(incY);
+        println("--------------");
+        buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y + incY);
+        //event.part.pos.set( event.part.pos.x + incX, event.part.pos.y + incY);
+      }
+      break;
+    case PartEvent.MOUSE_RELEASED:
+      dragging = false;
+>>>>>>> Mouse Local Fixed
       break;
     }
   }
-  
+
   //Other Part.Event that can be used
   //PartEvent.MOUSE_PRESSED
   //PartEvent.MOUSE_RELEASED

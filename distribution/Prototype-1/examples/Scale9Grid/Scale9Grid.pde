@@ -35,13 +35,13 @@ void setup() {
   //The second and third parameters are optional, they set the initial location of the Sbupart (Default is 0,0)
   //according to the relation point 'Blueprint.rel' (Default is 0,0).
   ////You should be aware that this location is is relation to the position of the parent bot.
-  //buttonPart.part(new AnchorRecipeTR());
-  //buttonPart.part(new AnchorRecipeBR());
-  //buttonPart.part(new AnchorRecipeBL());
-  //buttonPart.part(new LabelRecipe());
+  buttonPart.part(new AnchorRecipeTR());
+  buttonPart.part(new AnchorRecipeBR());
+  buttonPart.part(new AnchorRecipeBL());
+  buttonPart.part(new LabelRecipe());
   buttonPart.size.setMinMax(220, 400, 70, 400); //Sets the MIN/Max values for the part width and height.
   
-  //buttonPart.rotation = 45;
+  buttonPart.rotation = 45;
   cursor(CROSS);
 }
 

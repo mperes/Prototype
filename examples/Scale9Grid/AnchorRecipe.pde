@@ -24,14 +24,14 @@ class AnchorRecipe extends Blueprint {
     blueprint.ellipse(0, 0, 11, 11);
   }
 
-  public void partEvent(PartEvent event) {
-    switch (event.getID()) {
+  public void partEvent(PartEvent e) {
+    switch (e.getID()) {
     case PartEvent.PART_PRESSED:
       this.dragging = true;
       break;
     case PartEvent.MOUSE_DRAGGED:
       if(this.dragging) {
-        resizePic(event);
+        resizePic(e);
       }
       break;
     case PartEvent.MOUSE_RELEASED:
@@ -51,10 +51,17 @@ class AnchorRecipeTL extends AnchorRecipe {
   }
 
   void resizePic(PartEvent e) {
+<<<<<<< HEAD
     int incX = e.localMouseX-e.plocalMouseX;
     int incY = e.localMouseY-e.plocalMouseY;
     buttonPart.size.set( buttonPart.size.x - incX, buttonPart.size.y - incY);
     buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y + incY);
+=======
+    int modX = e.localX - e.plocalX;
+    int modY = e.localY - e.plocalY;
+    buttonPart.size.set( buttonPart.size.x - modX, buttonPart.size.y -  modY);
+    buttonPart.pos.set( buttonPart.pos.x + modX, buttonPart.pos.y + modY);
+>>>>>>> Mouse Local Fixed
   }
 }
 
@@ -65,11 +72,19 @@ class AnchorRecipeTR extends AnchorRecipe {
     rel.set(1,0); //Relative to the top right corner;
   }
 
+<<<<<<< HEAD
   void resizePic(PartEvent e) {
     int incX = e.localMouseX-e.plocalMouseX;
     int incY = e.localMouseY-e.plocalMouseY;
     buttonPart.size.set( buttonPart.size.x + incX, buttonPart.size.y - incY);
     buttonPart.pos.set( buttonPart.pos.x, buttonPart.pos.y + incY);
+=======
+  void resizePic(PartEvent e) {    
+    int modX = e.localX - e.plocalX;
+    int modY = e.localY - e.plocalY;
+    buttonPart.size.set( buttonPart.size.x + modX, buttonPart.size.y -  modY);
+    buttonPart.pos.set( buttonPart.pos.x, buttonPart.pos.y + modY);
+>>>>>>> Mouse Local Fixed
   }
 }
 
@@ -79,10 +94,17 @@ class AnchorRecipeBR extends AnchorRecipe {
     rel.set(1,1); //Relative to the bottom right corner;
   }
 
+<<<<<<< HEAD
   void resizePic(PartEvent e) {
     int incX = e.localMouseX-e.plocalMouseX;
     int incY = e.localMouseY-e.plocalMouseY;
     buttonPart.size.set( buttonPart.size.x + incX, buttonPart.size.y + incY);
+=======
+  void resizePic(PartEvent e) {    
+    int modX = e.localX - e.plocalX;
+    int modY = e.localY - e.plocalY;
+    buttonPart.size.set( buttonPart.size.x + modX, buttonPart.size.y +  modY);
+>>>>>>> Mouse Local Fixed
   }
 }
 
@@ -93,10 +115,17 @@ class AnchorRecipeBL extends AnchorRecipe {
   }
 
   void resizePic(PartEvent e) {
+<<<<<<< HEAD
     int incX = e.localMouseX-e.plocalMouseX;
     int incY = e.localMouseY-e.plocalMouseY;
     buttonPart.size.set( buttonPart.size.x - incX, buttonPart.size.y + incY);
     buttonPart.pos.set( buttonPart.pos.x + incX, buttonPart.pos.y);
+=======
+    int modX = e.localX - e.plocalX;
+    int modY = e.localY - e.plocalY;
+    buttonPart.size.set( buttonPart.size.x - modX, buttonPart.size.y +  modY);
+    buttonPart.pos.set( buttonPart.pos.x + modX, buttonPart.pos.y);
+>>>>>>> Mouse Local Fixed
   }
 }
 
