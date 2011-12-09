@@ -19,8 +19,11 @@ abstract public interface Part {
 	public boolean partEvent(MouseEvent event, float shiftX, float shiftY);
 	public boolean partEvent(MouseWheelEvent event, float shiftX, float shiftY);
 	
-	public void getBlueprint(Blueprint blueprint);
-	public Blueprint setBlueprint();
+	public Part getParent();
+	public void setParent(Part parent);
+	
+	public Blueprint getBlueprint();
+	public void setBlueprint(Blueprint blueprint);
 
 	SmartInt width();
 	int getWidth();
@@ -83,4 +86,9 @@ abstract public interface Part {
 	public int localMouseY();
 	public int plocalMouseX();
 	public int plocalMouseY();
+	
+	float left();
+	float top();
+	float right();
+	float bottom();
 }

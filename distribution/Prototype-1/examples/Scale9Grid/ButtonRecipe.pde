@@ -4,11 +4,15 @@ class ButtonRecipe extends Blueprint {
   ButtonRecipe() {
     //As a rule of a thumb, always call super() as your first line of the constructor.
     super();
-    
+
     //This is mandatory. Call it to set the desired initial Width and Height of you Blueprint.
     width = 135;
     height = 118;
     
+    //Sets the pivot point to the center of the image. This can also be done at runtime,
+    pivotX = .5;
+    pivotY = .5;
+
     //This configures the 0 scale grid box (left, top, right, bottom).
     scaleGrid = new Box(15, 15, 15, 15);
   }
@@ -25,17 +29,11 @@ class ButtonRecipe extends Blueprint {
       this.dragging = true;
       break;
     case PartEvent.MOUSE_DRAGGED:
-    //println(e.part);
-      if(this.dragging) {
+      if (this.dragging) {
         int modX = e.screenX - e.pscreenX;
         int modY = e.screenY - e.pscreenY;
-        //println(modX);
-         //println("e :" + e.part + " " + e.part);
-         //println("o :" + buttonPart + " " +buttonPart.pos);
-         //println("-------------------------------------------");
-           e.part.setX(e.part.getX() + modX);
-           e.part.setY(e.part.getY() + modY);
-         //e.part.pos.set( 200, 200);
+        e.part.setX(e.part.getX() + modX);
+        e.part.setY(e.part.getY() + modY);
       }
       break;
     case PartEvent.MOUSE_RELEASED:

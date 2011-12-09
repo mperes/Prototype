@@ -38,8 +38,8 @@ public abstract class Blueprint {
 		unique = false;
 	}
 	
-	final void initBlueprint() {
-		blueprint = Prototype.offScreenBuffer; 
+	final void initBlueprint(PGraphics canvas) {
+		blueprint = canvas;//Prototype.offScreenBuffer; 
 	}
 	
 	public abstract void description();

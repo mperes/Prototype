@@ -11,7 +11,7 @@ import processing.core.PMatrix3D;
 public class ImagePart implements Part {
 	private Blueprint blueprint;
 	public Part parent;
-	ArrayList<ImagePart> parts;
+	ArrayList<Part> parts;
 
 	private PImage diffuseMap;
 	private SmartInt width;
@@ -55,19 +55,19 @@ public class ImagePart implements Part {
 		}
 		this.localMouse = new float[] {0, 0, 0, 0};
 		this.localModel = new PMatrix3D();
-		this.parts = new ArrayList<ImagePart>();
-		this.getBlueprint(blueprint);
+		this.parts = new ArrayList<Part>();
+		this.setBlueprint(blueprint);
 
 		this.width = new SmartInt(blueprint.width);
 		this.height = new SmartInt(blueprint.height);
 		this.x = new SmartInt(blueprint.x);
 		this.y = new SmartInt(blueprint.y);
-		this.relX = new SmartFloat(blueprint.relX);
-		this.relY = new SmartFloat(blueprint.relY);
+		this.relX = new SmartFloat(blueprint.relX, 0, 1);
+		this.relY = new SmartFloat(blueprint.relY, 0, 1);
 		this.scaleX = new SmartFloat(blueprint.scaleX);
 		this.scaleY = new SmartFloat(blueprint.scaleY);
-		this.pivotX = new SmartFloat(blueprint.pivotX);
-		this.pivotY = new SmartFloat(blueprint.pivotY);
+		this.pivotX = new SmartFloat(blueprint.pivotX, 0, 1);
+		this.pivotY = new SmartFloat(blueprint.pivotY, 0, 1);
 		this.rotation = new SmartFloat(blueprint.rotation);
 		this.alpha = new SmartFloat(blueprint.alpha, 0, 1);
 
@@ -75,7 +75,7 @@ public class ImagePart implements Part {
 		this.enabled(blueprint.enabled);
 		this.showPivot(blueprint.showPivot);
 
-		this.setBlueprint().initBlueprint();
+		this.getBlueprint().initBlueprint(Prototype.offScreenBuffer);
 
 		this.readBlueprint();
 		this.calcBox();
@@ -90,15 +90,20 @@ public class ImagePart implements Part {
 
 	public void readBlueprint() {
 		Prototype.offScreenBuffer.beginDraw();
-		setBlueprint().description();
+		getBlueprint().description();
 		Prototype.offScreenBuffer.endDraw();
-		diffuseMap = Prototype.addDiffuseMap(setBlueprint(), getWidth(), getHeight());
+		diffuseMap = Prototype.addDiffuseMap(getBlueprint(), getWidth(), getHeight());
 	}
 
 	public void draw() {
 		if(visible) {
-			float translateX = (parent == null) ? getX() : (int)(getX() + parent.getWidth() * getRelX());
-			float translateY = (parent == null) ? getY() : (int)(getY() + parent.getHeight() * getRelY());
+			//float translateX = (parent == null) ? getX() : (int)(getX() + parent.getWidth() * getRelX());
+			//float translateY = (parent == null) ? getY() : (int)(getY() + parent.getHeight() * getRelY());
+			
+			float translateX = (parent == null) ? getX() : (int)(getX() + (parent.getWidth() * getRelX() +parent.left()));
+			float translateY = (parent == null) ? getY() : (int)(getY() + (parent.getHeight() * getRelY() +parent.top()));
+			
+			
 			Prototype.stage.pushMatrix();
 			Prototype.stage.translate(translateX, translateY);
 			if(getRotation() != 0) {
@@ -107,7 +112,7 @@ public class ImagePart implements Part {
 			this.localModel = Coordinates.getCurrentModel().get();
 			Prototype.stage.pushStyle();
 			Prototype.stage.tint(255, 255*getAlpha());
-			if(setBlueprint().scaleGrid != null) {
+			if(getBlueprint().scaleGrid != null) {
 				scale9Grid(this.getWidth(), this.getHeight(), this.getPivotX(), this.getPivotY(), this.blueprint.scaleGrid, this.diffuseMap);
 			} else {
 				drawPlane(this.getWidth(), this.getHeight(), this.getPivotX(), this.getPivotY(), this.diffuseMap);
@@ -123,7 +128,7 @@ public class ImagePart implements Part {
 
 	void drawParts() {
 		for(int p=0; p < parts.size(); p++) {
-			ImagePart part = parts.get(p);
+			Part part = parts.get(p);
 			part.draw();
 		}
 	}
@@ -149,7 +154,7 @@ public class ImagePart implements Part {
 
 	void updateParts() {
 		for(int p=0; p<parts.size(); p++) {
-			ImagePart part = parts.get(p);
+			Part part = parts.get(p);
 			part.pre();
 		}
 	}
@@ -182,16 +187,38 @@ public class ImagePart implements Part {
 		return false;
 	}
 
-	public ImagePart part(Blueprint blueprint) {
-		ImagePart newPart = new ImagePart(blueprint);
-		newPart.parent = this;
+	public Part part(Blueprint blueprint) {
+		Part newPart;
+		switch(blueprint.type) {
+		case Part.IMAGE:
+			newPart = new ImagePart(blueprint);
+			newPart.setParent(this);
+			break;
+		case Part.SHAPE:
+			newPart = new ShapePart(blueprint);
+			newPart.setParent(this);;
+			break;
+		default:
+			throw new RuntimeException("The declared part type is not valid.");
+		}
 		parts.add(newPart);
 		return newPart;
 	}
 
-	public ImagePart part(Blueprint blueprint, float x, float y) {
-		ImagePart newPart = new ImagePart(blueprint, x, y);
-		newPart.parent = this;
+	public Part part(Blueprint blueprint, float x, float y) {
+		Part newPart;
+		switch(blueprint.type) {
+		case Part.IMAGE:
+			newPart = new ImagePart(blueprint, x, y);
+			newPart.setParent(this);
+			break;
+		case Part.SHAPE:
+			newPart = new ShapePart(blueprint, x, y);
+			newPart.setParent(this);
+			break;
+		default:
+			throw new RuntimeException("The declared part type is not valid.");
+		}
 		parts.add(newPart);
 		return newPart;
 	}
@@ -199,7 +226,7 @@ public class ImagePart implements Part {
 	public void mouseEvent(MouseEvent event) {
 		if(enabled && visible) {
 			for(int p=0; p < parts.size(); p++) {
-				ImagePart part = parts.get(p);		
+				Part part = parts.get(p);		
 				part.mouseEvent(event);		
 			}
 			blueprint.partEvent(new PartEvent(this, event));
@@ -209,7 +236,7 @@ public class ImagePart implements Part {
 	public void mouseEvent(MouseWheelEvent event) {
 		if(enabled && visible) {
 			for(int p=0; p < parts.size(); p++) {
-				ImagePart part = parts.get(p);		
+				Part part = parts.get(p);		
 				part.mouseEvent(event);		
 			}
 			blueprint.partEvent(new PartEvent(this, event));
@@ -220,7 +247,7 @@ public class ImagePart implements Part {
 		if(enabled && visible) {
 			boolean found = false;
 			for(int p=parts.size()-1; p >= 0 ; p--) {
-				ImagePart part = parts.get(p);	
+				Part part = parts.get(p);	
 				found = part.partEvent(event, left+shiftX, top+shiftY);
 			}
 			if(!found) {
@@ -237,9 +264,9 @@ public class ImagePart implements Part {
 	public boolean partEvent(MouseWheelEvent event, float shiftX, float shiftY) {
 		if(enabled && visible) {
 			for(int p=parts.size()-1; p >= 0 ; p--) {
-				ImagePart part = parts.get(p);		
+				Part part = parts.get(p);		
 				if(part.partEvent(event, left+shiftX, top+shiftY)) {
-					part.blueprint.partEvent(new PartEvent(part, event, event.getID()-500));
+					part.getBlueprint().partEvent(new PartEvent(part, event, event.getID()-500));
 					break;
 				}
 			}
@@ -305,8 +332,8 @@ public class ImagePart implements Part {
 		drawPlane(width, height, pivotX, pivotY, img);
 	}
 
-	public void getBlueprint(Blueprint blueprint) { this.blueprint = blueprint; }
-	public Blueprint setBlueprint() { return blueprint; }
+	public Blueprint getBlueprint() { return blueprint; }
+	public void setBlueprint(Blueprint blueprint) { this.blueprint = blueprint; }
 
 	public SmartInt width() { return width; }
 	public int getWidth() { return this.width.value(); }
@@ -370,4 +397,12 @@ public class ImagePart implements Part {
 
 	public boolean showPivot() { return this.showPivot; }
 	public void showPivot(boolean state) { this.showPivot = state; }
+	
+	public float left() { calcBox(); return left; }
+	public float top() { calcBox(); return top; }
+	public float right() { calcBox(); return right; }
+	public float bottom() { calcBox(); return bottom; }
+	
+	public Part getParent() { return this.parent; }
+	public void setParent(Part parent) { this.parent = parent; }
 }

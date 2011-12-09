@@ -3,7 +3,8 @@ class AnchorRecipe extends Blueprint {
   AnchorRecipe() {
     //As a rule of a thumb, always call super() as your first line of the constructor.
     super();
-    
+
+    //type = Part.SHAPE;
     //This is mandatory. Call it to set the desired initial Width and Height of you Blueprint
     width = 12;
     height = 12;
@@ -35,7 +36,7 @@ class AnchorRecipe extends Blueprint {
       this.dragging = true;
       break;
     case PartEvent.MOUSE_DRAGGED:
-      if(this.dragging) {
+      if (this.dragging) {
         handleMouseDrag(e);
       }
       break;
@@ -47,26 +48,25 @@ class AnchorRecipe extends Blueprint {
 
   void handleMouseDrag(PartEvent e) {
   }
-  
-  void resizePic(PartEvent e, int w, int h, int x, int y) {
-    int modX = e.localX - e.plocalX;
-    int modY = e.localY - e.plocalY;
-    buttonPart.setWidth(buttonPart.getWidth() - w*modX);
-    buttonPart.setHeight(buttonPart.getHeight() - w*modY);
-    buttonPart.setX( buttonPart.getX() + x*modX);
-    buttonPart.setY(buttonPart.getY() + x*modY);
+
+  void resizePic(PartEvent e, int w, int h) {
+    int newWidth = buttonPart.getWidth() - w*(e.localX - e.plocalX);
+    int newHeight = buttonPart.getHeight() - h*(e.localY - e.plocalY);
+    buttonPart.setWidth(newWidth);
+    buttonPart.setHeight(newHeight);
   }
-  
-  
 }
 
 //You can reutilize your own blueprints by extending them.
 class AnchorRecipeTL extends AnchorRecipe {
   AnchorRecipeTL() {
     super(); //Always call Super().
+    //Relative to top left (Default)
+    //relX = 0;
+    //relX = 0;
   }
   void handleMouseDrag(PartEvent e) {
-    resizePic(e, 1, 1, 1, 1);
+    resizePic(e, 1, 1);
   }
 }
 
@@ -74,11 +74,15 @@ class AnchorRecipeTR extends AnchorRecipe {
   boolean dragging = false;
   AnchorRecipeTR() {
     super(); //Always call Super().
-    relX = 1;//Relative to the top right corner;
+    
+    //Relative to the top right corner;
+    relX = 1;
+    //relY = 0;
   }
 
   void handleMouseDrag(PartEvent e) {    
-    resizePic(e, -1, 1, 0, 1);
+    resizePic(e, -1, 1);
+    //resizePic(e, 0, 1, 0, 1);
   }
 }
 
@@ -91,7 +95,7 @@ class AnchorRecipeBR extends AnchorRecipe {
   }
 
   void handleMouseDrag(PartEvent e) {    
-    resizePic(e, -1, -1, 0, 0);
+    resizePic(e, -1, -1);
   }
 }
 
@@ -99,11 +103,12 @@ class AnchorRecipeBL extends AnchorRecipe {
   AnchorRecipeBL() {
     super(); //Always call Super().
     //Relative to the bottom left corner;
+    relX = 0;
     relY = 1;
   }
 
   void handleMouseDrag(PartEvent e) {
-    resizePic(e, 1, -1, 1, 0);
+    resizePic(e, 1, -1);
   }
 }
 
