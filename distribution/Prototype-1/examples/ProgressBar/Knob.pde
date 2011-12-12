@@ -4,21 +4,17 @@ class Knob extends Blueprint {
   boolean dragging = false;
   
   Knob() {
-    width = 18;
-    height = 18;
-    
-    pivotX = .6;
+    super();
+    width = 30;
+    height = 30;
     
     //Sets collision method to circle instead of pix;
     collisionMethod = Part.CIRCLE;
   }
   
   void description() {
-    blueprint.smooth();
-    blueprint.ellipseMode(CORNER);
-    blueprint.noStroke();
-    blueprint.fill(255, 30);
-    blueprint.ellipse(1,1,16,16);
+    PImage picture = loadImage("knob.png");
+    blueprint.image(picture, 0, 0);
   }
   
   public void partEvent(PartEvent event) {

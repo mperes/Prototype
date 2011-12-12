@@ -15,11 +15,9 @@ final int progressBarH = 30;
 
 Part progress;
 Part knob;
+Part highlight;
 
 PFont font;
-
-
-int inactivityCounter;
 
 void setup() {
   size(800, 600, OPENGL);
@@ -39,6 +37,7 @@ void setup() {
   prototype.part(new LabelRecipe(), 175, 10);
   progress = container.part(new Progress());
   knob = progress.part(new Knob());
+  highlight = knob.part(new KnobHighlight());
   
   
   container.setWidth(progressBarW);
@@ -48,15 +47,16 @@ void setup() {
    progress.width().constrain(0, progressBarW);
    progress.setWidth(knob.getX());
    
-    inactivityCounter = 300;
+   highlight.setAlpha(0);
   
 }
 
 void draw() {
  background(230);
-   if(inactivityCounter >= 300) {
-    knob.setX(map( sin(radians(millis()/20)), -1, 1, knob.getWidth(), progressBarW ));
-    progress.setWidth(knob.getX());
-  }
-  inactivityCounter++;
+  // if(inactivityCounter >= 300) {
+    //knob.setX(map( sin(radians(millis()/20)), -1, 1, knob.getWidth(), progressBarW ));
+    //progress.setWidth(knob.getX());
+    //highlight.setAlpha(  map(min(knob.getX(), 15), 0, 15, 0, 1) );
+ // }
+  //println(highlight.getAlpha());
 }

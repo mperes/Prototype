@@ -25,7 +25,7 @@ public abstract class Blueprint {
 	public boolean enabled;
 	public boolean showPivot;
 	public boolean unique;
-	public boolean interacble;
+	public boolean intractable;
 	
 	public Box scaleGrid;
 	
@@ -39,7 +39,7 @@ public abstract class Blueprint {
 		enabled = true;
 		showPivot = false;
 		unique = false;
-		interacble = true;
+		intractable = true;
 	}
 	
 	final void initBlueprint(PGraphics canvas) {

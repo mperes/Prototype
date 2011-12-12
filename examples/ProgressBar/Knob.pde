@@ -4,13 +4,14 @@ class Knob extends Blueprint {
   boolean dragging = false;
   
   Knob() {
+    super();
     width = 30;
     height = 30;
-    
+        
     pivotX = 1;
     
     //Sets collision method to circle instead of pix;
-    collisionMethod = Part.CIRCLE;
+    collisionMethod = Part.BOX;
   }
   
   void description() {
@@ -24,12 +25,14 @@ class Knob extends Blueprint {
       this.dragging = true;
       break;
          case PartEvent.MOUSE_MOVED:
-      inactivityCounter = 0;
+      //inactivityCounter = 0;
       break;
     case PartEvent.MOUSE_DRAGGED:
       if(this.dragging) {
         event.part.setX(event.part.getX()+mouseX-pmouseX);
         progress.setWidth(event.part.getX());
+        //println(eventpart.getX());
+        highlight.setAlpha(  map(event.part.getX(), event.part.getWidth(), event.part.getWidth()+15, 0, 1) );
       }
       break;
     case PartEvent.MOUSE_RELEASED:

@@ -79,7 +79,7 @@ abstract public class BasicPart implements Part {
 		this.visible(blueprint.visible);
 		this.enabled(blueprint.enabled);
 		this.showPivot(blueprint.showPivot);
-		this.interactble(blueprint.interacble);
+		this.interactble(blueprint.intractable);
 	}
 
 	protected void calcBox() {

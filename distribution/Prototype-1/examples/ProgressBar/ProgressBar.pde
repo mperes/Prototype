@@ -8,9 +8,10 @@ GL gl;
 
 Prototype prototype;
 
+final int progressBarX = 50;
+final int progressBarY = 50;
 final int progressBarW = 300;
 final int progressBarH = 30;
-final int progressBarMargin = 8;
 
 Part progress;
 Part knob;
@@ -34,19 +35,18 @@ void setup() {
   //Think of it like a canvas where your prototype is gonna run.
   prototype = Prototype.createPrototype(this);
   
-  Part container = prototype.part(new Container(), 50, 50);
+  Part container = prototype.part(new Container(), progressBarX, progressBarY);
   prototype.part(new LabelRecipe(), 175, 10);
   progress = container.part(new Progress());
   knob = progress.part(new Knob());
+  knob.part(new KnobHighlight());
   
   
   container.setWidth(progressBarW);
   container.setHeight(progressBarH);
   
-  progress.setX(progressBarMargin);
-  
-   knob.x().constrain(progressBarMargin*3, progressBarW-2*progressBarMargin);
-   progress.width().constrain(19, progressBarW-2*progressBarMargin);
+   knob.x().constrain(knob.getWidth(), progressBarW);
+   progress.width().constrain(0, progressBarW);
    progress.setWidth(knob.getX());
    
     inactivityCounter = 300;
@@ -56,7 +56,7 @@ void setup() {
 void draw() {
  background(230);
    if(inactivityCounter >= 300) {
-    knob.setX(map( sin(radians(millis()/20)), -1, 1, progressBarMargin*3, progressBarW-2*progressBarMargin ));
+    knob.setX(map( sin(radians(millis()/20)), -1, 1, knob.getWidth(), progressBarW ));
     progress.setWidth(knob.getX());
   }
   inactivityCounter++;
