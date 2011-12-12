@@ -20,8 +20,6 @@ PFont font;
 
 int inactivityCounter;
 
-
-PGraphics teste;
 void setup() {
   size(800, 600, OPENGL);
  
