@@ -4,17 +4,21 @@ class Knob extends Blueprint {
   boolean dragging = false;
   
   Knob() {
-    //Always call super(w, h)
-    super(containerH/3, containerH);
-    pivot.set(1, 0); // Sets the pivtor point to the top right corner.
-    pos.setMinMax(containerH/3, containerW, 0, 0); //Contrains the knob to the area of the container.
+    width = 18;
+    height = 18;
+    
+    pivotX = .6;
+    
+    //Sets collision method to circle instead of pix;
+    collisionMethod = Part.CIRCLE;
   }
   
   void description() {
-    rectMode(CORNER);
-    fill(50);
-    noStroke();
-    rect(0, 0, containerH/3, containerH);
+    blueprint.smooth();
+    blueprint.ellipseMode(CORNER);
+    blueprint.noStroke();
+    blueprint.fill(255, 30);
+    blueprint.ellipse(1,1,16,16);
   }
   
   public void partEvent(PartEvent event) {
@@ -22,10 +26,13 @@ class Knob extends Blueprint {
     case PartEvent.PART_PRESSED:
       this.dragging = true;
       break;
+         case PartEvent.MOUSE_MOVED:
+      inactivityCounter = 0;
+      break;
     case PartEvent.MOUSE_DRAGGED:
       if(this.dragging) {
-        event.part.pos.x += mouseX-pmouseX;
-        event.part.parent.size.x = event.part.pos.x;//constrain(event.part.pos.x, 0, containerW);
+        event.part.setX(event.part.getX()+mouseX-pmouseX);
+        progress.setWidth(event.part.getX());
       }
       break;
     case PartEvent.MOUSE_RELEASED:

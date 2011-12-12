@@ -1,4 +1,4 @@
-package Prototype;
+package prototype;
 public class Ease {
 
 	public static final int easeNone = 0;

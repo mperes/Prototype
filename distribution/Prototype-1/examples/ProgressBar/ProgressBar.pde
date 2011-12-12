@@ -1,6 +1,6 @@
 import processing.opengl.*;
 import javax.media.opengl.GL;
-import Prototype.*;
+import prototype.*;
        
 //Necessary to make straight OpenGL calls.
 PGraphicsOpenGL pgl;
@@ -8,39 +8,58 @@ GL gl;
 
 Prototype prototype;
 
-int containerW = 300;
-int containerH = 30;
+final int progressBarW = 300;
+final int progressBarH = 30;
+final int progressBarMargin = 8;
 
 Part progress;
+Part knob;
+
+PFont font;
+
+
+int inactivityCounter;
+
 
 PGraphics teste;
 void setup() {
   size(800, 600, OPENGL);
  
-   //set vertical sync on to avoid tearing on the scrolling.  
-  //pgl = (PGraphicsOpenGL) g;
-  //gl = pgl.beginGL();
-  //gl.setSwapInterval(1); 
-  //pgl.endGL();
- 
- //hint(DISABLE_OPENGL_2X_SMOOTH);
+  //set vertical sync on to avoid tearing on the scrolling.  
+  pgl = (PGraphicsOpenGL) g;
+  gl = pgl.beginGL();
+  gl.setSwapInterval(1); 
+  pgl.endGL();
 
+  font = loadFont("ArialMT-14.vlw"); 
   //Its is necessary to initialize an Prototype instance before using the library.
   //Think of it like a canvas where your prototype is gonna run.
   prototype = Prototype.createPrototype(this);
   
   Part container = prototype.part(new Container(), 50, 50);
-  progress = container.subpart(new Progress());
-  Part knob = progress.subpart(new Knob());
-  progress.size.x = 5;
+  prototype.part(new LabelRecipe(), 175, 10);
+  progress = container.part(new Progress());
+  knob = progress.part(new Knob());
+  
+  
+  container.setWidth(progressBarW);
+  container.setHeight(progressBarH);
+  
+  progress.setX(progressBarMargin);
+  
+   knob.x().constrain(progressBarMargin*3, progressBarW-2*progressBarMargin);
+   progress.width().constrain(19, progressBarW-2*progressBarMargin);
+   progress.setWidth(knob.getX());
+   
+    inactivityCounter = 300;
   
 }
 
 void draw() {
-  background(16);
-  //println(progress.size.x);
-    //println(progress.size.y);
-    //println(progress.size.minY);
-    //println(progress.size.maxX);
-    //println("-----------------------");
+ background(230);
+   if(inactivityCounter >= 300) {
+    knob.setX(map( sin(radians(millis()/20)), -1, 1, progressBarMargin*3, progressBarW-2*progressBarMargin ));
+    progress.setWidth(knob.getX());
+  }
+  inactivityCounter++;
 }

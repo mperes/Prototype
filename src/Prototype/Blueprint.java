@@ -1,10 +1,11 @@
-package Prototype;
+package prototype;
 
 import processing.core.PGraphics;
 
 public abstract class Blueprint {
 	
 	public int type = Part.IMAGE;
+	public int collisionMethod;
 	public PGraphics blueprint;
 	
 	public int x;
@@ -23,12 +24,14 @@ public abstract class Blueprint {
 	public boolean visible;
 	public boolean enabled;
 	public boolean showPivot;
-	public boolean unique ;
+	public boolean unique;
+	public boolean interacble;
 	
 	public Box scaleGrid;
 	
 	public Blueprint() {
 		type = Part.IMAGE;
+		collisionMethod = Part.DEFAULT;
 		scaleX = 1;
 		scaleY = 1;
 		alpha = 1;	
@@ -36,10 +39,11 @@ public abstract class Blueprint {
 		enabled = true;
 		showPivot = false;
 		unique = false;
+		interacble = true;
 	}
 	
 	final void initBlueprint(PGraphics canvas) {
-		blueprint = canvas;//Prototype.offScreenBuffer; 
+		blueprint = canvas;
 	}
 	
 	public abstract void description();

@@ -1,4 +1,4 @@
-package Prototype;
+package prototype;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -8,8 +8,14 @@ abstract public interface Part {
 	public static final int SHAPE = 0;
 	public static final int IMAGE = 1;
 	
+	public static final int DEFAULT = 0;
+	public static final int BOX = 1;
+	public static final int CIRCLE = 2;
+	public static final int PIXEL = 3;
+	
 	public void pre();
 	public void draw();
+	public void drawPivot();
 		
 	public Part part(Blueprint blueprint);
 	public Part part(Blueprint blueprint, float x, float y);
@@ -81,6 +87,9 @@ abstract public interface Part {
 
 	boolean showPivot();
 	void showPivot(boolean state);
+	
+	boolean interactble();
+	void interactble(boolean state);
 	
 	public int localMouseX();
 	public int localMouseY();

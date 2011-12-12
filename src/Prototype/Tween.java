@@ -1,4 +1,4 @@
-package Prototype;
+package prototype;
 import java.lang.reflect.*;
 
 public class Tween implements Interval {

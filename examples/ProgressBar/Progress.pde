@@ -4,15 +4,16 @@ class Progress extends Container {
   
   Progress() {
     super();
-    scaleGrid = new Box(4, 4, 4, 4); //Some borders to preserve the transparency around the bar.
-    size.setMinMax(0, containerW, containerH, containerH);
+    width = 19;
+    height = 18;
+    pivotY = .5;
+    relY = .5;
+    scaleGrid = new Box(9); //Some borders to preserve the transparency around the bar.
   }
   
   void description() {
-    noStroke();
-    rectMode(CORNER);
-    fill(230);
-    rect(margin, margin, containerW-2*margin, containerH-2*margin);
+    PImage picture = loadImage("progress.png");
+    blueprint.image(picture, 0, 0);
   }
   
 }

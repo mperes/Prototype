@@ -1,4 +1,4 @@
-package Prototype;
+package prototype;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -12,18 +12,18 @@ import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 
-
 public class Prototype implements MouseWheelListener {
+	static PImage pivot;
+	static int[] pivotPixels;
 	static PApplet stage;
 	static PGraphics offScreenBuffer;
 	Tweener tweener;
 	ArrayList<Part> parts;
 	static Map<String, PImage> diffuseMaps;
 	
-	
 	private static Prototype instance;
 
-	private Prototype(PApplet stage) {	
+	private Prototype(PApplet stage) {		
 		stage.registerPre(this);
 		stage.registerDraw(this);
 		stage.registerMouseEvent(this);
@@ -33,6 +33,8 @@ public class Prototype implements MouseWheelListener {
 		offScreenBuffer = Prototype.stage.createGraphics(Prototype.stage.width, Prototype.stage.height, PConstants.JAVA2D);
 		parts = new ArrayList<Part>();
 		diffuseMaps = new HashMap<String, PImage>();
+		pivot = Prototype.stage.loadImage("pivot.png");
+		pivotPixels = new int[] {5, 16, 26, 27, 28, 36, 40, 46, 52, 55, 56, 57, 60, 63, 64, 65, 68, 74, 80, 84, 92, 93, 94, 104, 115 };
 	}
 	
 	public static Prototype createPrototype(PApplet stage) {
@@ -94,8 +96,8 @@ public class Prototype implements MouseWheelListener {
 
 	private void updateParts() {
 		for(int p=0; p<parts.size(); p++) {
-			Part bot = parts.get(p);
-			bot.pre();
+			Part part = parts.get(p);
+			part.pre();
 		}
 	}
 
@@ -105,17 +107,21 @@ public class Prototype implements MouseWheelListener {
 
 	void drawParts() {
 		for(int p=0; p < parts.size(); p++) {
-			Part bot = parts.get(p);
-			bot.draw();
+			Part part = parts.get(p);
+			part.draw();
+		}
+		for(int p=0; p < parts.size(); p++) {	
+			Part part = parts.get(p);
+			part.drawPivot();
 		}
 	}
 
 	public void mouseEvent(MouseEvent event) {	
-		for(int p=0; p < parts.size(); p++) {
+		for(int p=parts.size()-1; p >= 0; p--) {
 			Part part = parts.get(p);		
 			part.mouseEvent(event);
 		}
-		for(int p=0; p < parts.size(); p++) {
+		for(int p=parts.size()-1; p >= 0; p--) {
 			Part part = parts.get(p);		
 			 if(part.partEvent(event, 0, 0)) {
 				 break;
@@ -124,11 +130,11 @@ public class Prototype implements MouseWheelListener {
 	}
 	
 	public void mouseWheelMoved(MouseWheelEvent event) {	
-		for(int p=0; p < parts.size(); p++) {
+		for(int p=parts.size()-1; p >= 0; p--) {
 			Part part = parts.get(p);		
 			part.mouseEvent(event);
 		}
-		for(int p=0; p < parts.size(); p++) {
+		for(int p=parts.size()-1; p >= 0; p--) {
 			Part part = parts.get(p);		
 			 if(part.partEvent(event, 0, 0)) {
 				 break;
@@ -154,9 +160,9 @@ public class Prototype implements MouseWheelListener {
 			return diffuseMaps.get(randUID);
 		}
 		Class<?> blueprintClass = blueprint.getClass();
-		while(blueprintClass.getName() != "Prototype.Blueprint") {
+		while(blueprintClass.getName() != "prototype.Blueprint") {
 			Class<?> bluePrintSuperClass = blueprintClass.getSuperclass();
-			if(bluePrintSuperClass.getName() == "Prototype.Blueprint"){
+			if(bluePrintSuperClass.getName() == "prototype.Blueprint"){
 				if(!diffuseMaps.containsKey(blueprintClass)) {
 					PImage newImg = Prototype.stage.createImage(w, h, PConstants.ARGB);
 					newImg.set(0, 0, offScreenBuffer);

@@ -1,4 +1,4 @@
-package Prototype;
+package prototype;
 
 public class Box {
 	public float left;
@@ -11,5 +11,12 @@ public class Box {
 		this.top = top;
 		this.right = right;
 		this.bottom = bottom;
+	}
+	
+	public Box(float value) {
+		this.left = value;
+		this.top = value;
+		this.right = value;
+		this.bottom = value;
 	}
 }

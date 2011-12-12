@@ -1,4 +1,4 @@
-package Prototype;
+package prototype;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -25,7 +25,7 @@ public class PartEvent {
 	public final static int PART_CLICKED = 0;
 	public final static int PART_PRESSED = 1;
 	public final static int PART_RELEASED = 2;
-	public final static int PART_MOVED = 3;
+	public final static int PART_ROLLOVER = 3;
 	public final static int PART_DRAGGED = 6;
 	public final static int PART_SCROLLED = 7;
 

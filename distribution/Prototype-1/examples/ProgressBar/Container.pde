@@ -1,14 +1,16 @@
 class Container extends Blueprint {
     
   Container() {
-    super(containerW, containerH);
+    super();
+    
+    width = 46;
+    height = 30;
+    scaleGrid = new Box(15);
   }
   
   void description() {
-    rectMode(CORNER);
-    fill(150);
-    noStroke();
-    rect(0, 0, containerW, containerH);
+    PImage picture = loadImage("container.png");
+    blueprint.image(picture, 0, 0);
   }
   
 }

@@ -1,4 +1,4 @@
-package Prototype;
+package prototype;
 import java.lang.reflect.Method;
 
 public class Delay implements Interval {

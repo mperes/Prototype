@@ -1,286 +1,54 @@
-package Prototype;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
-
-import processing.core.PApplet;
+package prototype;
 import processing.core.PConstants;
 import processing.core.PImage;
-import processing.core.PMatrix3D;
 
-public class ImagePart implements Part {
-	private Blueprint blueprint;
-	public Part parent;
-	ArrayList<Part> parts;
-
+public class ImagePart extends BasicPart implements Part {
 	private PImage diffuseMap;
-	private SmartInt width;
-	private SmartInt height;
-	private SmartInt x;
-	private SmartInt y;
-	private SmartFloat relX;
-	private SmartFloat relY;
-	private SmartFloat scaleX;
-	private SmartFloat scaleY;
-	private SmartFloat pivotX;
-	private SmartFloat pivotY;
-	private SmartFloat rotation;
-	private SmartFloat alpha;
-
-	private float left;
-	private float top;
-	private float right;
-	private float bottom;
-
-	private boolean visible;
-	private boolean enabled;
-	public boolean showPivot; 
-
-	private float[] localMouse;
-	private PMatrix3D localModel;
+	private float[][][] faces;
 
 	public ImagePart (Blueprint blueprint) {
-		this.initPart(blueprint);
+		super(blueprint);
 	}
 
 	public ImagePart (Blueprint blueprint, float x, float y) {
-		this.initPart(blueprint);
-		this.setX(x);
-		this.setY(y);
+		super(blueprint, x, y);
 	}	
 
-	private void initPart (Blueprint blueprint) {
-		if(blueprint.width == 0 || blueprint.height == 0) {
-			throw new RuntimeException("A Part's height or width cannnot be 0. Set the 'width' and 'height' in your your class constructor to fix this.");
-		}
-		this.localMouse = new float[] {0, 0, 0, 0};
-		this.localModel = new PMatrix3D();
-		this.parts = new ArrayList<Part>();
-		this.setBlueprint(blueprint);
-
-		this.width = new SmartInt(blueprint.width);
-		this.height = new SmartInt(blueprint.height);
-		this.x = new SmartInt(blueprint.x);
-		this.y = new SmartInt(blueprint.y);
-		this.relX = new SmartFloat(blueprint.relX, 0, 1);
-		this.relY = new SmartFloat(blueprint.relY, 0, 1);
-		this.scaleX = new SmartFloat(blueprint.scaleX);
-		this.scaleY = new SmartFloat(blueprint.scaleY);
-		this.pivotX = new SmartFloat(blueprint.pivotX, 0, 1);
-		this.pivotY = new SmartFloat(blueprint.pivotY, 0, 1);
-		this.rotation = new SmartFloat(blueprint.rotation);
-		this.alpha = new SmartFloat(blueprint.alpha, 0, 1);
-
-		this.visible(blueprint.visible);
-		this.enabled(blueprint.enabled);
-		this.showPivot(blueprint.showPivot);
-
+	protected void initPart (Blueprint blueprint) {
+		basicSetup(blueprint);
 		this.getBlueprint().initBlueprint(Prototype.offScreenBuffer);
 
 		this.readBlueprint();
 		this.calcBox();
 	}
 
-	private void calcBox() {
-		left = -getPivotX() * getWidth();
-		top = -getPivotY() * getHeight();
-		right =  left + getWidth();
-		bottom = top + getHeight();
-	}
-
-	public void readBlueprint() {
+	protected void readBlueprint() {
 		Prototype.offScreenBuffer.beginDraw();
 		getBlueprint().description();
 		Prototype.offScreenBuffer.endDraw();
 		diffuseMap = Prototype.addDiffuseMap(getBlueprint(), getWidth(), getHeight());
-	}
-
-	public void draw() {
-		if(visible) {
-			//float translateX = (parent == null) ? getX() : (int)(getX() + parent.getWidth() * getRelX());
-			//float translateY = (parent == null) ? getY() : (int)(getY() + parent.getHeight() * getRelY());
-			
-			float translateX = (parent == null) ? getX() : (int)(getX() + (parent.getWidth() * getRelX() +parent.left()));
-			float translateY = (parent == null) ? getY() : (int)(getY() + (parent.getHeight() * getRelY() +parent.top()));
-			
-			
-			Prototype.stage.pushMatrix();
-			Prototype.stage.translate(translateX, translateY);
-			if(getRotation() != 0) {
-				Prototype.stage.rotate(PApplet.radians(getRotation()));
-			}
-			this.localModel = Coordinates.getCurrentModel().get();
-			Prototype.stage.pushStyle();
-			Prototype.stage.tint(255, 255*getAlpha());
-			if(getBlueprint().scaleGrid != null) {
-				scale9Grid(this.getWidth(), this.getHeight(), this.getPivotX(), this.getPivotY(), this.blueprint.scaleGrid, this.diffuseMap);
-			} else {
-				drawPlane(this.getWidth(), this.getHeight(), this.getPivotX(), this.getPivotY(), this.diffuseMap);
-			}
-			if (showPivot) { 
-				drawPivot();
-			}
-			drawParts();
-			Prototype.stage.popStyle();
-			Prototype.stage.popMatrix();
+		if(getBlueprint().scaleGrid != null) {
+			faces = new float[3][3][8];
 		}
 	}
 
-	void drawParts() {
-		for(int p=0; p < parts.size(); p++) {
-			Part part = parts.get(p);
-			part.draw();
+	public void drawPart() {
+		Prototype.stage.tint(255, 255*getAlpha());
+		if(getBlueprint().scaleGrid != null) {
+			//scale9Grid(this.getWidth(), this.getHeight(), this.getPivotX(), this.getPivotY(), getBlueprint().scaleGrid, this.diffuseMap);
+			scale9Grid(getBlueprint().width, getBlueprint().height, this.getPivotX(), this.getPivotY(), getBlueprint().scaleGrid, this.diffuseMap);
+		} else {
+			//drawPlane(this.getWidth(), this.getHeight(), this.getPivotX(), this.getPivotY(), this.diffuseMap);
+			drawPlane(getBlueprint().width, getBlueprint().height, this.getPivotX(), this.getPivotY(), this.diffuseMap);
 		}
-	}
-
-	private void drawPivot() {
-		Prototype.stage.pushStyle();
-		Prototype.stage.fill(255, 0, 0);
-		Prototype.stage.noStroke();
-		Prototype.stage.rectMode(PConstants.CENTER);
-		Prototype.stage.rect(0, 0, 5, 5);
-		Prototype.stage.popStyle();
-	}
-
-	public void pre() {
-		calcBox();
-		updateParts();
-		updateLocalMouse();
-	}
-
-	void updateLocalMouse() {
-		localMouse = Coordinates.localMouse(localModel);
-	}
-
-	void updateParts() {
-		for(int p=0; p<parts.size(); p++) {
-			Part part = parts.get(p);
-			part.pre();
-		}
-	}
-
-	public boolean mouseInside(int shiftX, int shiftY) {
-		calcBox();
-		return (
-				localMouseX() > left &&
-				localMouseX() < right &&
-				localMouseY() > top &&
-				localMouseY() < bottom
-				)
-				? true : false;
-	}
-
-	public boolean mouseReallyInside(int shiftX, int shiftY) {
-		if (mouseInside(shiftX, shiftY)) {
-			int offSetMouseX = localMouseX() + Math.round(getWidth() * getPivotX());
-			int offSetMouseY = localMouseY() + Math.round(getHeight() * getPivotY());
-			PImage buffer = this.diffuseMap.get();
-			buffer.resize(getWidth() * (int)getScaleX(), getHeight() * (int)getScaleY());
-			buffer.loadPixels();
-			if (buffer.pixels[(int) PApplet.constrain( offSetMouseX + offSetMouseY * getWidth(), 0, buffer.pixels.length-1)] == 0x00000000) {
-				buffer.updatePixels();
-				return false;
-			}
-			buffer.updatePixels();
-			return true;    
-		}
-		return false;
-	}
-
-	public Part part(Blueprint blueprint) {
-		Part newPart;
-		switch(blueprint.type) {
-		case Part.IMAGE:
-			newPart = new ImagePart(blueprint);
-			newPart.setParent(this);
-			break;
-		case Part.SHAPE:
-			newPart = new ShapePart(blueprint);
-			newPart.setParent(this);;
-			break;
-		default:
-			throw new RuntimeException("The declared part type is not valid.");
-		}
-		parts.add(newPart);
-		return newPart;
-	}
-
-	public Part part(Blueprint blueprint, float x, float y) {
-		Part newPart;
-		switch(blueprint.type) {
-		case Part.IMAGE:
-			newPart = new ImagePart(blueprint, x, y);
-			newPart.setParent(this);
-			break;
-		case Part.SHAPE:
-			newPart = new ShapePart(blueprint, x, y);
-			newPart.setParent(this);
-			break;
-		default:
-			throw new RuntimeException("The declared part type is not valid.");
-		}
-		parts.add(newPart);
-		return newPart;
-	}
-
-	public void mouseEvent(MouseEvent event) {
-		if(enabled && visible) {
-			for(int p=0; p < parts.size(); p++) {
-				Part part = parts.get(p);		
-				part.mouseEvent(event);		
-			}
-			blueprint.partEvent(new PartEvent(this, event));
-		}
-	}
-
-	public void mouseEvent(MouseWheelEvent event) {
-		if(enabled && visible) {
-			for(int p=0; p < parts.size(); p++) {
-				Part part = parts.get(p);		
-				part.mouseEvent(event);		
-			}
-			blueprint.partEvent(new PartEvent(this, event));
-		}
-	}
-
-	public boolean partEvent(MouseEvent event, float shiftX, float shiftY) {
-		if(enabled && visible) {
-			boolean found = false;
-			for(int p=parts.size()-1; p >= 0 ; p--) {
-				Part part = parts.get(p);	
-				found = part.partEvent(event, left+shiftX, top+shiftY);
-			}
-			if(!found) {
-				if(mouseReallyInside((int)shiftX, (int)shiftY)) {
-					updateLocalMouse();
-					blueprint.partEvent(new PartEvent(this, event, event.getID()-500));
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public boolean partEvent(MouseWheelEvent event, float shiftX, float shiftY) {
-		if(enabled && visible) {
-			for(int p=parts.size()-1; p >= 0 ; p--) {
-				Part part = parts.get(p);		
-				if(part.partEvent(event, left+shiftX, top+shiftY)) {
-					part.getBlueprint().partEvent(new PartEvent(part, event, event.getID()-500));
-					break;
-				}
-			}
-			if(mouseReallyInside((int)shiftX, (int)shiftY)) {
-				updateLocalMouse();
-				blueprint.partEvent(new PartEvent(this, event, event.getID()-500));
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@SuppressWarnings("deprecation")
 	void drawPlane(float width, float height, float pivotX, float pivotY, PImage texture) {
+		Prototype.stage.pushMatrix();
+		if(widthToScale() != 1 || heightToScale() != 1) {
+			Prototype.stage.scale(widthToScale(), heightToScale());
+		}
 		Prototype.stage.pushStyle();
 		Prototype.stage.textureMode(PConstants.NORMALIZED);
 		Prototype.stage.noStroke();
@@ -292,117 +60,65 @@ public class ImagePart implements Part {
 		Prototype.stage.vertex(-width*pivotX, height*(1-pivotY), 0, 1);
 		Prototype.stage.endShape(PConstants.CLOSE);
 		Prototype.stage.popStyle();
+		Prototype.stage.popMatrix();
 	}
 
 	void scale9Grid(int width, int height, float pivotX, float pivotY, Box box, PImage texture) {
-		PImage img = Prototype.stage.createImage(width, height, PConstants.ARGB);
-		img.loadPixels();
-		int dW = width - texture.width;
-		int dH = height - texture.height;
-		for(int y = 0; y < height; y++) {
-			for(int x = 0; x < width; x++) {
-				if(x < box.left) {
-					if(y < box.top) {
-						img.pixels[ (x+y*width)] = texture.pixels[x+y*texture.width];
-					} else if(y >= height-box.bottom) {
-						img.pixels[ (x+y*width)] = texture.pixels[x+(y-dH)*texture.width];
-					} else {
-						img.pixels[ (x+y*width)] = texture.pixels[x+(int)box.top*texture.width];
-					}
-				} else if(x >= width-box.right) {
-					if(y < box.top) {
-						img.pixels[ (x+y*width)] = texture.pixels[(x-dW)+y*texture.width];
-					} else if(y >= height-box.bottom) {
-						img.pixels[ (x+y*width)] = texture.pixels[(x-dW)+(y-dH)*texture.width];
-					} else {
-						img.pixels[ (x+y*width)] = texture.pixels[(x-dW)+(int)box.top*texture.width];
-					}
-				} else {
-					if(y < box.top) {
-						img.pixels[ (x+y*width)] = texture.pixels[(int)box.left+y*texture.width];
-					} else if(y >= height-box.bottom) {
-						img.pixels[ (x+y*width)] = texture.pixels[(int)box.left+(y-dH)*texture.width];
-					} else {
-						img.pixels[ (x+y*width)] = texture.pixels[(int)box.left+(int)box.top*texture.width];
-					}
-				}
+		Prototype.stage.pushMatrix();
+		Prototype.stage.translate(-getWidth()*pivotX, -getHeight()*pivotY);
+		if(widthToScale() != 1 || heightToScale() != 1) {
+			Prototype.stage.scale(widthToScale(), heightToScale());
+		}
+		faces[0] = new float[][] {
+				{ 0, 0, box.left/widthToScale(), box.top/heightToScale(), 0, 0, box.left, box.top }, 
+				{ box.left/widthToScale(), 0, width-box.right/widthToScale(), box.top/heightToScale(), box.left, 0, texture.width-box.right, box.top },
+				{ width-box.right/widthToScale(), 0, width, box.top/heightToScale(), texture.width-box.right, 0, texture.width, box.top } 
+		};
+		faces[1] = new float[][]{ 
+				{ faces[0][0][0], box.top/heightToScale(), faces[0][0][2], height-box.bottom/heightToScale(), faces[0][0][4], box.top+1, faces[0][0][6],  texture.height-box.bottom-1 }, 
+				{ faces[0][1][0], box.top/heightToScale(), faces[0][1][2], height-box.bottom/heightToScale(), faces[0][1][4], box.top+1, faces[0][1][6],  texture.height-box.bottom-1 },
+				{ faces[0][2][0], box.top/heightToScale(), faces[0][2][2], height-box.bottom/heightToScale(), faces[0][2][4], box.top+1, faces[0][2][6],  texture.height-box.bottom-1 } 
+		};
+		faces[2] = new float[][] {
+				{ faces[0][0][0], height-box.bottom/heightToScale(), faces[0][0][2], height, faces[0][0][4], texture.height-box.bottom, faces[0][0][6],  texture.height},
+				{ faces[0][1][0], height-box.bottom/heightToScale(), faces[0][1][2], height, faces[0][1][4], texture.height-box.bottom, faces[0][1][6],  texture.height},
+				{ faces[0][2][0], height-box.bottom/heightToScale(), faces[0][2][2], height, faces[0][2][4], texture.height-box.bottom, faces[0][2][6],  texture.height}
+		};	
+		Prototype.stage.pushStyle();
+		Prototype.stage.noStroke();
+		Prototype.stage.textureMode(PConstants.IMAGE);
+		for(int row = 0; row < 3; row++) {
+			for(int col = 0; col < 3; col++) {
+				rectShape(texture, faces[row][col][0], faces[row][col][1], faces[row][col][2], faces[row][col][3], faces[row][col][4], faces[row][col][5], faces[row][col][6], faces[row][col][7]);
 			}
 		}
-		img.updatePixels();
-		drawPlane(width, height, pivotX, pivotY, img);
+		Prototype.stage.popStyle();
+		Prototype.stage.popMatrix();
 	}
 
-	public Blueprint getBlueprint() { return blueprint; }
-	public void setBlueprint(Blueprint blueprint) { this.blueprint = blueprint; }
+	private void rectShape(PImage texture, float x1, float y1, float x2, float y2, float tx1, float ty1, float tx2, float ty2) {
+		Prototype.stage.beginShape();
+		Prototype.stage.texture(texture);
+		Prototype.stage.vertex(x1, y1, tx1, ty1);
+		Prototype.stage.vertex(x2, y1, tx2, ty1);
+		Prototype.stage.vertex(x2, y2, tx2, ty2);
+		Prototype.stage.vertex(x1, y2, tx1, ty2);
+		Prototype.stage.endShape(PConstants.CLOSE);
+	}
 
-	public SmartInt width() { return width; }
-	public int getWidth() { return this.width.value(); }
-	public void setWidth(float value) { this.width.value(value); }
-
-	public SmartInt height() { return height; }
-	public int getHeight() { return this.height.value(); }
-	public void setHeight(float value) { this.height.value(value); }
-
-	public SmartInt x() { return x; }
-	public int getX() { return this.x.value(); }
-	public void setX(float value) { this.x.value(value); }
-
-	public SmartInt y() { return y; }
-	public int getY() { return this.y.value(); }
-	public void setY(float value) { this.y.value(value); }
-
-	public SmartFloat relX() { return relX; }
-	public float getRelX() { return this.relX.value(); }
-	public void setRelX(float value) { this.relX.value(value); }
-
-	public SmartFloat relY() { return relY; }
-	public float getRelY() { return this.relY.value(); }
-	public void setRelY(float value) { this.relY.value(value); }
-
-	public SmartFloat scaleX() { return scaleX; }
-	public float getScaleX() { return this.scaleX.value(); }
-	public void setScaleX(float value) { this.scaleX.value(value); }
-
-	public SmartFloat scaleY() { return scaleY; }
-	public float getScaleY() { return this.scaleY.value(); }
-	public void setScaleY(float value) { this.scaleY.value(value); }
-
-	public SmartFloat pivotX() { return pivotX; }
-	public float getPivotX() { return this.pivotX.value(); }
-	public void setPivotX(float value) { this.pivotX.value(value); }
-
-	public SmartFloat pivotY() { return pivotY; }
-	public float getPivotY() { return this.pivotY.value(); }
-	public void setPivotY(float value) { this.pivotY.value(value); }
-
-	public SmartFloat rotation() { return rotation; }
-	public float getRotation() { return this.rotation.value(); }
-	public void setRotation(float value) { this.rotation.value(value); }
-
-	public SmartFloat alpha() { return alpha; }
-	public float getAlpha() { return this.alpha.value(); }
-	public void setAlpha(float value) { this.alpha.value(value); }
-
-	public int localMouseX() { return (int)(localMouse[0]); }
-	public int localMouseY() { return (int)(localMouse[1]);	}
-
-	public int plocalMouseX() { return (int)(localMouse[2]);}
-	public int plocalMouseY() { return (int)(localMouse[3]);}
-
-	public boolean visible() { return this.visible; }
-	public void visible(boolean state) { this.visible = state; }
-
-	public boolean enabled() { return this.enabled; }
-	public void enabled(boolean state) { this.enabled = state; }
-
-	public boolean showPivot() { return this.showPivot; }
-	public void showPivot(boolean state) { this.showPivot = state; }
-	
-	public float left() { calcBox(); return left; }
-	public float top() { calcBox(); return top; }
-	public float right() { calcBox(); return right; }
-	public float bottom() { calcBox(); return bottom; }
-	
-	public Part getParent() { return this.parent; }
-	public void setParent(Part parent) { this.parent = parent; }
+	public boolean mouseInside() {
+		switch(getBlueprint().collisionMethod) {
+		case Part.DEFAULT:
+			return pixelCollide(localMouseX(), localMouseY(), diffuseMap);
+		case Part.BOX:
+			return boxCollide(localMouseX(), localMouseY());
+		case Part.CIRCLE:
+			return circleCollide(localMouseX(), localMouseY());
+		case Part.PIXEL:
+			return pixelCollide(localMouseX(), localMouseY(), diffuseMap);
+		default:
+			System.err.println("Invalid Collision Method. Switching to Box Collision");
+			return boxCollide(localMouseX(), localMouseY());
+		}
+	}
 }
