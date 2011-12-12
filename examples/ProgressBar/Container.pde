@@ -2,7 +2,7 @@ class Container extends Blueprint {
     
   Container() {
     super();
-    width = 46;
+    width = 31;
     height = 30;
     scaleGrid = new Box(15);
     

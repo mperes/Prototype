@@ -4,7 +4,6 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 
