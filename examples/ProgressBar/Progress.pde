@@ -4,11 +4,11 @@ class Progress extends Container {
   
   Progress() {
     super();
-    width = 19;
-    height = 18;
+    width = 33;
+    height = 30;
     pivotY = .5;
     relY = .5;
-    scaleGrid = new Box(9); //Some borders to preserve the transparency around the bar.
+    scaleGrid = new Box(16, 15, 16, 15); //Define the 9 scale grid box.
   }
   
   void description() {

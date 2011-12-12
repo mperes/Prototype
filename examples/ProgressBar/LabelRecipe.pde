@@ -28,7 +28,7 @@ class LabelRecipe extends Blueprint {
     blueprint.textAlign(CENTER, CENTER);
     fill(70);
     blueprint.textFont(font); 
-    blueprint.text(round(map(progress.getWidth(), progressBarMargin*3, progressBarW-2*progressBarMargin, 0, 100 )) + "%", 30, 25);
+    blueprint.text(round(map(progress.getWidth(), knob.getWidth(), progressBarW, 0, 100 )) + "%", progressBarX-progressBarW/2, progressBarY-20);
   }
 }
 
