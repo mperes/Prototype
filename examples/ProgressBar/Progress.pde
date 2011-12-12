@@ -9,6 +9,9 @@ class Progress extends Container {
     pivotY = .5;
     relY = .5;
     scaleGrid = new Box(16, 15, 16, 15); //Define the 9 scale grid box.
+    
+    //Set the part to be not interactive
+    intractable = false;
   }
   
   void description() {

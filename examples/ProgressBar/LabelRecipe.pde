@@ -19,6 +19,9 @@ class LabelRecipe extends Blueprint {
     //Relative to the center of the parent.
     relX = .5;
     relY = .5;
+    
+    //Set the part to be not interactive
+    intractable = false;
   }
 
   //Describe you blueprint here by simple describing a drawing like you would in the main graphics.

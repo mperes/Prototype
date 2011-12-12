@@ -4,6 +4,7 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 
@@ -183,9 +184,9 @@ abstract public class BasicPart implements Part {
 
 	public boolean circleCollide(int x, int y) {
 		calcBox();
-		float center_x = (right-left)/2;
-		float center_y = (bottom-top)/2;
-		float radius = (getWidth() > getHeight()) ? getWidth() : getHeight();
+		float center_x = left + (right-left)/2;
+		float center_y = top + (bottom-top)/2;
+		float radius = (getWidth() > getHeight()) ? getWidth()/2 : getHeight()/2;		
 		return (x-center_x)*(x-center_x) + (y - center_y)*(y - center_y) < radius*radius;
 	}
 

@@ -8,10 +8,8 @@ class KnobHighlight extends Blueprint {
     width = 30;
     height = 30;
     
-    pivotX = 1;
-    
     //Set the part to be not interactive
-    interacble = false;
+    intractable = false;
   }
   
   void description() {

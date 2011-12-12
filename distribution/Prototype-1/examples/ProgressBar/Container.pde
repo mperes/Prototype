@@ -5,6 +5,9 @@ class Container extends Blueprint {
     width = 46;
     height = 30;
     scaleGrid = new Box(15);
+    
+    //Set the part to be not interactive
+    intractable = false;
   }
   
   void description() {

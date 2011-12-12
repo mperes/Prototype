@@ -31,8 +31,8 @@ class Knob extends Blueprint {
       if(this.dragging) {
         event.part.setX(event.part.getX()+mouseX-pmouseX);
         progress.setWidth(event.part.getX());
-        //println(eventpart.getX());
         highlight.setAlpha(  map(event.part.getX(), event.part.getWidth(), event.part.getWidth()+15, 0, 1) );
+        println( round(map(event.part.getX(), event.part.getWidth(), progressBarW, 0, 100)) + "%");
       }
       break;
     case PartEvent.MOUSE_RELEASED:

@@ -1,17 +1,17 @@
 import processing.opengl.*;
 import javax.media.opengl.GL;
 import prototype.*;
-       
+
 //Necessary to make straight OpenGL calls.
 PGraphicsOpenGL pgl;
 GL gl;
 
 Prototype prototype;
 
-final int progressBarX = 50;
-final int progressBarY = 50;
 final int progressBarW = 300;
 final int progressBarH = 30;
+final int progressBarX = 50;
+final int progressBarY = 50;
 
 Part progress;
 Part knob;
@@ -20,8 +20,8 @@ Part highlight;
 PFont font;
 
 void setup() {
-  size(800, 600, OPENGL);
- 
+  size(400, 130, OPENGL);
+
   //set vertical sync on to avoid tearing on the scrolling.  
   pgl = (PGraphicsOpenGL) g;
   gl = pgl.beginGL();
@@ -29,34 +29,29 @@ void setup() {
   pgl.endGL();
 
   font = loadFont("ArialMT-14.vlw"); 
+  
   //Its is necessary to initialize an Prototype instance before using the library.
   //Think of it like a canvas where your prototype is gonna run.
   prototype = Prototype.createPrototype(this);
-  
+
   Part container = prototype.part(new Container(), progressBarX, progressBarY);
-  prototype.part(new LabelRecipe(), 175, 10);
+  //prototype.part(new LabelRecipe(), 175, 5);
   progress = container.part(new Progress());
   knob = progress.part(new Knob());
   highlight = knob.part(new KnobHighlight());
-  
-  
+
+
   container.setWidth(progressBarW);
   container.setHeight(progressBarH);
-  
-   knob.x().constrain(knob.getWidth(), progressBarW);
-   progress.width().constrain(0, progressBarW);
-   progress.setWidth(knob.getX());
-   
-   highlight.setAlpha(0);
-  
+
+  knob.x().constrain(knob.getWidth(), progressBarW);
+  progress.width().constrain(0, progressBarW);
+  progress.setWidth(knob.getX());
+
+  highlight.setAlpha(0);
 }
 
 void draw() {
- background(230);
-  // if(inactivityCounter >= 300) {
-    //knob.setX(map( sin(radians(millis()/20)), -1, 1, knob.getWidth(), progressBarW ));
-    //progress.setWidth(knob.getX());
-    //highlight.setAlpha(  map(min(knob.getX(), 15), 0, 15, 0, 1) );
- // }
-  //println(highlight.getAlpha());
+  background(255);
 }
+
