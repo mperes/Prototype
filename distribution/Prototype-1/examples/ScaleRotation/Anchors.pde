@@ -1,6 +1,6 @@
-class AnchorRecipe extends Blueprint {
+class Anchor extends Blueprint {
   boolean dragging = false;
-  AnchorRecipe() {
+  Anchor() {
     //As a rule of a thumb, always call super() as your first line of the constructor.
     super();
 
@@ -12,33 +12,19 @@ class AnchorRecipe extends Blueprint {
     pivotX = .5;
     pivotY = .5;
 
-    //This you can play with:
-    /*
-    int x;
-    int y;
-    float relX;
-    float relY;
-    int width;
-    int height;
-    float scaleX;
-    float scaleY;
-    float pivotX;
-    float pivotY;
-    float rotation;
-    float alpha;
-
-    boolean visible;
-    boolean enabled;
-    boolean showPivot;
-    boolean unique ;
-    */
+    //Sets the the part as a shape part. Draws the description everyframe instead of using a Image buffer.
+    //Default type is Part.IMAGE.
+    type = Part.SHAPE;
+    
+    collisionMethod = Part.BOX;
   }
 
   void description() {
     blueprint.smooth();
-    blueprint.ellipseMode(CORNER);
-    //Circle size is set to 11 due to the line stroke.
-    blueprint.ellipse(0, 0, 11, 11);
+    blueprint.noStroke();
+    blueprint.rectMode(CORNER);
+    blueprint.fill(#e410dd, 200);
+    blueprint.rect(0, 0, 12, 12);
   }
 
   public void partEvent(PartEvent e) {
@@ -61,16 +47,16 @@ class AnchorRecipe extends Blueprint {
   }
 
   void resizePic(PartEvent e, int w, int h) {
-    int newWidth = imagePart.getWidth() - w*(e.localX - e.plocalX);
-    int newHeight = imagePart.getHeight() - h*(e.localY - e.plocalY);
-    imagePart.setWidth(newWidth);
-    imagePart.setHeight(newHeight);
+    int newWidth = blueSquare.getWidth() - w*(e.localX - e.plocalX);
+    int newHeight = blueSquare.getHeight() - h*(e.localY - e.plocalY);
+    blueSquare.setWidth(newWidth);
+    blueSquare.setHeight(newHeight);
   }
 }
 
 //You can reutilize your own blueprints by extending them.
-class AnchorRecipeTL extends AnchorRecipe {
-  AnchorRecipeTL() {
+class AnchorTL extends Anchor {
+  AnchorTL() {
     super(); //Always call Super().
     //Relative to top left (Default)
     //relX = 0;
@@ -81,9 +67,9 @@ class AnchorRecipeTL extends AnchorRecipe {
   }
 }
 
-class AnchorRecipeTR extends AnchorRecipe {
+class AnchorTR extends Anchor {
   boolean dragging = false;
-  AnchorRecipeTR() {
+  AnchorTR() {
     super(); //Always call Super().
 
     //Relative to the top right corner;
@@ -97,8 +83,8 @@ class AnchorRecipeTR extends AnchorRecipe {
   }
 }
 
-class AnchorRecipeBR extends AnchorRecipe {
-  AnchorRecipeBR() {
+class AnchorBR extends Anchor {
+  AnchorBR() {
     super(); //Always call Super().
     //Relative to the bottom right corner;
     relX = 1;
@@ -110,8 +96,8 @@ class AnchorRecipeBR extends AnchorRecipe {
   }
 }
 
-class AnchorRecipeBL extends AnchorRecipe {
-  AnchorRecipeBL() {
+class AnchorBL extends Anchor {
+  AnchorBL() {
     super(); //Always call Super().
     //Relative to the bottom left corner;
     relX = 0;

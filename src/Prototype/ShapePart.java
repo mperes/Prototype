@@ -1,6 +1,6 @@
 package prototype;
 
-public class ShapePart extends BasicPart implements Part {
+public class ShapePart extends Part {
 	
 	int collisionType;
 	
@@ -19,17 +19,17 @@ public class ShapePart extends BasicPart implements Part {
 	}
 
 	public void drawPart() {
-		boolean scaled = false;
+		Prototype.stage.pushMatrix();
+		Prototype.stage.translate(-getWidth()*getPivotX(), -getHeight()*getPivotY());
 		if(widthToScale() != 1 || heightToScale() != 1) {
-			Prototype.stage.pushMatrix();
 			Prototype.stage.scale(widthToScale(), heightToScale());
-			scaled = true;
 		}
 		this.getBlueprint().description();
-		if(scaled) { Prototype.stage.popMatrix(); }
+		Prototype.stage.popMatrix();
 	}
 	
 	public boolean mouseInside() {
+		//updateLocalMouse();
 		switch(getBlueprint().collisionMethod) {
 		case Part.DEFAULT:
 			return boxCollide(localMouseX(), localMouseY());

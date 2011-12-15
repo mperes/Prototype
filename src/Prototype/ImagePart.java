@@ -2,7 +2,7 @@ package prototype;
 import processing.core.PConstants;
 import processing.core.PImage;
 
-public class ImagePart extends BasicPart implements Part {
+public class ImagePart extends Part {
 	private PImage diffuseMap;
 	private float[][][] faces;
 

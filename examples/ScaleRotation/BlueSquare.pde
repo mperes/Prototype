@@ -1,7 +1,7 @@
-class ImageRecipe extends Blueprint {
+class BlueSquare extends Blueprint {
 
   boolean dragging = false;
-  ImageRecipe() {
+  BlueSquare() {
     //As a rule of a thumb, always call super() as your first line of the constructor.
     super();
 
@@ -13,14 +13,19 @@ class ImageRecipe extends Blueprint {
     pivotX = .5;
     pivotY = .5;
     
-    //Display the Part's pivot point.
-    showPivot = true;
+    //Sets the the part as a shape part. Draws the description everyframe instead of using a Image buffer.
+    //Default type is Part.IMAGE.
+    type = Part.SHAPE;
+    
+    //showPivot = true;
   }
 
   //Describe you blueprint here by simple describing a drawing like you would in the main graphics.
   void description() {
-    PImage picture = loadImage("spider.jpg");
-    blueprint.image(picture, 0, 0);
+     blueprint.noStroke();
+     blueprint.fill(#10b0e4, 200);
+     blueprint.smooth();
+     blueprint.rect(0, 0, 300, 200);
   }
 
   public void partEvent(PartEvent e) {

@@ -4,11 +4,11 @@ class Progress extends Container {
   
   Progress() {
     super();
-    width = 33;
+    width = 31;
     height = 30;
     pivotY = .5;
     relY = .5;
-    scaleGrid = new Box(16, 15, 16, 15); //Define the 9 scale grid box.
+    scaleGrid = new Box(15); //Define the 9 scale grid box.
     
     //Set the part to be not interactive
     intractable = false;
