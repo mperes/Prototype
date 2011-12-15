@@ -2,7 +2,7 @@ package prototype;
 
 import processing.core.PGraphics;
 
-public abstract class Skin {
+public abstract class Blueprint {
 	
 	public int type = Part.IMAGE;
 	public int collisionMethod;
@@ -29,7 +29,7 @@ public abstract class Skin {
 	
 	public Box scaleGrid;
 	
-	public Skin() {
+	public Blueprint() {
 		type = Part.IMAGE;
 		collisionMethod = Part.DEFAULT;
 		scaleX = 1;

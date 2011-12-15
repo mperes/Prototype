@@ -17,10 +17,9 @@ abstract public class Part {
 	public static final int CIRCLE = 2;
 	public static final int PIXEL = 3;
 	
-	private Skin blueprint;
+	private Blueprint blueprint;
 	public Part parent;
 	ArrayList<Part> parts;
-	ArrayList<Behavior> behaviors;
 
 	private SmartInt width;
 	private SmartInt height;
@@ -42,38 +41,27 @@ abstract public class Part {
 	private int pivotModelX;
 	private int pivotModelY;
 
-	protected boolean visible;
-	protected boolean enabled;
-	protected boolean showPivot;
-	protected boolean interactble;
+	private boolean visible;
+	private boolean enabled;
+	private boolean showPivot;
+	private boolean interactble;
 
 	private float[] localMouse;
 	protected PMatrix3D localModel;
 
-	public Part (String imgPath, Behavior... behaviors) {
-		diffuseMap = Prototype.loadTexture(skin);
+	public Part (Blueprint blueprint) {
 		this.initPart(blueprint);
-		this.behaviors = new ArrayList<Behavior>();
-		for (Behavior b : behaviors) {
-			b.initBehavior(this);
-			this.behaviors.add(b);
-	    }
 	}
 
-	public Part (Skin blueprint, float x, float y, Behavior... behaviors) {
+	public Part (Blueprint blueprint, float x, float y) {
 		this.initPart(blueprint);
 		this.setX(x);
 		this.setY(y);
-		this.behaviors = new ArrayList<Behavior>();
-		for (Behavior b : behaviors) {
-			b.initBehavior(this);
-			this.behaviors.add(b);
-	    }
 	}	
 
-	abstract protected void initPart (Skin blueprint);
-	
-	protected void basicSetup(Skin blueprint) {
+	abstract protected void initPart (Blueprint blueprint);
+
+	protected void basicSetup(Blueprint blueprint) {
 
 		if(blueprint.width == 0 || blueprint.height == 0) {
 			throw new RuntimeException("A Part's height or width cannnot be 0. Set the 'width' and 'height' in your your class constructor to fix this.");
@@ -227,23 +215,23 @@ abstract public class Part {
 		return false;
 	}
 
-	public Part part(Skin blueprint, Behavior... behaviors) {
-		return addPart(blueprint, 0, 0, behaviors);
+	public Part part(Blueprint blueprint) {
+		return addPart(blueprint, 0, 0);
 	}
 
-	public Part part(Skin blueprint, float x, float y, Behavior... behaviors) {
-		return addPart(blueprint, x, y, behaviors);
+	public Part part(Blueprint blueprint, float x, float y) {
+		return addPart(blueprint, x, y);
 	}
 
-	protected Part addPart(Skin blueprint, float x, float y, Behavior... behaviors) {
+	protected Part addPart(Blueprint blueprint, float x, float y) {
 		Part newPart;
 		switch(blueprint.type) {
 		case Part.IMAGE:
-			newPart = new ImagePart(blueprint, x, y, behaviors);
+			newPart = new ImagePart(blueprint, x, y);
 			newPart.setParent(this);
 			break;
 		case Part.SHAPE:
-			newPart = new ShapePart(blueprint, x, y, behaviors);
+			newPart = new ShapePart(blueprint, x, y);
 			newPart.setParent(this);
 			break;
 		default:
@@ -323,8 +311,8 @@ abstract public class Part {
 		return (float)this.getHeight() / (float)this.getBlueprint().height;
 	}
 
-	public Skin getBlueprint() { return blueprint; }
-	public void setBlueprint(Skin blueprint) { this.blueprint = blueprint; }
+	public Blueprint getBlueprint() { return blueprint; }
+	public void setBlueprint(Blueprint blueprint) { this.blueprint = blueprint; }
 
 	public SmartInt width() { return width; }
 	public int getWidth() { return this.width.value(); }

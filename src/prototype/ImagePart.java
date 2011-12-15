@@ -1,24 +1,20 @@
 package prototype;
-import java.util.ArrayList;
-
 import processing.core.PConstants;
 import processing.core.PImage;
-import processing.core.PMatrix3D;
 
 public class ImagePart extends Part {
 	private PImage diffuseMap;
 	private float[][][] faces;
 
-	public ImagePart (String skin, Behavior... behaviors) {
-		diffuseMap = Prototype.loadTexture(skin);
-		setDefaultValues();
+	public ImagePart (Blueprint blueprint) {
+		super(blueprint);
 	}
 
-	public ImagePart (PartBuilder builder) {
-		//super(blueprint, x, y, behaviors);
-	}
+	public ImagePart (Blueprint blueprint, float x, float y) {
+		super(blueprint, x, y);
+	}	
 
-	protected void initPart (Skin blueprint) {
+	protected void initPart (Blueprint blueprint) {
 		basicSetup(blueprint);
 		this.getBlueprint().initBlueprint(Prototype.offScreenBuffer);
 

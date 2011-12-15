@@ -4,15 +4,15 @@ public class ShapePart extends Part {
 	
 	int collisionType;
 	
-	public ShapePart (Skin blueprint, Behavior... behaviors) {
-		super(blueprint, behaviors);
+	public ShapePart (Blueprint blueprint) {
+		super(blueprint);
 	}
 
-	public ShapePart (Skin blueprint, float x, float y, Behavior... behaviors) {
-		super(blueprint, x, y, behaviors);
+	public ShapePart (Blueprint blueprint, float x, float y) {
+		super(blueprint, x, y);
 	}	
 
-	protected void initPart (Skin blueprint) {
+	protected void initPart (Blueprint blueprint) {
 		basicSetup(blueprint);
 		this.getBlueprint().initBlueprint(Prototype.stage.g);
 		this.calcBox();
