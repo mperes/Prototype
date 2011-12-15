@@ -17,7 +17,7 @@ abstract public class Part {
 	public static final int CIRCLE = 2;
 	public static final int PIXEL = 3;
 	
-	private Blueprint blueprint;
+	private Skin blueprint;
 	public Part parent;
 	ArrayList<Part> parts;
 
@@ -49,19 +49,19 @@ abstract public class Part {
 	private float[] localMouse;
 	protected PMatrix3D localModel;
 
-	public Part (Blueprint blueprint) {
+	public Part (Skin blueprint) {
 		this.initPart(blueprint);
 	}
 
-	public Part (Blueprint blueprint, float x, float y) {
+	public Part (Skin blueprint, float x, float y) {
 		this.initPart(blueprint);
 		this.setX(x);
 		this.setY(y);
 	}	
 
-	abstract protected void initPart (Blueprint blueprint);
+	abstract protected void initPart (Skin blueprint);
 
-	protected void basicSetup(Blueprint blueprint) {
+	protected void basicSetup(Skin blueprint) {
 
 		if(blueprint.width == 0 || blueprint.height == 0) {
 			throw new RuntimeException("A Part's height or width cannnot be 0. Set the 'width' and 'height' in your your class constructor to fix this.");
@@ -215,15 +215,15 @@ abstract public class Part {
 		return false;
 	}
 
-	public Part part(Blueprint blueprint) {
+	public Part part(Skin blueprint) {
 		return addPart(blueprint, 0, 0);
 	}
 
-	public Part part(Blueprint blueprint, float x, float y) {
+	public Part part(Skin blueprint, float x, float y) {
 		return addPart(blueprint, x, y);
 	}
 
-	protected Part addPart(Blueprint blueprint, float x, float y) {
+	protected Part addPart(Skin blueprint, float x, float y) {
 		Part newPart;
 		switch(blueprint.type) {
 		case Part.IMAGE:
@@ -311,8 +311,8 @@ abstract public class Part {
 		return (float)this.getHeight() / (float)this.getBlueprint().height;
 	}
 
-	public Blueprint getBlueprint() { return blueprint; }
-	public void setBlueprint(Blueprint blueprint) { this.blueprint = blueprint; }
+	public Skin getBlueprint() { return blueprint; }
+	public void setBlueprint(Skin blueprint) { this.blueprint = blueprint; }
 
 	public SmartInt width() { return width; }
 	public int getWidth() { return this.width.value(); }

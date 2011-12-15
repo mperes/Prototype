@@ -6,15 +6,15 @@ public class ImagePart extends Part {
 	private PImage diffuseMap;
 	private float[][][] faces;
 
-	public ImagePart (Blueprint blueprint) {
+	public ImagePart (Skin blueprint) {
 		super(blueprint);
 	}
 
-	public ImagePart (Blueprint blueprint, float x, float y) {
+	public ImagePart (Skin blueprint, float x, float y) {
 		super(blueprint, x, y);
 	}	
 
-	protected void initPart (Blueprint blueprint) {
+	protected void initPart (Skin blueprint) {
 		basicSetup(blueprint);
 		this.getBlueprint().initBlueprint(Prototype.offScreenBuffer);
 

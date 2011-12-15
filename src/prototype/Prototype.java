@@ -15,7 +15,7 @@ import processing.core.PImage;
 public class Prototype implements MouseWheelListener {
 	static PImage pivot;
 	static int[] pivotPixels;
-	static PApplet stage;
+	public static PApplet stage;
 	static PGraphics offScreenBuffer;
 	Tweener tweener;
 	ArrayList<Part> parts;
@@ -54,7 +54,7 @@ public class Prototype implements MouseWheelListener {
 		}
 	}
 
-	public Part part(Blueprint blueprint) {
+	public Part part(Skin blueprint) {
 		Part newPart;
 		switch(blueprint.type) {
 		case Part.IMAGE:
@@ -70,7 +70,7 @@ public class Prototype implements MouseWheelListener {
 		return newPart;
 	}
 	
-	public Part part(Blueprint blueprint, float x, float y) {
+	public Part part(Skin blueprint, float x, float y) {
 		Part newPart;
 		switch(blueprint.type) {
 		case Part.IMAGE:
@@ -150,7 +150,7 @@ public class Prototype implements MouseWheelListener {
 		Prototype.offScreenBuffer.updatePixels();
 	}
 	
-	public static PImage addDiffuseMap(Blueprint blueprint, int w, int h) {
+	public static PImage addDiffuseMap(Skin blueprint, int w, int h) {
 		if(blueprint.unique) {
 			PImage newImg = Prototype.stage.createImage(w, h, PConstants.ARGB);
 			newImg.set(0, 0, offScreenBuffer);
