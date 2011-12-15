@@ -2,7 +2,7 @@ package prototype;
 
 import java.awt.event.MouseEvent;
 
-public abstract class MouseBehavior implements Behavior{
+public abstract class MouseBehavior implements Behavior {
 	
 	Part parent;
 	boolean mouseOver;

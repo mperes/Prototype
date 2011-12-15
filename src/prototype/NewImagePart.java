@@ -7,19 +7,11 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 
-abstract public class Part {
-	
-	public static final int SHAPE = 0;
-	public static final int IMAGE = 1;
-
-	public static final int DEFAULT = 0;
-	public static final int BOX = 1;
-	public static final int CIRCLE = 2;
-	public static final int PIXEL = 3;
+abstract public class NewImagePart {
 	
 	private Skin blueprint;
-	public Part parent;
-	ArrayList<Part> parts;
+	public NewImagePart parent;
+	ArrayList<NewImagePart> parts;
 	ArrayList<Behavior> behaviors;
 
 	private SmartInt width;
@@ -49,58 +41,81 @@ abstract public class Part {
 
 	private float[] localMouse;
 	protected PMatrix3D localModel;
+	
+	//Image Part only
+	private PImage diffuseMap;
+	private float[][][] faces;
 
-	public Part (String imgPath, Behavior... behaviors) {
+	public NewImagePart (String skin, Behavior... behaviors) {
 		diffuseMap = Prototype.loadTexture(skin);
-		this.initPart(blueprint);
+		initWithDefaultValues();
+		this.setWidth(diffuseMap.width);
+		this.setHeight(diffuseMap.height);
 		this.behaviors = new ArrayList<Behavior>();
 		for (Behavior b : behaviors) {
 			b.initBehavior(this);
 			this.behaviors.add(b);
 	    }
+		calcBox();
 	}
 
-	public Part (Skin blueprint, float x, float y, Behavior... behaviors) {
-		this.initPart(blueprint);
-		this.setX(x);
-		this.setY(y);
-		this.behaviors = new ArrayList<Behavior>();
-		for (Behavior b : behaviors) {
-			b.initBehavior(this);
-			this.behaviors.add(b);
-	    }
-	}	
-
-	abstract protected void initPart (Skin blueprint);
-	
-	protected void basicSetup(Skin blueprint) {
-
-		if(blueprint.width == 0 || blueprint.height == 0) {
+	public NewImagePart (PartBuilder builder) {
+		diffuseMap = Prototype.loadTexture(skin);
+		
+		if(builder.width == 0 || builder.height == 0) {
 			throw new RuntimeException("A Part's height or width cannnot be 0. Set the 'width' and 'height' in your your class constructor to fix this.");
 		}
 
 		this.localMouse = new float[] {0, 0, 0, 0};
 		this.localModel = new PMatrix3D();
+		this.parts = new ArrayList<NewImagePart>();
+
+		this.width = new SmartInt(builder.width);
+		this.height = new SmartInt(builder.height);
+		this.x = new SmartInt(builder.x);
+		this.y = new SmartInt(builder.y);
+		this.relX = new SmartFloat(builder.relX, 0, 1);
+		this.relY = new SmartFloat(builder.relY, 0, 1);
+		this.scaleX = new SmartFloat(builder.scaleX);
+		this.scaleY = new SmartFloat(builder.scaleY);
+		this.pivotX = new SmartFloat(builder.pivotX, 0, 1);
+		this.pivotY = new SmartFloat(builder.pivotY, 0, 1);
+		this.rotation = new SmartFloat(builder.rotation);
+		this.alpha = new SmartFloat(builder.alpha, 0, 1);
+
+		this.visible(builder.visible);
+		this.enabled(builder.enabled);
+		this.showPivot(builder.showPivot);
+		this.interactble(builder.intractable);
+	}
+	
+	protected void initWithDefaultValues() {
+		this.localMouse = new float[] {0, 0, 0, 0};
+		this.localModel = new PMatrix3D();
 		this.parts = new ArrayList<Part>();
-		this.setBlueprint(blueprint);
 
-		this.width = new SmartInt(blueprint.width);
-		this.height = new SmartInt(blueprint.height);
-		this.x = new SmartInt(blueprint.x);
-		this.y = new SmartInt(blueprint.y);
-		this.relX = new SmartFloat(blueprint.relX, 0, 1);
-		this.relY = new SmartFloat(blueprint.relY, 0, 1);
-		this.scaleX = new SmartFloat(blueprint.scaleX);
-		this.scaleY = new SmartFloat(blueprint.scaleY);
-		this.pivotX = new SmartFloat(blueprint.pivotX, 0, 1);
-		this.pivotY = new SmartFloat(blueprint.pivotY, 0, 1);
-		this.rotation = new SmartFloat(blueprint.rotation);
-		this.alpha = new SmartFloat(blueprint.alpha, 0, 1);
+		this.width = new SmartInt(diffuseMap.width);
+		this.height = new SmartInt(diffuseMap.height);
+		this.x = new SmartInt(0);
+		this.y = new SmartInt(0);
+		this.relX = new SmartFloat(0, 0, 1);
+		this.relY = new SmartFloat(0, 0, 1);
+		this.scaleX = new SmartFloat(1);
+		this.scaleY = new SmartFloat(1);
+		this.pivotX = new SmartFloat(0, 0, 1);
+		this.pivotY = new SmartFloat(0, 0, 1);
+		this.rotation = new SmartFloat(0);
+		this.alpha = new SmartFloat(1, 0, 1);
 
-		this.visible(blueprint.visible);
-		this.enabled(blueprint.enabled);
-		this.showPivot(blueprint.showPivot);
-		this.interactble(blueprint.intractable);
+		this.visible(true);
+		this.enabled(true);
+		this.showPivot(false);
+		this.interactble(true);
+	}
+
+	abstract protected void initPart (Skin blueprint);
+	
+	protected void basicSetup(Skin blueprint) {
 	}
 
 	protected void calcBox() {
@@ -143,7 +158,7 @@ abstract public class Part {
 
 	void drawChildren() {
 		for(int p=0; p < parts.size(); p++) {
-			Part part = parts.get(p);
+			NewImagePart part = parts.get(p);
 			part.draw();
 		}
 	}
@@ -156,7 +171,7 @@ abstract public class Part {
 				Prototype.stage.image(Prototype.pivot, pivotModelX-5, pivotModelY-5);
 			}		
 			for(int p=0; p < parts.size(); p++) {
-				Part part = parts.get(p);
+				NewImagePart part = parts.get(p);
 				part.drawPivot();
 			}
 		}
@@ -184,7 +199,7 @@ abstract public class Part {
 
 	void updateParts() {
 		for(int p=0; p<parts.size(); p++) {
-			Part part = parts.get(p);
+			NewImagePart part = parts.get(p);
 			part.pre();
 		}
 	}
@@ -227,22 +242,22 @@ abstract public class Part {
 		return false;
 	}
 
-	public Part part(Skin blueprint, Behavior... behaviors) {
+	public NewImagePart part(Skin blueprint, Behavior... behaviors) {
 		return addPart(blueprint, 0, 0, behaviors);
 	}
 
-	public Part part(Skin blueprint, float x, float y, Behavior... behaviors) {
+	public NewImagePart part(Skin blueprint, float x, float y, Behavior... behaviors) {
 		return addPart(blueprint, x, y, behaviors);
 	}
 
-	protected Part addPart(Skin blueprint, float x, float y, Behavior... behaviors) {
-		Part newPart;
+	protected NewImagePart addPart(Skin blueprint, float x, float y, Behavior... behaviors) {
+		NewImagePart newPart;
 		switch(blueprint.type) {
-		case Part.IMAGE:
+		case NewImagePart.IMAGE:
 			newPart = new ImagePart(blueprint, x, y, behaviors);
 			newPart.setParent(this);
 			break;
-		case Part.SHAPE:
+		case NewImagePart.SHAPE:
 			newPart = new ShapePart(blueprint, x, y, behaviors);
 			newPart.setParent(this);
 			break;
@@ -256,7 +271,7 @@ abstract public class Part {
 	public void mouseEvent(MouseEvent event) {
 		if(enabled && visible) {
 			for(int p=parts.size()-1; p >= 0; p--) {
-				Part part = parts.get(p);		
+				NewImagePart part = parts.get(p);		
 				part.mouseEvent(event);		
 			}
 			if(interactble()) {
@@ -268,7 +283,7 @@ abstract public class Part {
 	public void mouseEvent(MouseWheelEvent event) {
 		if(enabled && visible) {
 			for(int p=parts.size()-1; p >= 0; p--) {
-				Part part = parts.get(p);		
+				NewImagePart part = parts.get(p);		
 				part.mouseEvent(event);		
 			}
 			if(interactble()) {
@@ -281,7 +296,7 @@ abstract public class Part {
 		if(enabled && visible) {
 			boolean found = false;
 			for(int p=parts.size()-1; p >= 0 ; p--) {
-				Part part = parts.get(p);	
+				NewImagePart part = parts.get(p);	
 				found = part.partEvent(event, left+shiftX, top+shiftY);
 				if(found) {
 					break;
@@ -301,7 +316,7 @@ abstract public class Part {
 	public boolean partEvent(MouseWheelEvent event, float shiftX, float shiftY) {
 		if(enabled && visible) {
 			for(int p=parts.size()-1; p >= 0 ; p--) {
-				Part part = parts.get(p);		
+				NewImagePart part = parts.get(p);		
 				if(part.partEvent(event, left+shiftX, top+shiftY)) {
 					part.getBlueprint().partEvent(new PartEvent(part, event, event.getID()-500));
 					break;
@@ -398,6 +413,6 @@ abstract public class Part {
 	public float right() { calcBox(); return right; }
 	public float bottom() { calcBox(); return bottom; }
 
-	public Part getParent() { return this.parent; }
-	public void setParent(Part parent) { this.parent = parent; }
+	public NewImagePart getParent() { return this.parent; }
+	public void setParent(NewImagePart parent) { this.parent = parent; }
 }

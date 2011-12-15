@@ -4,12 +4,12 @@ public class ShapePart extends Part {
 	
 	int collisionType;
 	
-	public ShapePart (Skin blueprint) {
-		super(blueprint);
+	public ShapePart (Skin blueprint, Behavior... behaviors) {
+		super(blueprint, behaviors);
 	}
 
-	public ShapePart (Skin blueprint, float x, float y) {
-		super(blueprint, x, y);
+	public ShapePart (Skin blueprint, float x, float y, Behavior... behaviors) {
+		super(blueprint, x, y, behaviors);
 	}	
 
 	protected void initPart (Skin blueprint) {
