@@ -2,7 +2,7 @@ package prototype;
 
 import java.awt.event.MouseEvent;
 
-public abstract class MouseBehavior implements Behavior{
+public abstract class MouseBehavior implements Behavior, PrototypeConstants {
 	
 	Part parent;
 	boolean mouseOver;
@@ -15,7 +15,6 @@ public abstract class MouseBehavior implements Behavior{
 	
 	public final void initBehavior(Part parent) {
 		this.parent = parent;
-		Prototype.stage.registerMouseEvent(this);
 	}
 
 	public final void mouseEvent(MouseEvent event) {
@@ -38,6 +37,10 @@ public abstract class MouseBehavior implements Behavior{
 			mouseMoved(event);
 			break;
 		}
+	}
+	
+	public int type() {
+		return MOUSE;
 	}
 	
 	public void mousePressed(MouseEvent e) { }

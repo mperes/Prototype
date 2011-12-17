@@ -10,11 +10,16 @@ public class SmartInt implements SmartNumber {
 	private boolean constrain;
 	
 	public SmartInt() {
+		this.value = 0;
+		this.min = 0;
+		this.max = 0;
 		this.constrain = false;
 	}
 	
 	public SmartInt(int value) {
 		this.value = value;
+		this.min = 0;
+		this.max = 0;
 		this.constrain = false;
 	}
 	
@@ -57,6 +62,12 @@ public class SmartInt implements SmartNumber {
 		this.constrain = true;
 		this.min = PApplet.round(min);
 		this.max = PApplet.round(max);
+	}
+	
+	public void constrain(float value) {
+		this.constrain = true;
+		this.min = PApplet.round(value);
+		this.max = PApplet.round(value);
 	}
 
 }

@@ -16,65 +16,65 @@ public class Kinetc extends MouseOverBehavior {
 	public Kinetc() { 
 		super();
 		Prototype.stage.registerPre(this);
-		maxCount = 10;
-		pointsX = new float[maxCount];
-		pointsY = new float[maxCount];
+		this.maxCount = 10;
+		this.pointsX = new float[this.maxCount];
+		this.pointsY = new float[this.maxCount];
 	}
 	
 	public void onStartDragging(MouseEvent e) {
-		startTime = Prototype.stage.millis();
-		pointsX = new float[maxCount];
-		pointsY = new float[maxCount];
-		counter = 0;
+		this.startTime = Prototype.stage.millis();
+		this.pointsX = new float[this.maxCount];
+		this.pointsY = new float[this.maxCount];
+		this.counter = 0;
 	}
 	
 	public void onDrag(MouseEvent e) {		
         addPoint(
-        		parent.localMouseX()-parent.plocalMouseX(),
-        		parent.localMouseY()-parent.plocalMouseY()
+        		this.parent.localMouseX()-this.parent.plocalMouseX(),
+        		this.parent.localMouseY()-this.parent.plocalMouseY()
         );
-		parent.setX(parent.getX() + parent.localMouseX()-parent.plocalMouseX());
-        parent.setY(parent.getY() + parent.localMouseY()-parent.plocalMouseY());
+        this.parent.x(this.parent.x() + this.parent.localMouseX()-this.parent.plocalMouseX());
+        this.parent.y(this.parent.y() + this.parent.localMouseY()-this.parent.plocalMouseY());
 	}
 	
 	public void onStopDragging(MouseEvent e) {	
-		kinetcSpeedX = averageSpeed(pointsX) / (Prototype.stage.millis() - startTime) * 100;
-		kinetcSpeedY = averageSpeed(pointsY) / (Prototype.stage.millis() - startTime) * 100;
+		this.kinetcSpeedX = this.averageSpeed(this.pointsX) / (Prototype.stage.millis() - this.startTime) * 100;
+		this.kinetcSpeedY = this.averageSpeed(this.pointsY) / (Prototype.stage.millis() - this.startTime) * 100;
 	}
 	
 	public void pre() {
-		if(Math.abs(kinetcSpeedX) >= 1) {
-			parent.setX(parent.getX() + kinetcSpeedX);
-			kinetcSpeedX *= .9;
+		if(Math.abs(this.kinetcSpeedX) >= 1) {
+			this.parent.x(this.parent.x() + this.kinetcSpeedX);
+			this.kinetcSpeedX *= .9;
 		}
 		if(Math.abs(kinetcSpeedY) >= 1) {
-			parent.setY(parent.getY() + kinetcSpeedY);
-			kinetcSpeedY *= .9;
+			this.parent.y(this.parent.y() + this.kinetcSpeedY);
+			this.kinetcSpeedY *= .9;
 		}
 	}
 	
 	void addPoint(float x, float y) {
-		for(int i = 0; i < pointsX.length-1; i++) {
-			pointsX[i] = pointsX[i+1];
-			pointsY[i] = pointsY[i+1];
+		for(int i = 0; i < this.pointsX.length-1; i++) {
+			this.pointsX[i] = this.pointsX[i+1];
+			this.pointsY[i] = this.pointsY[i+1];
 		}
-		if(counter < pointsX.length) {
-			pointsX[counter] = x;
-			pointsY[counter] = y;
-			counter++;
+		if(this.counter < this.pointsX.length) {
+			this.pointsX[this.counter] = x;
+			this.pointsY[this.counter] = y;
+			this.counter++;
 		} else {
-			pointsX[pointsX.length-1] = x;
-			pointsY[pointsX.length-1] = y;
+			this.pointsX[this.pointsX.length-1] = x;
+			this.pointsY[this.pointsX.length-1] = y;
 		}
 	}
 	
 	float averageSpeed(float[] axis) {
 		float total = 0;
-		int to = (counter < maxCount) ? counter : maxCount;
+		int to = (this.counter < this.maxCount) ? this.counter : this.maxCount;
 		for(int i = 1; i < to; i++) {
 			total += axis[i] - axis[i-1];
 		}
-		return (counter < maxCount) ? total / (counter-1) : total / (maxCount-1);
+		return (this.counter < this.maxCount) ? total / (this.counter-1) : total / (this.maxCount-1);
 	}
 	
 }

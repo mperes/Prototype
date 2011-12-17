@@ -54,5 +54,10 @@ abstract public class Utils {
 		float minPlusMax = minRGB + maxRGB;
 		return Prototype.stage.color(minPlusMax-R, minPlusMax-G, minPlusMax-B);	
 	}
+	
+	public static String className(Object o) {
+		String fullClassName = o.getClass().getName();
+		return fullClassName.substring(fullClassName.lastIndexOf(".")+1);
+	}
 
 }
