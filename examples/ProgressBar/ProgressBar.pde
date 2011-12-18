@@ -23,6 +23,6 @@ void setup() {
 }
 
 void draw() {
-  println(frameRate);
+  background(255);
 }
 
