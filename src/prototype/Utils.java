@@ -1,12 +1,12 @@
 package prototype;
 
 import processing.core.PApplet;
-import processing.core.PGraphics3D;
 import processing.core.PMatrix3D;
+import processing.opengl.PGraphicsOpenGL;
 
 abstract public class Utils {
 
-	final static PGraphics3D world = (PGraphics3D)Prototype.stage.g;
+	final static PGraphicsOpenGL world = (PGraphicsOpenGL)Prototype.stage.g;
 
 	public static float[] localMouse() {
 		PMatrix3D cam = world.camera;

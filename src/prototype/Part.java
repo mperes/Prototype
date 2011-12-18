@@ -33,6 +33,7 @@ public class Part implements PrototypeConstants, PartListener {
 	public SmartFloat alpha;
 
 	private Box boundingBox;
+	private Box boundingBoxWorld;
 	private Box scaleGrid;
 	private float pivotModelX;
 	private float pivotModelY;
@@ -167,6 +168,7 @@ public class Part implements PrototypeConstants, PartListener {
 		this.parts = new ArrayList<Part>();
 		listeners = new ArrayList<PartListener>();
 		this.boundingBox = new Box();
+		this.boundingBoxWorld = new Box();
 
 		this.behaviors = builder.behaviors();
 		initBuilderBehaviors();
@@ -209,6 +211,7 @@ public class Part implements PrototypeConstants, PartListener {
 		listeners = new ArrayList<PartListener>();
 		this.behaviors = new HashMap<String, Behavior>();
 		this.boundingBox = new Box();
+		this.boundingBoxWorld = new Box();
 
 		this.width = new SmartInt();
 		this.height = new SmartInt();
@@ -237,6 +240,15 @@ public class Part implements PrototypeConstants, PartListener {
 		this.boundingBox.right =  this.boundingBox.left + this.width();
 		this.boundingBox.bottom = this.boundingBox.top + this.height();
 	}
+	
+	private void calcBoxWorld() {
+		if(Prototype.checkOffScreenParts > 0 && Prototype.stage.frameCount % Prototype.checkOffScreenParts == 0) {
+			this.boundingBoxWorld.left = Prototype.stage.modelX(this.boundingBox.left, this.boundingBox.top, 0);
+			this.boundingBoxWorld.top = Prototype.stage.modelY(this.boundingBox.left, this.boundingBox.top, 0);
+			this.boundingBoxWorld.right = this.boundingBox.left + this.width();
+			this.boundingBoxWorld.bottom = this.boundingBox.top + this.height();
+		}
+	}
 
 	private void worldToLocal() {
 		float translateX = (this.parent == null) ? this.x() : (int)(this.x() + (this.parent.width() * this.relX() + this.parent.left()));
@@ -262,10 +274,20 @@ public class Part implements PrototypeConstants, PartListener {
 			pivotModelX = Prototype.stage.modelX(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0);
 			pivotModelY = Prototype.stage.modelY(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0);
 		}
+		calcBoxWorld();
+	}
+	
+	public boolean onScreen() {
+		return (
+			boundingBoxWorld.left <= Prototype.stage.width &&
+			boundingBoxWorld.top <= Prototype.stage.height &&
+			boundingBoxWorld.right >= 0 &&
+			boundingBoxWorld.bottom >= 0
+		);
 	}
 
 	public void draw() {
-		if(visible) {
+		if(visible && onScreen()) {
 			this.worldToLocal();
 			this.updateLocalModel();
 			Prototype.stage.pushStyle();

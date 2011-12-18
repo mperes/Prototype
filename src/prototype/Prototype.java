@@ -19,6 +19,7 @@ public class Prototype implements PrototypeConstants {
 	private static Map<String, PImage> textures;
 	
 	private static Prototype instance;
+	static int checkOffScreenParts;
 
 	private Prototype(PApplet stage) {		
 		Prototype.stage = stage;
@@ -31,6 +32,7 @@ public class Prototype implements PrototypeConstants {
 		stage.registerPre(this);
 		stage.registerDraw(this);
 		Prototype.stage.registerMouseEvent(this);
+		checkOffScreenParts = 15;
 	}
 	
 	public static Prototype createPrototype(PApplet stage) {
@@ -135,5 +137,9 @@ public class Prototype implements PrototypeConstants {
 			}
 		}
 		return over;
+	}
+	
+	public void checkOffScreenParts(int value) {
+		checkOffScreenParts = value;
 	}
 }

@@ -18,11 +18,19 @@ void setup() {
 
   Part slider = prototype.part(new MySlider(SLIDER_WIDTH));
   
+  for(int x = 0; x < 100; x++) {
+    //Part newPart = prototype.part(new MySlider(SLIDER_WIDTH));
+    //newPart.x( random(width) );
+    //newPart.y( random(height) );
+    //newPart.visible(false);
+  }
+  
   slider.x( width/2-slider.width()/2);
   slider.y(height/2-slider.height()/2);
 }
 
 void draw() {
   background(255);
+  println(frameRate);
 }
 
