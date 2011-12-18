@@ -5,8 +5,8 @@ import processing.opengl.*;
 import prototype.*;
 
 Prototype prototype;
+Part slider;
 
-PFont font;
 static final int SLIDER_WIDTH = 300;
 
 void setup() {
@@ -16,7 +16,7 @@ void setup() {
   //Think of it like a canvas where your prototype is gonna run.
   prototype = Prototype.createPrototype(this);
 
-  Part slider = prototype.part(new MySlider(SLIDER_WIDTH));
+  slider = prototype.part(new MySlider(SLIDER_WIDTH));
   
   slider.x( width/2-slider.width()/2);
   slider.y(height/2-slider.height()/2);

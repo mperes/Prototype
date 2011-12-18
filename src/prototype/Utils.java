@@ -5,44 +5,32 @@ import processing.core.PMatrix3D;
 import processing.opengl.PGraphicsOpenGL;
 
 abstract public class Utils {
-
-	final static PGraphicsOpenGL world = (PGraphicsOpenGL)Prototype.stage.g;
-
-	public static float[] localMouse() {
-		PMatrix3D cam = world.camera;
-		PMatrix3D mvi = world.modelviewInv;  
-		// First, transform along the camera matrix.
-		float z = 0;
-		float aX = Prototype.stage.mouseX*cam.m00 + Prototype.stage.mouseY*cam.m01 + z*cam.m02 + cam.m03;
-		float aY = Prototype.stage.mouseX*cam.m10 + Prototype.stage.mouseY*cam.m11 + z*cam.m12 + cam.m13;
-		// Next, transform along the modelviewInv matrix.
-		float modelX = aX*mvi.m00 + aY*mvi.m01 + z*mvi.m02 + mvi.m03;
-		float modelY = aX*mvi.m10 + aY*mvi.m11 + z*mvi.m12 + mvi.m13;
-		
-		return new float[] {modelX, modelY, 0};
-	}
 	
 	public static float[] localMouse(PMatrix3D localModel) {
+		PGraphicsOpenGL world = (PGraphicsOpenGL)Prototype.stage.g;
+		
 		PMatrix3D cam = world.camera;
 		PMatrix3D mvi = localModel;  
-		// First, transform along the camera matrix.
+
 		float z = 0;
 		float aX = Prototype.stage.mouseX*cam.m00 + Prototype.stage.mouseY*cam.m01 + z*cam.m02 + cam.m03;
 		float aY = Prototype.stage.mouseX*cam.m10 + Prototype.stage.mouseY*cam.m11 + z*cam.m12 + cam.m13;
 		float paX = Prototype.stage.pmouseX*cam.m00 + Prototype.stage.pmouseY*cam.m01 + z*cam.m02 + cam.m03;
 		float paY = Prototype.stage.pmouseX*cam.m10 + Prototype.stage.pmouseY*cam.m11 + z*cam.m12 + cam.m13;
 		
-		// Next, transform along the modelviewInv matrix.
 		float modelX = aX*mvi.m00 + aY*mvi.m01 + z*mvi.m02 + mvi.m03;
 		float modelY = aX*mvi.m10 + aY*mvi.m11 + z*mvi.m12 + mvi.m13;
 		float pmodelX = paX*mvi.m00 + paY*mvi.m01 + z*mvi.m02 + mvi.m03;
 		float pmodelY = paX*mvi.m10 + paY*mvi.m11 + z*mvi.m12 + mvi.m13;
 		
-		return new float[] {modelX, modelY, pmodelX, pmodelY};
+		
+		return new float[] {modelX, modelY, pmodelX, pmodelY};		
 	}
 	
 	public static PMatrix3D getCurrentModel() {
-		return world.modelviewInv;
+		PMatrix3D currentMatrix = (PMatrix3D)Prototype.stage.getMatrix();
+		currentMatrix.invert();
+		return currentMatrix;
 	}
 	
 	public static int getComplementar(int original) {
@@ -59,5 +47,4 @@ abstract public class Utils {
 		String fullClassName = o.getClass().getName();
 		return fullClassName.substring(fullClassName.lastIndexOf(".")+1);
 	}
-
 }
