@@ -17,23 +17,25 @@ public class Part implements PrototypeConstants, PartListener {
 
 	private int initialWidth;
 	private int initialHeight;
-	protected SmartInt width;
-	protected SmartInt height;
-	protected SmartInt x;
-	protected SmartInt y;
-	protected SmartFloat relX;
-	protected SmartFloat relY;
-	protected SmartFloat scaleX;
-	protected SmartFloat scaleY;
-	protected SmartFloat pivotX;
-	protected SmartFloat pivotY;
-	protected SmartFloat rotation;
-	protected SmartFloat alpha;
+	
+	//TODO (Change to protected)
+	public SmartInt width;
+	public SmartInt height;
+	public SmartInt x;
+	public SmartInt y;
+	public SmartFloat relX;
+	public SmartFloat relY;
+	public SmartFloat scaleX;
+	public SmartFloat scaleY;
+	public SmartFloat pivotX;
+	public SmartFloat pivotY;
+	public SmartFloat rotation;
+	public SmartFloat alpha;
 
 	private Box boundingBox;
 	private Box scaleGrid;
-	private int pivotModelX;
-	private int pivotModelY;
+	private float pivotModelX;
+	private float pivotModelY;
 	private int collisionMethod;
 
 	private boolean visible;
@@ -47,7 +49,10 @@ public class Part implements PrototypeConstants, PartListener {
 	public PImage texture;
 	private DynamicImage dynamicTexture;
 	private float[][][] faces;
-
+	
+	//TODO
+	//boolean passThrough;
+	
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
 	{
@@ -249,14 +254,14 @@ public class Part implements PrototypeConstants, PartListener {
 
 	private void localToWorld() {
 		Prototype.stage.popMatrix();
-		if(this.showPivot()) {
-			pivotModelX = PApplet.round(Prototype.stage.modelX(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0));
-			pivotModelY = PApplet.round(Prototype.stage.modelY(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0));
-		}
 	}
 
 	private void updateLocalModel() {
 		this.localModel = Utils.getCurrentModel().get();
+		if(this.showPivot()) {
+			pivotModelX = Prototype.stage.modelX(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0);
+			pivotModelY = Prototype.stage.modelY(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0);
+		}
 	}
 
 	public void draw() {
@@ -372,7 +377,7 @@ public class Part implements PrototypeConstants, PartListener {
 	public void drawPivot() {
 		if(visible()) {
 			if(showPivot()  && pivotModelX >= 0 && pivotModelX <= Prototype.stage.width &&
-					pivotModelY >= 0 && pivotModelY <= Prototype.stage.height) {
+				pivotModelY >= 0 && pivotModelY <= Prototype.stage.height) {
 				//fillPivot(Utils.getComplementar(Prototype.stage.get(pivotModelX+1, pivotModelY)));
 				Prototype.stage.image(Prototype.pivot, pivotModelX-5, pivotModelY-5);
 			}		
@@ -582,7 +587,7 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 
 	public float rotation() { return this.rotation.value(); }
-	public void rtation(float value) {
+	public void rotation(float value) {
 		this.rotation.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.ROTATION) );
 	}

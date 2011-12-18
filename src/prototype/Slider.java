@@ -2,7 +2,7 @@ package prototype;
 
 import processing.core.PApplet;
 
-public class Slider extends Part implements PrototypeConstants {
+public class Slider extends Part {
 	
 	private Part progress;
 	private Part knob;

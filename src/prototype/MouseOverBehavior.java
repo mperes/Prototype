@@ -6,14 +6,17 @@ public class MouseOverBehavior extends MouseBehavior {
 	
 	boolean lastState;
 	boolean dragging;
+	boolean pressed;
 	
 	public MouseOverBehavior() {
 		super();
-		dragging = false;	
+		dragging = false;
+		pressed = false;
+		
 	}
 	
 	public void mousePressed(MouseEvent e) {
-		if(mouseOver) { onPress(e); }
+		if(mouseOver) { onPress(e); pressed = true; }
 	}
 	public void mouseReleased(MouseEvent e) {
 		if(mouseOver) { onRelease(e); }
@@ -22,20 +25,23 @@ public class MouseOverBehavior extends MouseBehavior {
 			onStopDragging(e);
 			dragging = false;	
 		}
+		pressed = false;
 	}
 	public void mouseClicked(MouseEvent e) {
 		if(mouseOver) { onClick(e); }
 	}
 	public void mouseDragged(MouseEvent e) {
-		if(mouseOver || dragging) {
-			if(!dragging) { onStartDragging(e); }
-			dragging = true;
-			onDrag(e);
+		if(pressed) {
+			if(mouseOver || dragging) {
+				if(!dragging) { onStartDragging(e); }
+				dragging = true;
+				onDrag(e);
+			}
 		}
 	}
 	public void mouseMoved(MouseEvent e) {
-		if(mouseOver) { onRollOver(e); }
-		else if(!mouseOver && lastState) { onRollOut(e); }
+		if(mouseOver) { onRollOver(e); lastState = true; }
+		else if(!mouseOver && lastState) { onRollOut(e); lastState = false; }
 	}
 	
 	public void onPress(MouseEvent e) {}

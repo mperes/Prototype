@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 
 public abstract class MouseBehavior implements Behavior, PrototypeConstants {
 	
-	Part parent;
+	protected Part parent;
 	boolean mouseOver;
 	boolean lastState;
 	

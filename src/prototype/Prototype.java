@@ -64,8 +64,9 @@ public class Prototype implements PrototypeConstants {
 	}
 	
 	//Pre-Built Part
-	public void part(Part newPart) {
+	public Part part(Part newPart) {
 		parts.add(newPart);
+		return newPart;
 	}
 
 	public void pre(){
@@ -113,19 +114,26 @@ public class Prototype implements PrototypeConstants {
 	public final void mouseEvent(MouseEvent event) {
 		for(int p = parts.size()-1; p >= 0; p--) {
 			Part childPart = parts.get(p);
-			Prototype.propagateMouseEvent(childPart, event);
+			boolean found = Prototype.propagateMouseEvent(childPart, event);
+			if(found) { break; }
 		}
 	}
 	
-	static void propagateMouseEvent(Part part, MouseEvent event) {
+	static boolean propagateMouseEvent(Part part, MouseEvent event) {
+		boolean over = false;
 		for(int p = part.parts.size()-1; p >= 0; p--) {
 			Part childPart = part.parts.get(p);
-			Prototype.propagateMouseEvent(childPart, event);
+			boolean found = Prototype.propagateMouseEvent(childPart, event);
+			if(found) { return true; }
 		}
 		for (Behavior b : part.behaviors.values()) {
 			if(b.type() == MOUSE) {
 				((MouseBehavior)b).mouseEvent(event);
+				if(((MouseBehavior)b).parent.mouseInside()) {
+					over = true;
+				}
 			}
 		}
+		return over;
 	}
 }

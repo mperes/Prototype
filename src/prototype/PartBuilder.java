@@ -35,7 +35,7 @@ public class PartBuilder implements PrototypeConstants {
 	private Map<String, Behavior> behaviors;
 	
 	public PartBuilder(int type) {
-		if(type < 0 || type > TYPES) {
+		if(type < 0 && type >= TYPES) {
 			throw new RuntimeException("Invalid part type.");
 		}
 		this.type = type;
