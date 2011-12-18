@@ -17,7 +17,7 @@ public class Part implements PrototypeConstants, PartListener {
 
 	private int initialWidth;
 	private int initialHeight;
-	
+
 	//TODO (Change to protected)
 	public SmartInt width;
 	public SmartInt height;
@@ -48,12 +48,15 @@ public class Part implements PrototypeConstants, PartListener {
 
 	//Belongs to ImagePart only
 	public PImage texture;
+	private PImage resizedTexture;
 	private DynamicImage dynamicTexture;
 	private float[][][] faces;
-	
+
 	//TODO
 	//boolean passThrough;
-	
+	private boolean updated;
+	private boolean scaled;
+
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
 	{
@@ -196,6 +199,8 @@ public class Part implements PrototypeConstants, PartListener {
 		this.collisionMethod = builder.collisionMethod();	
 
 		this.behaviors = builder.behaviors();
+		updated = true;
+		scaled = true;
 	}
 
 	private void initBuilderBehaviors() {
@@ -232,6 +237,8 @@ public class Part implements PrototypeConstants, PartListener {
 		this.showPivot(false);
 
 		this.collisionMethod = BOX;
+		updated = true;
+		scaled = true;
 	}
 
 	private void calcBox() {
@@ -240,14 +247,16 @@ public class Part implements PrototypeConstants, PartListener {
 		this.boundingBox.right =  this.boundingBox.left + this.width();
 		this.boundingBox.bottom = this.boundingBox.top + this.height();
 	}
-	
+
 	private void calcBoxWorld() {
-		if(Prototype.checkOffScreenParts > 0 && Prototype.stage.frameCount % Prototype.checkOffScreenParts == 0) {
+		//System.out.println(Prototype.stage.frameCount % Prototype.checkOffScreenParts);
+		//if(Prototype.checkOffScreenParts > 0 && Prototype.stage.frameCount % Prototype.checkOffScreenParts == 0) {
+			//System.out.println(1);
 			this.boundingBoxWorld.left = Prototype.stage.modelX(this.boundingBox.left, this.boundingBox.top, 0);
 			this.boundingBoxWorld.top = Prototype.stage.modelY(this.boundingBox.left, this.boundingBox.top, 0);
 			this.boundingBoxWorld.right = this.boundingBox.left + this.width();
 			this.boundingBoxWorld.bottom = this.boundingBox.top + this.height();
-		}
+		//}
 	}
 
 	private void worldToLocal() {
@@ -276,21 +285,25 @@ public class Part implements PrototypeConstants, PartListener {
 		}
 		calcBoxWorld();
 	}
-	
+
 	public boolean onScreen() {
+		//TODO REFACTORY
 		return (
-			boundingBoxWorld.left <= Prototype.stage.width &&
-			boundingBoxWorld.top <= Prototype.stage.height &&
-			boundingBoxWorld.right >= 0 &&
-			boundingBoxWorld.bottom >= 0
+				boundingBoxWorld.left <= Prototype.stage.width ||
+				boundingBoxWorld.top <= Prototype.stage.height ||
+				boundingBoxWorld.right >= 0 ||
+				boundingBoxWorld.bottom >= 0
 		);
 	}
 
-	public void draw() {
+	public void draw(boolean parentUpdated, boolean parentScaled) {
 		if(visible && onScreen()) {
+			if(parentScaled == true) { this.scaled = true; }
 			this.worldToLocal();
-			this.updateLocalModel();
-			Prototype.stage.pushStyle();
+			if(updated || parentUpdated) {
+				this.updateLocalModel();
+			}
+			//Prototype.stage.pushStyle();
 			switch(this.type) {
 			case IMAGE:
 				drawImage();
@@ -301,16 +314,18 @@ public class Part implements PrototypeConstants, PartListener {
 			case TEXT:
 				break;
 			}
-			Prototype.stage.popStyle();
+			//Prototype.stage.popStyle();
 			this.drawChildren();
 			this.localToWorld();
+			updated = false;
+			scaled = false;
 		}
 	}
 
 	private void drawImage() {
 		Prototype.stage.tint(255, 255*alpha());
 		if(this.scaleGrid != null) {
-			scale9Grid(this.initialWidth, this.initialHeight, this.pivotX(), this.pivotY(), this.scaleGrid, this.texture);
+			scale9Grid(this.width(), this.height(), this.pivotX(), this.pivotY(), this.scaleGrid, this.texture);
 		} else {
 			drawPlane(this.initialWidth, this.initialHeight, this.pivotX(), this.pivotY(), this.texture);
 		}
@@ -332,7 +347,7 @@ public class Part implements PrototypeConstants, PartListener {
 		if(widthToScale() != 1 || heightToScale() != 1) {
 			Prototype.stage.scale(widthToScale(), heightToScale());
 		}
-		Prototype.stage.pushStyle();
+		//Prototype.stage.pushStyle();
 		Prototype.stage.textureMode(PConstants.NORMALIZED);
 		Prototype.stage.noStroke();
 		Prototype.stage.beginShape(PConstants.QUADS);
@@ -342,32 +357,78 @@ public class Part implements PrototypeConstants, PartListener {
 		Prototype.stage.vertex(width*(1-pivotX), height*(1-pivotY), 1, 1);
 		Prototype.stage.vertex(-width*pivotX, height*(1-pivotY), 0, 1);
 		Prototype.stage.endShape();
-		Prototype.stage.popStyle();
+		//Prototype.stage.popStyle();
 		Prototype.stage.popMatrix();
 	}
-
+	
+	void scale9Grid(float width, float height, float pivotX, float pivotY, Box box, PImage texture) {
+		if(scaled) {
+		int roundSizeX = Math.round(width);
+		int roundSizeY = Math.round(height);
+		resizedTexture = Prototype.stage.createImage(roundSizeX, roundSizeY, PConstants.ARGB);
+		resizedTexture.loadPixels();
+		int dW = roundSizeX - texture.width;
+		int dH = roundSizeY - texture.height;
+		for(int y = 0; y < roundSizeY; y++) {
+			for(int x = 0; x < roundSizeX; x++) {
+				if(x < box.left) {
+					if(y < box.top) {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[x+y*texture.width];
+					} else if(y >= roundSizeY-box.bottom) {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(y-dH)*texture.width];
+					} else {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(int)box.top*texture.width];
+					}
+				} else if(x >= roundSizeX-box.right) {
+					if(y < box.top) {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+y*texture.width];
+					} else if(y >= roundSizeY-box.bottom) {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(y-dH)*texture.width];
+					} else {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(int)box.top*texture.width];
+					}
+				} else {
+					if(y < box.top) {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+y*texture.width];
+					} else if(y >= roundSizeY-box.bottom) {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(y-dH)*texture.width];
+					} else {
+						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(int)box.top*texture.width];
+					}
+				}
+			}
+		}
+		resizedTexture.updatePixels();
+		}
+		drawPlane(initialWidth, initialHeight, this.pivotX(), this.pivotY(), resizedTexture);
+	}
+	
+	//Old scale grid function.
+	/*
 	void scale9Grid(int width, int height, float pivotX, float pivotY, Box box, PImage texture) {
 		Prototype.stage.pushMatrix();
 		Prototype.stage.translate(-width*pivotX, -height*pivotY);
 		if(this.widthToScale() != 1 || this.heightToScale() != 1) {
 			Prototype.stage.scale(this.widthToScale(), this.heightToScale());
 		}
-		faces[0] = new float[][] {
-				{ 0, 0, box.left/widthToScale(), box.top/heightToScale(), 0, 0, box.left, box.top }, 
-				{ box.left/widthToScale(), 0, width-box.right/widthToScale(), box.top/heightToScale(), box.left, 0, texture.width-box.right, box.top },
-				{ width-box.right/widthToScale(), 0, width, box.top/heightToScale(), texture.width-box.right, 0, texture.width, box.top } 
-		};
-		faces[1] = new float[][]{ 
-				{ faces[0][0][0], box.top/heightToScale(), faces[0][0][2], height-box.bottom/heightToScale(), faces[0][0][4], box.top+1, faces[0][0][6],  texture.height-box.bottom-1 }, 
-				{ faces[0][1][0], box.top/heightToScale(), faces[0][1][2], height-box.bottom/heightToScale(), faces[0][1][4], box.top+1, faces[0][1][6],  texture.height-box.bottom-1 },
-				{ faces[0][2][0], box.top/heightToScale(), faces[0][2][2], height-box.bottom/heightToScale(), faces[0][2][4], box.top+1, faces[0][2][6],  texture.height-box.bottom-1 } 
-		};
-		faces[2] = new float[][] {
-				{ faces[0][0][0], height-box.bottom/heightToScale(), faces[0][0][2], height, faces[0][0][4], texture.height-box.bottom, faces[0][0][6],  texture.height},
-				{ faces[0][1][0], height-box.bottom/heightToScale(), faces[0][1][2], height, faces[0][1][4], texture.height-box.bottom, faces[0][1][6],  texture.height},
-				{ faces[0][2][0], height-box.bottom/heightToScale(), faces[0][2][2], height, faces[0][2][4], texture.height-box.bottom, faces[0][2][6],  texture.height}
-		};		
-		Prototype.stage.pushStyle();
+		if(updated) {
+			faces[0] = new float[][] {
+					{ 0, 0, box.left/widthToScale(), box.top/heightToScale(), 0, 0, box.left, box.top }, 
+					{ box.left/widthToScale(), 0, width-box.right/widthToScale(), box.top/heightToScale(), box.left, 0, texture.width-box.right, box.top },
+					{ width-box.right/widthToScale(), 0, width, box.top/heightToScale(), texture.width-box.right, 0, texture.width, box.top } 
+			};
+			faces[1] = new float[][]{ 
+					{ faces[0][0][0], box.top/heightToScale(), faces[0][0][2], height-box.bottom/heightToScale(), faces[0][0][4], box.top+1, faces[0][0][6],  texture.height-box.bottom-1 }, 
+					{ faces[0][1][0], box.top/heightToScale(), faces[0][1][2], height-box.bottom/heightToScale(), faces[0][1][4], box.top+1, faces[0][1][6],  texture.height-box.bottom-1 },
+					{ faces[0][2][0], box.top/heightToScale(), faces[0][2][2], height-box.bottom/heightToScale(), faces[0][2][4], box.top+1, faces[0][2][6],  texture.height-box.bottom-1 } 
+			};
+			faces[2] = new float[][] {
+					{ faces[0][0][0], height-box.bottom/heightToScale(), faces[0][0][2], height, faces[0][0][4], texture.height-box.bottom, faces[0][0][6],  texture.height},
+					{ faces[0][1][0], height-box.bottom/heightToScale(), faces[0][1][2], height, faces[0][1][4], texture.height-box.bottom, faces[0][1][6],  texture.height},
+					{ faces[0][2][0], height-box.bottom/heightToScale(), faces[0][2][2], height, faces[0][2][4], texture.height-box.bottom, faces[0][2][6],  texture.height}
+			};	
+		}
+		//Prototype.stage.pushStyle();
 		Prototype.stage.noStroke();
 		Prototype.stage.textureMode(PConstants.IMAGE);
 		Prototype.stage.beginShape(PConstants.QUADS);
@@ -378,28 +439,28 @@ public class Part implements PrototypeConstants, PartListener {
 			}
 		}
 		Prototype.stage.endShape();
-		Prototype.stage.popStyle();
+		//Prototype.stage.popStyle();
 		Prototype.stage.popMatrix();
 	}
-
+	
 	private void rectShape(PImage texture, float x1, float y1, float x2, float y2, float tx1, float ty1, float tx2, float ty2) {
 		Prototype.stage.vertex(x1, y1, tx1, ty1);
 		Prototype.stage.vertex(x2, y1, tx2, ty1);
 		Prototype.stage.vertex(x2, y2, tx2, ty2);
 		Prototype.stage.vertex(x1, y2, tx1, ty2);
 	}
-
+	*/
 	void drawChildren() {
 		for(int p=0; p < parts.size(); p++) {
 			Part part = parts.get(p);
-			part.draw();
+			part.draw(updated, scaled);
 		}
 	}
 
 	public void drawPivot() {
 		if(visible()) {
 			if(showPivot()  && pivotModelX >= 0 && pivotModelX <= Prototype.stage.width &&
-				pivotModelY >= 0 && pivotModelY <= Prototype.stage.height) {
+					pivotModelY >= 0 && pivotModelY <= Prototype.stage.height) {
 				//fillPivot(Utils.getComplementar(Prototype.stage.get(pivotModelX+1, pivotModelY)));
 				Prototype.stage.image(Prototype.pivot, pivotModelX-5, pivotModelY-5);
 			}		
@@ -420,10 +481,12 @@ public class Part implements PrototypeConstants, PartListener {
 		Prototype.pivot.updatePixels();
 	}
 
-	public void pre() {
-		calcBox();
+	public void pre(boolean parentUpdated) {
+		if(updated || parentUpdated) {
+			calcBox();
+		}
 		updateParts();
-		updateLocalMouse();
+		//updateLocalMouse();
 	}
 
 	void updateLocalMouse() {
@@ -433,7 +496,7 @@ public class Part implements PrototypeConstants, PartListener {
 	void updateParts() {
 		for(int p=0; p<parts.size(); p++) {
 			Part part = parts.get(p);
-			part.pre();
+			part.pre(updated);
 		}
 	}
 
@@ -549,67 +612,82 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 
 	public int width() { return this.width.value(); }
-	public void width(float value) { 
+	public void width(float value) {
+		scaled = true;
+		updated = true;
 		this.width.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.WIDTH) );
 	}
 
 	public int height() { return this.height.value(); }
 	public void height(float value) {
+		scaled = true;
+		updated = true;
 		this.height.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.HEIGHT) );
 	}
 
 	public int x() { return this.x.value(); }
-	public void x(float value) { 
+	public void x(float value) {
+		updated = true;
 		this.x.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.X) );
 	}
 
 	public int y() { return this.y.value(); }
 	public void y(float value) {
+		updated = true;
 		this.y.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.Y) );
 	}
 
 	public float relX() { return this.relX.value(); }
 	public void relX(float value) {
+		updated = true;
 		this.relX.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.RELX) );
 	}
 
 	public float relY() { return this.relY.value(); }
 	public void relY(float value) {
+		updated = true;
 		this.relY.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.RELY) );
 	}
 
 	public float scaleX() { return this.scaleX.value(); }
 	public void scaleX(float value) {
+		scaled = true;
+		updated = true;
 		this.scaleX.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.SCALEX) );
 	}
 
 	public float scaleY() { return this.scaleY.value(); }
 	public void scaleY(float value) {
+		scaled = true;
+		updated = true;
 		this.scaleY.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.SCALEY) );
 	}
 
 	public float pivotX() { return this.pivotX.value(); }
 	public void pivotX(float value) {
+		updated = true;
 		this.pivotX.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.PIVOTX) );
 	}
 
 	public float pivotY() { return this.pivotY.value(); }
 	public void pivotY(float value) {
+		updated = true;
 		this.pivotY.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.PIVOTY) );
 	}
 
 	public float rotation() { return this.rotation.value(); }
 	public void rotation(float value) {
+		updated = true;
 		this.rotation.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.ROTATION) );
 	}

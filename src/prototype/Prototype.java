@@ -74,14 +74,14 @@ public class Prototype implements PrototypeConstants {
 	public void pre(){
 		for(int p=0; p<parts.size(); p++) {
 			Part part = parts.get(p);
-			part.pre();
+			part.pre(false);
 		}
 	}
 
 	public void draw(){
 		for(int p=0; p < parts.size(); p++) {
 			Part part = parts.get(p);
-			part.draw();
+			part.draw(false, false);
 		}
 		for(int p=0; p < parts.size(); p++) {	
 			Part part = parts.get(p);
