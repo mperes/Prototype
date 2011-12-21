@@ -20,6 +20,13 @@ public class Box {
 		this.bottom = value;
 	}
 	
+	public Box(float leftright, float upbottom ) {
+		this.left = leftright;
+		this.top = upbottom;
+		this.right = leftright;
+		this.bottom = upbottom;
+	}
+	
 	public Box(float left, float top, float right, float bottom) {
 		this.left = left;
 		this.top = top;

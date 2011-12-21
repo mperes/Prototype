@@ -7,6 +7,8 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
+import processing.core.PShape;
+import processing.opengl.PShape3D;
 
 public class Part implements PrototypeConstants, PartListener {	
 	private Part parent;
@@ -31,6 +33,7 @@ public class Part implements PrototypeConstants, PartListener {
 	public SmartFloat pivotY;
 	public SmartFloat rotation;
 	public SmartFloat alpha;
+	float multipliedAlpha;
 
 	private Box boundingBox;
 	private Box boundingBoxWorld;
@@ -48,14 +51,16 @@ public class Part implements PrototypeConstants, PartListener {
 
 	//Belongs to ImagePart only
 	public PImage texture;
-	private PImage resizedTexture;
 	private DynamicImage dynamicTexture;
-	private float[][][] faces;
+	private float[][][] gridVertexs;
+	int gridStyle;
 
 	//TODO
 	//boolean passThrough;
+	private boolean alphaChanged;
 	private boolean updated;
 	private boolean scaled;
+	private PShape partModel;
 
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
@@ -124,7 +129,7 @@ public class Part implements PrototypeConstants, PartListener {
 			}
 			if(builder.scaleGrid() != null) {
 				this.scaleGrid = builder.scaleGrid();
-				this.faces = new float[3][3][8];
+				//this.faces = new float[3][3][8];
 			}
 			this.texture = Prototype.loadTexture(builder.texture());
 			this.width(this.texture.width);
@@ -191,6 +196,7 @@ public class Part implements PrototypeConstants, PartListener {
 		this.pivotY = new SmartFloat(builder.pivotY(), 0, 1);
 		this.rotation = new SmartFloat(builder.rotation());
 		this.alpha = new SmartFloat(builder.alpha(), 0, 1);
+		this.multipliedAlpha = alpha();
 
 		this.visible(builder.visible());
 		this.enabled(builder.enabled());
@@ -201,6 +207,7 @@ public class Part implements PrototypeConstants, PartListener {
 		this.behaviors = builder.behaviors();
 		updated = true;
 		scaled = true;
+		alphaChanged = true;
 	}
 
 	private void initBuilderBehaviors() {
@@ -231,6 +238,7 @@ public class Part implements PrototypeConstants, PartListener {
 		this.pivotY = new SmartFloat(0, 0, 1);
 		this.rotation = new SmartFloat();
 		this.alpha = new SmartFloat(1, 0, 1);
+		this.multipliedAlpha = 1;
 
 		this.visible(true);
 		this.enabled(true);
@@ -239,6 +247,7 @@ public class Part implements PrototypeConstants, PartListener {
 		this.collisionMethod = BOX;
 		updated = true;
 		scaled = true;
+		alphaChanged = true;
 	}
 
 	private void calcBox() {
@@ -249,14 +258,10 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 
 	private void calcBoxWorld() {
-		//System.out.println(Prototype.stage.frameCount % Prototype.checkOffScreenParts);
-		//if(Prototype.checkOffScreenParts > 0 && Prototype.stage.frameCount % Prototype.checkOffScreenParts == 0) {
-			//System.out.println(1);
-			this.boundingBoxWorld.left = Prototype.stage.modelX(this.boundingBox.left, this.boundingBox.top, 0);
-			this.boundingBoxWorld.top = Prototype.stage.modelY(this.boundingBox.left, this.boundingBox.top, 0);
-			this.boundingBoxWorld.right = this.boundingBox.left + this.width();
-			this.boundingBoxWorld.bottom = this.boundingBox.top + this.height();
-		//}
+		this.boundingBoxWorld.left = Prototype.stage.modelX(this.boundingBox.left, this.boundingBox.top, 0);
+		this.boundingBoxWorld.top = Prototype.stage.modelY(this.boundingBox.left, this.boundingBox.top, 0);
+		this.boundingBoxWorld.right = this.boundingBox.left + this.width();
+		this.boundingBoxWorld.bottom = this.boundingBox.top + this.height();
 	}
 
 	private void worldToLocal() {
@@ -284,26 +289,35 @@ public class Part implements PrototypeConstants, PartListener {
 			pivotModelY = Prototype.stage.modelY(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0);
 		}
 		calcBoxWorld();
+		
+		//Alpha multiplication
+		if(parent != null) {
+			if(parent.parent != null) {
+				multipliedAlpha = this.alpha()*parent.multipliedAlpha;
+			} else {
+				multipliedAlpha = this.alpha()*parent.alpha();
+			}
+		}
 	}
 
 	public boolean onScreen() {
 		//TODO REFACTORY
 		return (
-				boundingBoxWorld.left <= Prototype.stage.width ||
-				boundingBoxWorld.top <= Prototype.stage.height ||
-				boundingBoxWorld.right >= 0 ||
-				boundingBoxWorld.bottom >= 0
+			boundingBoxWorld.left <= Prototype.stage.width ||
+			boundingBoxWorld.top <= Prototype.stage.height ||
+			boundingBoxWorld.right >= 0 ||
+			boundingBoxWorld.bottom >= 0
 		);
 	}
 
-	public void draw(boolean parentUpdated, boolean parentScaled) {
+	public void draw(boolean parentUpdated, boolean parentScaled, boolean parentChangedAlpha) {
 		if(visible && onScreen()) {
 			if(parentScaled == true) { this.scaled = true; }
+			if(parentChangedAlpha == true) { this.alphaChanged = true; }
 			this.worldToLocal();
 			if(updated || parentUpdated) {
 				this.updateLocalModel();
 			}
-			//Prototype.stage.pushStyle();
 			switch(this.type) {
 			case IMAGE:
 				drawImage();
@@ -314,18 +328,22 @@ public class Part implements PrototypeConstants, PartListener {
 			case TEXT:
 				break;
 			}
-			//Prototype.stage.popStyle();
 			this.drawChildren();
 			this.localToWorld();
 			updated = false;
 			scaled = false;
+			alphaChanged = false;
 		}
 	}
 
 	private void drawImage() {
-		Prototype.stage.tint(255, 255*alpha());
+		if(parent != null) {
+			Prototype.stage.tint(255, 255*multipliedAlpha);
+		} else {
+			Prototype.stage.tint(255, 255*alpha());
+		}
 		if(this.scaleGrid != null) {
-			scale9Grid(this.width(), this.height(), this.pivotX(), this.pivotY(), this.scaleGrid, this.texture);
+			scale9Grid(this.texture, this.scaleGrid);
 		} else {
 			drawPlane(this.initialWidth, this.initialHeight, this.pivotX(), this.pivotY(), this.texture);
 		}
@@ -341,126 +359,215 @@ public class Part implements PrototypeConstants, PartListener {
 		Prototype.stage.popMatrix();
 	}
 
-	@SuppressWarnings("deprecation")
+	//Scale Grid functions using Vertex Buffer. Only on Processing 2.0
+	
 	void drawPlane(float width, float height, float pivotX, float pivotY, PImage texture) {
 		Prototype.stage.pushMatrix();
 		if(widthToScale() != 1 || heightToScale() != 1) {
 			Prototype.stage.scale(widthToScale(), heightToScale());
 		}
-		//Prototype.stage.pushStyle();
-		Prototype.stage.textureMode(PConstants.NORMALIZED);
+		if(partModel == null || alphaChanged) {
+			Prototype.stage.mergeShapes(true);
+			partModel = Prototype.stage.beginRecord();
+			Prototype.stage.noStroke();
+			Prototype.stage.beginShape(PConstants.QUADS);
+			Prototype.stage.texture(texture);
+			Prototype.stage.vertex(-width*pivotX, -height*pivotY, 0, 0);
+			Prototype.stage.vertex(width*(1-pivotX), -height*pivotY, texture.width, 0);
+			Prototype.stage.vertex(width*(1-pivotX), height*(1-pivotY), texture.width, texture.height);
+			Prototype.stage.vertex(-width*pivotX, height*(1-pivotY), 0, texture.height);
+			Prototype.stage.endShape();
+			Prototype.stage.endRecord();
+		}
+		Prototype.stage.shape(partModel);
+		Prototype.stage.popMatrix();
+	}
+
+	void scale9Grid(PImage texture, Box grid) {
+		
+		//Creates models based on the scale grid and sends to the GPU (Happens only once);
+		if(scaled || alphaChanged) {
+			Prototype.stage.textureMode(PConstants.IMAGE);
+			if(grid.left == 0) {
+				
+				gridStyle = 0; // 1x3 grid;
+				gridVertexs = new float[][][] {
+					{{0, 0, 0, 0}, {width(), 0, texture.width, 0}},
+					{{0, grid.top, 0, grid.top}, {width(), grid.top, texture.width, grid.top}},
+					{{0, height()-grid.bottom, 0, texture.height-grid.bottom}, {width(), height()-grid.bottom, texture.width, texture.height-grid.bottom}},
+					{{0, height(), 0, texture.height}, {width(), height(), texture.width, texture.height}}
+				};
+				
+				Prototype.stage.mergeShapes(true);
+				partModel = Prototype.stage.beginRecord();
+				Prototype.stage.noStroke();
+				Prototype.stage.beginShape(PConstants.QUADS);
+				Prototype.stage.texture(texture);
+				int rows = gridVertexs.length-1;
+				int cols = gridVertexs[0].length-1;
+				for(int y = 0; y < rows; y++) {
+					for(int x = 0; x < cols; x++)  {
+						Prototype.stage.vertex(gridVertexs[y][x][0], gridVertexs[y][x][1], 0, gridVertexs[y][x][2], gridVertexs[y][x][3]);
+						Prototype.stage.vertex(gridVertexs[y][x+1][0], gridVertexs[y][x+1][1], 0, gridVertexs[y][x+1][2], gridVertexs[y][x+1][3]);
+						Prototype.stage.vertex(gridVertexs[y+1][x+1][0], gridVertexs[y+1][x+1][1], 0, gridVertexs[y+1][x+1][2], gridVertexs[y+1][x+1][3]);
+						Prototype.stage.vertex(gridVertexs[y+1][x][0], gridVertexs[y+1][x][1], 0, gridVertexs[y+1][x][2], gridVertexs[y+1][x][3]);
+					}
+				}
+				Prototype.stage.endShape();
+				Prototype.stage.endRecord();
+				
+
+			}
+			else if(grid.top == 0) {
+				gridStyle = 1;
+				gridVertexs = new float[][][] {
+					{{0, 0, 0, 0}, {grid.left, 0, grid.left, 0}, {width()-grid.right, 0, texture.width-grid.right, 0}, {width(), 0, texture.width, 0}},
+					{{0, height(), 0, texture.height}, {grid.left, height(), grid.left, texture.height}, {width()-grid.right, height(), texture.width-grid.right, texture.height}, {width(), height(), texture.width, texture.height}},			
+				};
+					
+				Prototype.stage.mergeShapes(true);
+				partModel = Prototype.stage.beginRecord();
+				Prototype.stage.noStroke();
+				Prototype.stage.beginShape(PConstants.QUADS);
+				Prototype.stage.texture(texture);
+				int rows = gridVertexs.length-1;
+				int cols = gridVertexs[0].length-1;
+				for(int y = 0; y < rows; y++) {
+					for(int x = 0; x < cols; x++)  {
+						Prototype.stage.vertex(gridVertexs[y][x][0], gridVertexs[y][x][1], 0, gridVertexs[y][x][2], gridVertexs[y][x][3]);
+						Prototype.stage.vertex(gridVertexs[y][x+1][0], gridVertexs[y][x+1][1], 0, gridVertexs[y][x+1][2], gridVertexs[y][x+1][3]);
+						Prototype.stage.vertex(gridVertexs[y+1][x+1][0], gridVertexs[y+1][x+1][1], 0, gridVertexs[y+1][x+1][2], gridVertexs[y+1][x+1][3]);
+						Prototype.stage.vertex(gridVertexs[y+1][x][0], gridVertexs[y+1][x][1], 0, gridVertexs[y+1][x][2], gridVertexs[y+1][x][3]);
+					}
+				}
+				Prototype.stage.endShape();
+				Prototype.stage.endRecord();
+			}
+			else {
+				gridStyle = 2; //3x3 grid;
+				gridVertexs = new float[][][] {
+					{{0, 0, 0, 0}, {grid.left, 0, grid.left, 0}, {width()-grid.right, 0, texture.width-grid.right, 0}, {width(), 0, texture.width, 0}},
+					{{0, grid.top, 0, grid.top}, {grid.left, grid.top, grid.left, grid.top}, {width()-grid.right, grid.top, texture.width-grid.right, grid.top}, {width(), grid.top, texture.width, grid.top}},
+					{{0, height()-grid.bottom, 0, texture.height-grid.bottom}, {grid.left, height()-grid.bottom, grid.left, texture.height-grid.bottom}, {width()-grid.right, height()-grid.bottom, texture.width-grid.right, texture.height-grid.bottom}, {width(), height()-grid.bottom, texture.width, texture.height-grid.bottom}},
+					{{0, height(), 0, texture.height}, {grid.left, height(), grid.left, texture.height}, {width()-grid.right, height(), texture.width-grid.right, texture.height}, {width(), height(), texture.width, texture.height}},			
+				};
+					
+				Prototype.stage.mergeShapes(true);
+				partModel = Prototype.stage.beginRecord();
+				Prototype.stage.noStroke();
+				Prototype.stage.beginShape(PConstants.QUADS);
+				Prototype.stage.texture(texture);
+				int rows = gridVertexs.length-1;
+				int cols = gridVertexs[0].length-1;
+				for(int y = 0; y < rows; y++) {
+					for(int x = 0; x < cols; x++)  {
+						Prototype.stage.vertex(gridVertexs[y][x][0], gridVertexs[y][x][1], 0, gridVertexs[y][x][2], gridVertexs[y][x][3]);
+						Prototype.stage.vertex(gridVertexs[y][x+1][0], gridVertexs[y][x+1][1], 0, gridVertexs[y][x+1][2], gridVertexs[y][x+1][3]);
+						Prototype.stage.vertex(gridVertexs[y+1][x+1][0], gridVertexs[y+1][x+1][1], 0, gridVertexs[y+1][x+1][2], gridVertexs[y+1][x+1][3]);
+						Prototype.stage.vertex(gridVertexs[y+1][x][0], gridVertexs[y+1][x][1], 0, gridVertexs[y+1][x][2], gridVertexs[y+1][x][3]);
+					}
+				}
+				Prototype.stage.endShape();
+				Prototype.stage.endRecord();
+			}
+			
+		}
+		//End of setting up the shapes;
+		Prototype.stage.pushMatrix();
+		Prototype.stage.translate(-width()*pivotX(), -height()*pivotY());
+		Prototype.stage.shape(partModel);
+		Prototype.stage.popMatrix();
+	}
+	
+	
+	//Scale Grid functions using Immediate Mode. Works on any version of Processing.
+	//This functions ins more CPU intensive.
+	/*
+	void drawPlane(float width, float height, float pivotX, float pivotY, PImage texture) {
+		Prototype.stage.pushMatrix();
+		if(widthToScale() != 1 || heightToScale() != 1) {
+			Prototype.stage.scale(widthToScale(), heightToScale());
+		}
 		Prototype.stage.noStroke();
 		Prototype.stage.beginShape(PConstants.QUADS);
 		Prototype.stage.texture(texture);
 		Prototype.stage.vertex(-width*pivotX, -height*pivotY, 0, 0);
-		Prototype.stage.vertex(width*(1-pivotX), -height*pivotY, 1, 0);
-		Prototype.stage.vertex(width*(1-pivotX), height*(1-pivotY), 1, 1);
-		Prototype.stage.vertex(-width*pivotX, height*(1-pivotY), 0, 1);
+		Prototype.stage.vertex(width*(1-pivotX), -height*pivotY, texture.width, 0);
+		Prototype.stage.vertex(width*(1-pivotX), height*(1-pivotY), texture.width, texture.height);
+		Prototype.stage.vertex(-width*pivotX, height*(1-pivotY), 0, texture.height);
 		Prototype.stage.endShape();
-		//Prototype.stage.popStyle();
 		Prototype.stage.popMatrix();
 	}
 	
-	void scale9Grid(float width, float height, float pivotX, float pivotY, Box box, PImage texture) {
+	void scale9Grid(PImage texture, Box grid) {
+		
+		//Creates models based on the scale grid and sends to the GPU (Happens only once);
 		if(scaled) {
-		int roundSizeX = Math.round(width);
-		int roundSizeY = Math.round(height);
-		resizedTexture = Prototype.stage.createImage(roundSizeX, roundSizeY, PConstants.ARGB);
-		resizedTexture.loadPixels();
-		int dW = roundSizeX - texture.width;
-		int dH = roundSizeY - texture.height;
-		for(int y = 0; y < roundSizeY; y++) {
-			for(int x = 0; x < roundSizeX; x++) {
-				if(x < box.left) {
-					if(y < box.top) {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[x+y*texture.width];
-					} else if(y >= roundSizeY-box.bottom) {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(y-dH)*texture.width];
-					} else {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[x+(int)box.top*texture.width];
-					}
-				} else if(x >= roundSizeX-box.right) {
-					if(y < box.top) {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+y*texture.width];
-					} else if(y >= roundSizeY-box.bottom) {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(y-dH)*texture.width];
-					} else {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(x-dW)+(int)box.top*texture.width];
-					}
-				} else {
-					if(y < box.top) {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+y*texture.width];
-					} else if(y >= roundSizeY-box.bottom) {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(y-dH)*texture.width];
-					} else {
-						resizedTexture.pixels[ (x+y*roundSizeX)] = texture.pixels[(int)box.left+(int)box.top*texture.width];
-					}
-				}
+			Prototype.stage.textureMode(PConstants.IMAGE);
+			if(grid.left == 0) {			
+				gridStyle = 0; // 1x3 grid;
+				gridVertexs = new float[][][] {
+					{{0, 0, 0, 0}, {width(), 0, texture.width, 0}},
+					{{0, grid.top, 0, grid.top}, {width(), grid.top, texture.width, grid.top}},
+					{{0, height()-grid.bottom, 0, texture.height-grid.bottom}, {width(), height()-grid.bottom, texture.width, texture.height-grid.bottom}},
+					{{0, height(), 0, texture.height}, {width(), height(), texture.width, texture.height}}
+				};
 			}
+			else if(grid.top == 0) {
+				gridStyle = 1;
+				gridVertexs = new float[][][] {
+					{{0, 0, 0, 0}, {grid.left, 0, grid.left, 0}, {width()-grid.right, 0, texture.width-grid.right, 0}, {width(), 0, texture.width, 0}},
+					{{0, height(), 0, texture.height}, {grid.left, height(), grid.left, texture.height}, {width()-grid.right, height(), texture.width-grid.right, texture.height}, {width(), height(), texture.width, texture.height}},			
+				};
+			}
+			else {
+				gridStyle = 2; //3x3 grid;
+				gridVertexs = new float[][][] {
+					{{0, 0, 0, 0}, {grid.left, 0, grid.left, 0}, {width()-grid.right, 0, texture.width-grid.right, 0}, {width(), 0, texture.width, 0}},
+					{{0, grid.top, 0, grid.top}, {grid.left, grid.top, grid.left, grid.top}, {width()-grid.right, grid.top, texture.width-grid.right, grid.top}, {width(), grid.top, texture.width, grid.top}},
+					{{0, height()-grid.bottom, 0, texture.height-grid.bottom}, {grid.left, height()-grid.bottom, grid.left, texture.height-grid.bottom}, {width()-grid.right, height()-grid.bottom, texture.width-grid.right, texture.height-grid.bottom}, {width(), height()-grid.bottom, texture.width, texture.height-grid.bottom}},
+					{{0, height(), 0, texture.height}, {grid.left, height(), grid.left, texture.height}, {width()-grid.right, height(), texture.width-grid.right, texture.height}, {width(), height(), texture.width, texture.height}},			
+				};
+			}
+			
 		}
-		resizedTexture.updatePixels();
-		}
-		drawPlane(initialWidth, initialHeight, this.pivotX(), this.pivotY(), resizedTexture);
-	}
-	
-	//Old scale grid function.
-	/*
-	void scale9Grid(int width, int height, float pivotX, float pivotY, Box box, PImage texture) {
+		//End of setting up the shapes;
 		Prototype.stage.pushMatrix();
-		Prototype.stage.translate(-width*pivotX, -height*pivotY);
-		if(this.widthToScale() != 1 || this.heightToScale() != 1) {
-			Prototype.stage.scale(this.widthToScale(), this.heightToScale());
-		}
-		if(updated) {
-			faces[0] = new float[][] {
-					{ 0, 0, box.left/widthToScale(), box.top/heightToScale(), 0, 0, box.left, box.top }, 
-					{ box.left/widthToScale(), 0, width-box.right/widthToScale(), box.top/heightToScale(), box.left, 0, texture.width-box.right, box.top },
-					{ width-box.right/widthToScale(), 0, width, box.top/heightToScale(), texture.width-box.right, 0, texture.width, box.top } 
-			};
-			faces[1] = new float[][]{ 
-					{ faces[0][0][0], box.top/heightToScale(), faces[0][0][2], height-box.bottom/heightToScale(), faces[0][0][4], box.top+1, faces[0][0][6],  texture.height-box.bottom-1 }, 
-					{ faces[0][1][0], box.top/heightToScale(), faces[0][1][2], height-box.bottom/heightToScale(), faces[0][1][4], box.top+1, faces[0][1][6],  texture.height-box.bottom-1 },
-					{ faces[0][2][0], box.top/heightToScale(), faces[0][2][2], height-box.bottom/heightToScale(), faces[0][2][4], box.top+1, faces[0][2][6],  texture.height-box.bottom-1 } 
-			};
-			faces[2] = new float[][] {
-					{ faces[0][0][0], height-box.bottom/heightToScale(), faces[0][0][2], height, faces[0][0][4], texture.height-box.bottom, faces[0][0][6],  texture.height},
-					{ faces[0][1][0], height-box.bottom/heightToScale(), faces[0][1][2], height, faces[0][1][4], texture.height-box.bottom, faces[0][1][6],  texture.height},
-					{ faces[0][2][0], height-box.bottom/heightToScale(), faces[0][2][2], height, faces[0][2][4], texture.height-box.bottom, faces[0][2][6],  texture.height}
-			};	
-		}
-		//Prototype.stage.pushStyle();
+		Prototype.stage.translate(-width()*pivotX(), -height()*pivotY());
+		
 		Prototype.stage.noStroke();
-		Prototype.stage.textureMode(PConstants.IMAGE);
 		Prototype.stage.beginShape(PConstants.QUADS);
 		Prototype.stage.texture(texture);
-		for(int row = 0; row < 3; row++) {
-			for(int col = 0; col < 3; col++) {
-				rectShape(texture, faces[row][col][0], faces[row][col][1], faces[row][col][2], faces[row][col][3], faces[row][col][4], faces[row][col][5], faces[row][col][6], faces[row][col][7]);
+		int rows = gridVertexs.length-1;
+		int cols = gridVertexs[0].length-1;
+		for(int y = 0; y < rows; y++) {
+			for(int x = 0; x < cols; x++)  {
+				Prototype.stage.vertex(gridVertexs[y][x][0], gridVertexs[y][x][1], 0, gridVertexs[y][x][2], gridVertexs[y][x][3]);
+				Prototype.stage.vertex(gridVertexs[y][x+1][0], gridVertexs[y][x+1][1], 0, gridVertexs[y][x+1][2], gridVertexs[y][x+1][3]);
+				Prototype.stage.vertex(gridVertexs[y+1][x+1][0], gridVertexs[y+1][x+1][1], 0, gridVertexs[y+1][x+1][2], gridVertexs[y+1][x+1][3]);
+				Prototype.stage.vertex(gridVertexs[y+1][x][0], gridVertexs[y+1][x][1], 0, gridVertexs[y+1][x][2], gridVertexs[y+1][x][3]);
 			}
 		}
 		Prototype.stage.endShape();
-		//Prototype.stage.popStyle();
+		
 		Prototype.stage.popMatrix();
 	}
-	
-	private void rectShape(PImage texture, float x1, float y1, float x2, float y2, float tx1, float ty1, float tx2, float ty2) {
-		Prototype.stage.vertex(x1, y1, tx1, ty1);
-		Prototype.stage.vertex(x2, y1, tx2, ty1);
-		Prototype.stage.vertex(x2, y2, tx2, ty2);
-		Prototype.stage.vertex(x1, y2, tx1, ty2);
-	}
 	*/
+	//End
+	
+	
+	
 	void drawChildren() {
 		for(int p=0; p < parts.size(); p++) {
 			Part part = parts.get(p);
-			part.draw(updated, scaled);
+			part.draw(updated, scaled, alphaChanged);
 		}
 	}
 
 	public void drawPivot() {
 		if(visible()) {
 			if(showPivot()  && pivotModelX >= 0 && pivotModelX <= Prototype.stage.width &&
-					pivotModelY >= 0 && pivotModelY <= Prototype.stage.height) {
+				pivotModelY >= 0 && pivotModelY <= Prototype.stage.height) {
 				//fillPivot(Utils.getComplementar(Prototype.stage.get(pivotModelX+1, pivotModelY)));
 				Prototype.stage.image(Prototype.pivot, pivotModelX-5, pivotModelY-5);
 			}		
@@ -694,6 +801,7 @@ public class Part implements PrototypeConstants, PartListener {
 
 	public float alpha() { return this.alpha.value(); }
 	public void alpha(float value) {
+		alphaChanged = true;
 		this.alpha.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.ALPHA) );
 	}

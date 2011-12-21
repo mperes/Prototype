@@ -81,7 +81,7 @@ public class Prototype implements PrototypeConstants {
 	public void draw(){
 		for(int p=0; p < parts.size(); p++) {
 			Part part = parts.get(p);
-			part.draw(false, false);
+			part.draw(false, false, false);
 		}
 		for(int p=0; p < parts.size(); p++) {	
 			Part part = parts.get(p);

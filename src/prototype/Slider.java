@@ -8,16 +8,16 @@ public class Slider extends Part {
 	private Part knob;
 	private Part knobHighlight;
 	
-	public Slider(int width, int height) {
+	public Slider(int width) {
 		super(
 			new PartBuilder(IMAGE).
 			texture(DEFAULT_SLIDER_CONTAINER).
-			scaleGrid(15)
+			scaleGrid(15, 0)
 		);
 		this.progress = this.part(
 			new PartBuilder(IMAGE).
 			texture(DEFAULT_SLIDER_PROGRESS).
-			scaleGrid(15).
+			scaleGrid(15, 0).
 			relY(0.5f).
 			pivotY(0.5f)
 		);
@@ -30,7 +30,7 @@ public class Slider extends Part {
 		this.knobHighlight = this.knob.part(DEFAULT_SLIDER_KNOB_HIGHLIGHT);
 	
 		this.width(width);
-		this.height(height);
+		//this.height(height);
 
 		this.knobHighlight.alpha(0);
 		this.knob.x.constrain(this.knob.width(), width);

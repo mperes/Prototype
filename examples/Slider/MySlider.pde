@@ -11,7 +11,7 @@ public class MySlider extends Part {
     super(
     new PartBuilder(Prototype.IMAGE).
       texture("container.png").
-      scaleGrid(15)
+      scaleGrid(15, 0)
       );
       
     //Definition of the childpart for the progressbar.
@@ -20,7 +20,7 @@ public class MySlider extends Part {
     this.progress = this.part(
     new PartBuilder(Prototype.IMAGE).
       texture("progress.png").
-      scaleGrid(15).
+      scaleGrid(15, 0).
       relY(0.5f).
       pivotY(0.5f)
       );

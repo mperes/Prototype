@@ -20,6 +20,8 @@ void setup() {
   
   slider.x( width/2-slider.width()/2);
   slider.y(height/2-slider.height()/2);
+  
+  //slider.alpha(.5);
 }
 
 void draw() {

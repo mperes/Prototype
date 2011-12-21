@@ -152,6 +152,14 @@ public class PartBuilder implements PrototypeConstants {
 		}
 		return this;
 	}
+	public PartBuilder scaleGrid(float leftright, float upbottom ) {
+		if(this.type != IMAGE) {
+			System.err.println("9 Scale grid is only avaible for image parts.");
+		} else {
+			this.scaleGrid = new Box(leftright, upbottom);
+		}
+		return this;
+	}
 	
 	public Map<String, Behavior> behaviors() { return this.behaviors; }
 	public PartBuilder behaviors(Behavior... behaviors) {

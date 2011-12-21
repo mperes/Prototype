@@ -11,7 +11,7 @@ public class MySlider extends Part {
     super(
     new PartBuilder(Prototype.IMAGE).
       texture("container.png").
-      scaleGrid(15)
+      scaleGrid(15, 0)
       );
       
     //Definition of the childpart for the progressbar.
@@ -20,7 +20,7 @@ public class MySlider extends Part {
     this.progress = this.part(
     new PartBuilder(Prototype.IMAGE).
       texture("progress.png").
-      scaleGrid(15).
+      scaleGrid(15, 0).
       relY(0.5f).
       pivotY(0.5f)
       );
@@ -40,7 +40,7 @@ public class MySlider extends Part {
 
     this.width(width);
 
-    this.knobHighlight.alpha(0);
+    //this.knobHighlight.alpha(0);
     
     //here we are contraining some values. You can turn the constraining off, or change the range during rutime.
     this.knob.x.constrain(this.knob.width(), width);
@@ -62,6 +62,7 @@ public class MySlider extends Part {
       this.progress.width(this.knob.x());
       this.knobHighlight.alpha(  PApplet.map(this.knob.x(), this.knob.width(), this.knob.width()+15, 0, 1) );
       println( round(map(this.progress.width(), this.knob.width(), this.width(), 0, 100)) + "%");
+      //this.knobHighlight.alpha(0);
       break;
     }
   }
