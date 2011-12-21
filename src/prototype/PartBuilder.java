@@ -32,10 +32,10 @@ public class PartBuilder implements PrototypeConstants {
 	//Shape parts
 	private int width;
 	private int height;
-	private DynamicImage dynamicTexture;
+	private ShapeRender dynamicTexture;
 	
 	private String text;
-	private int textColor;
+	private int color;
 	private PFont font;
 	
 	private Map<String, Behavior> behaviors;
@@ -69,7 +69,7 @@ public class PartBuilder implements PrototypeConstants {
 		
 		//Text parts
 		text = "";
-		textColor = 0;
+		color = 0;
 		
 		behaviors = new HashMap<String, Behavior>();
 	}
@@ -132,9 +132,9 @@ public class PartBuilder implements PrototypeConstants {
 	public PartBuilder showPivot(boolean value) { this.showPivot = value; return this; }
 	
 	public String texture() { return this.texture; }
-	public DynamicImage dynamicTexture() { return this.dynamicTexture; }
+	public ShapeRender dynamicTexture() { return this.dynamicTexture; }
 	public PartBuilder texture(String value) { this.texture = value; return this; }
-	public PartBuilder texture(DynamicImage value) { this.dynamicTexture = value; return this; }
+	public PartBuilder texture(ShapeRender value) { this.dynamicTexture = value; return this; }
 	
 	public int collisionMethod() { return this.collisionMethod; }
 	public PartBuilder collisionMethod(int value) {
@@ -189,9 +189,9 @@ public class PartBuilder implements PrototypeConstants {
 		this.text = value;
 		return this;
 	}
-	public int textColor() { return textColor; }
-	public PartBuilder textColor(int value) {
-		this.textColor = value;
+	public int color() { return color; }
+	public PartBuilder color(int value) {
+		this.color = value;
 		return this;
 	}
 	public PFont font() { return font; }

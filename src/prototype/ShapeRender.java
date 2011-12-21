@@ -4,14 +4,14 @@ public abstract class ShapeRender {
 	
 	Part parent;
 	
-	abstract void draw();
+	abstract public void draw();
 	
-	final void fill(int color) {
-		Prototype.stage.fill(color, parent.alphaStack());
+	final public void fill(int color) {
+		Prototype.stage.fill(color, 255*parent.alphaStack());
 	}
 	
-	final void stroke(int color) {
-		Prototype.stage.stroke(color, parent.alphaStack());
+	final public void stroke(int color) {
+		Prototype.stage.stroke(color, 255*parent.alphaStack());
 	}
 	
 }

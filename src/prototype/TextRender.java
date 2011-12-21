@@ -4,7 +4,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 
-public class TextRender implements DynamicImage {
+public class TextRender extends ShapeRender {
 	String text;
 	PFont font;
 	int width;

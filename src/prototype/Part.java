@@ -52,7 +52,7 @@ public class Part implements PrototypeConstants, PartListener {
 
 	//Belongs to ImagePart only
 	public PImage texture;
-	private DynamicImage dynamicTexture;
+	private ShapeRender dynamicTexture;
 	private float[][][] gridVertexs;
 	int gridStyle;
 
@@ -64,7 +64,7 @@ public class Part implements PrototypeConstants, PartListener {
 	private PShape partModel;
 	
 	//Belongs to TextPart only
-	int textColor;
+	int color;
 
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
@@ -95,9 +95,10 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 
 	//Shape Part
-	public Part (int width, int height, DynamicImage imageRecipe, Behavior... behaviors) {
+	public Part (int width, int height, ShapeRender imageRecipe, Behavior... behaviors) {
 		this.type = SHAPE;
 		this.dynamicTexture = imageRecipe;
+		this.dynamicTexture.parent = this;
 		this.initWithDefaultValues();
 		this.width(width);
 		this.height(height);
@@ -118,8 +119,9 @@ public class Part implements PrototypeConstants, PartListener {
 	public Part(String text, int textColor, PFont textFont, Behavior... behaviors)  {
 		this.type = TEXT;
 		initWithDefaultValues();
-		this.textColor = textColor;
+		this.color = textColor;
 		TextRender textRender = new TextRender(text, textFont);
+		textRender.parent = this;
 		this.width(textRender.width);
 		this.height(textRender.height);
 		this.initialWidth = this.width();
@@ -139,8 +141,9 @@ public class Part implements PrototypeConstants, PartListener {
 	public Part(String text, int textColor, PFont textFont, int width, Behavior... behaviors)  {
 		this.type = TEXT;
 		initWithDefaultValues();
-		this.textColor = textColor;
+		this.color = textColor;
 		TextRender textRender = new TextRender(text, textFont, width);
+		textRender.parent = this;
 		this.width(textRender.width);
 		this.height(textRender.height);
 		this.initialWidth = this.width();
@@ -172,7 +175,7 @@ public class Part implements PrototypeConstants, PartListener {
 			if(builder.text() == "" || builder.font() == null) {
 				throw new RuntimeException( "Invalid text part.");
 			}
-			this.textColor = builder.textColor();
+			this.color = builder.color();
 			TextRender textRender;
 			if(builder.width() > 0) {
 				textRender = new TextRender(builder.text(), builder.font(), builder.width());
@@ -211,7 +214,7 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 
 	//Shape child part
-	public Part part(int width, int height, DynamicImage imageRecipe, Behavior... behaviors) {
+	public Part part(int width, int height, ShapeRender imageRecipe, Behavior... behaviors) {
 		Part newPart = new Part(width, height, imageRecipe, behaviors);
 		newPart.parent(this);
 		this.parts.add(newPart);
@@ -436,7 +439,7 @@ public class Part implements PrototypeConstants, PartListener {
 		if(this.widthToScale() != 1 || this.heightToScale() != 1) {
 			Prototype.stage.scale(this.widthToScale(), this.heightToScale());
 		}
-		Prototype.stage.fill(textColor, 255*alphaStack());
+		Prototype.stage.fill(color, 255*alphaStack());
 		dynamicTexture.draw();
 		Prototype.stage.popMatrix();
 	}

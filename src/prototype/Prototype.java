@@ -53,7 +53,7 @@ public class Prototype implements PrototypeConstants {
 	}
 	
 	//Shape Part
-	public Part part(int width, int height, DynamicImage imageRecipe, Behavior... behaviors) {
+	public Part part(int width, int height, ShapeRender imageRecipe, Behavior... behaviors) {
 		Part newPart = new Part(width, height, imageRecipe, behaviors);
 		parts.add(newPart);
 		return newPart;
