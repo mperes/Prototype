@@ -7,6 +7,7 @@ import java.util.Map;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
 
@@ -61,6 +62,18 @@ public class Prototype implements PrototypeConstants {
 	//Shape Part
 	public Part part(PartBuilder builder) {
 		Part newPart = new Part(builder);
+		parts.add(newPart);
+		return newPart;
+	}
+	
+	//Text childPart
+	public Part part(String text, int textColor, PFont textFont, Behavior... behaviors)  {
+		Part newPart = new Part(text, textColor, textFont, behaviors);
+		parts.add(newPart);
+		return newPart;
+	}
+	public Part part(String text, int textColor, PFont textFont, int width, Behavior... behaviors)  {
+		Part newPart = new Part(text, textColor, textFont, width, behaviors);
 		parts.add(newPart);
 		return newPart;
 	}

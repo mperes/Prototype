@@ -64,9 +64,7 @@ public class Part implements PrototypeConstants, PartListener {
 	private PShape partModel;
 	
 	//Belongs to TextPart only
-	String text;
 	int textColor;
-	PFont textFont;
 
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
@@ -117,11 +115,46 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 	
 	//Text Shape Part
-	public void Part(String text, int textColor, PFont textFont)  {
+	public Part(String text, int textColor, PFont textFont, Behavior... behaviors)  {
+		this.type = TEXT;
 		initWithDefaultValues();
-		this.text = text;
 		this.textColor = textColor;
-		this.textFont = textFont;
+		TextRender textRender = new TextRender(text, textFont);
+		this.width(textRender.width);
+		this.height(textRender.height);
+		this.initialWidth = this.width();
+		this.initialHeight = this.height();
+		this.dynamicTexture = textRender;
+		for(Behavior b : behaviors) {
+			if(!this.behaviors.containsKey(Utils.className(b))) {
+				b.initBehavior(this);
+				this.behaviors.put(Utils.className(b), b);
+			} else {
+				System.err.println("The behavior "+ Utils.className(b) +" was already added to this part.");
+			}
+
+		}
+	}
+	
+	public Part(String text, int textColor, PFont textFont, int width, Behavior... behaviors)  {
+		this.type = TEXT;
+		initWithDefaultValues();
+		this.textColor = textColor;
+		TextRender textRender = new TextRender(text, textFont, width);
+		this.width(textRender.width);
+		this.height(textRender.height);
+		this.initialWidth = this.width();
+		this.initialHeight = this.height();
+		this.dynamicTexture = textRender;
+		for(Behavior b : behaviors) {
+			if(!this.behaviors.containsKey(Utils.className(b))) {
+				b.initBehavior(this);
+				this.behaviors.put(Utils.className(b), b);
+			} else {
+				System.err.println("The behavior "+ Utils.className(b) +" was already added to this part.");
+			}
+
+		}
 	}
 
 	public Part(PartBuilder builder) {
@@ -136,6 +169,21 @@ public class Part implements PrototypeConstants, PartListener {
 			this.dynamicTexture = builder.dynamicTexture();
 			break;
 		case TEXT:
+			if(builder.text() == "" || builder.font() == null) {
+				throw new RuntimeException( "Invalid text part.");
+			}
+			this.textColor = builder.textColor();
+			TextRender textRender;
+			if(builder.width() > 0) {
+				textRender = new TextRender(builder.text(), builder.font(), builder.width());
+			} else {
+				textRender = new TextRender(builder.text(), builder.font());
+			}
+			this.width(textRender.width);
+			this.height(textRender.height);
+			this.initialWidth = this.width();
+			this.initialHeight = this.height();
+			this.dynamicTexture = textRender;
 			break;
 		case IMAGE:
 			if(builder.texture() == "") {
@@ -178,6 +226,18 @@ public class Part implements PrototypeConstants, PartListener {
 		return newPart;
 	}
 
+	//Text childPart
+	public Part part(String text, int textColor, PFont textFont, Behavior... behaviors)  {
+		Part newPart = new Part(text, textColor, textFont, behaviors);
+		parts.add(newPart);
+		return newPart;
+	}
+	public Part part(String text, int textColor, PFont textFont, int width, Behavior... behaviors)  {
+		Part newPart = new Part(text, textColor, textFont, width, behaviors);
+		parts.add(newPart);
+		return newPart;
+	}
+	
 	//Pre-Built child Part
 	public void part(Part newPart) {
 		newPart.parent(this);
@@ -340,6 +400,7 @@ public class Part implements PrototypeConstants, PartListener {
 				drawShape();
 				break;
 			case TEXT:
+				drawText();
 				break;
 			}
 			this.drawChildren();
@@ -351,11 +412,7 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 
 	private void drawImage() {
-		if(parent != null) {
-			Prototype.stage.tint(255, 255*multipliedAlpha);
-		} else {
-			Prototype.stage.tint(255, 255*alpha());
-		}
+		Prototype.stage.tint(255, 255*alphaStack());
 		if(this.scaleGrid != null) {
 			scale9Grid(this.texture, this.scaleGrid);
 		} else {
@@ -369,6 +426,17 @@ public class Part implements PrototypeConstants, PartListener {
 		if(this.widthToScale() != 1 || this.heightToScale() != 1) {
 			Prototype.stage.scale(this.widthToScale(), this.heightToScale());
 		}
+		dynamicTexture.draw();
+		Prototype.stage.popMatrix();
+	}
+	
+	private void drawText() {
+		Prototype.stage.pushMatrix();
+		Prototype.stage.translate(-this.width()*this.pivotX(), -this.height()*this.pivotY());
+		if(this.widthToScale() != 1 || this.heightToScale() != 1) {
+			Prototype.stage.scale(this.widthToScale(), this.heightToScale());
+		}
+		Prototype.stage.fill(textColor, 255*alphaStack());
 		dynamicTexture.draw();
 		Prototype.stage.popMatrix();
 	}
@@ -811,7 +879,14 @@ public class Part implements PrototypeConstants, PartListener {
 		this.rotation.value(value);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.ROTATION) );
 	}
-
+	
+	public float alphaStack() {
+		if(parent != null) {
+			return multipliedAlpha;
+		} else {
+			return alpha();
+		}
+	}
 	public float alpha() { return this.alpha.value(); }
 	public void alpha(float value) {
 		alphaChanged = true;

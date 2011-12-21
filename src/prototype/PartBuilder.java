@@ -3,6 +3,8 @@ package prototype;
 import java.util.HashMap;
 import java.util.Map;
 
+import processing.core.PFont;
+
 public class PartBuilder implements PrototypeConstants {
 	
 	private final int type;
@@ -31,6 +33,10 @@ public class PartBuilder implements PrototypeConstants {
 	private int width;
 	private int height;
 	private DynamicImage dynamicTexture;
+	
+	private String text;
+	private int textColor;
+	private PFont font;
 	
 	private Map<String, Behavior> behaviors;
 	
@@ -61,6 +67,10 @@ public class PartBuilder implements PrototypeConstants {
 		width = 0;
 		height = 0;
 		
+		//Text parts
+		text = "";
+		textColor = 0;
+		
 		behaviors = new HashMap<String, Behavior>();
 	}
 	
@@ -68,12 +78,13 @@ public class PartBuilder implements PrototypeConstants {
 		return this.type;
 	}
 	
+	//TODO add check to negative value
 	public int width() { return this.width; }
 	public PartBuilder width(int value) {
 		if(this.type == IMAGE) { System.err.println("This field has no effects over image parts."); };
 		this.width = value; return this; 
 	}
-
+	//TODO add check to negative value
 	public int height() { return this.height; }
 	public PartBuilder height(int value) {
 		if(this.type == IMAGE) { System.err.println("This field has no effects over image parts."); };
@@ -170,6 +181,22 @@ public class PartBuilder implements PrototypeConstants {
 				System.err.println("The behavior "+ Utils.className(b) +" was already added to this part.");
 			}
 		}
+		return this;
+	}
+	
+	public String text() { return text; }
+	public PartBuilder text(String value) {
+		this.text = value;
+		return this;
+	}
+	public int textColor() { return textColor; }
+	public PartBuilder textColor(int value) {
+		this.textColor = value;
+		return this;
+	}
+	public PFont font() { return font; }
+	public PartBuilder font(PFont value) {
+		this.font = value;
 		return this;
 	}
 	
