@@ -5,6 +5,7 @@ import java.util.Map;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PFont;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -61,6 +62,11 @@ public class Part implements PrototypeConstants, PartListener {
 	private boolean updated;
 	private boolean scaled;
 	private PShape partModel;
+	
+	//Belongs to TextPart only
+	String text;
+	int textColor;
+	PFont textFont;
 
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
@@ -108,6 +114,14 @@ public class Part implements PrototypeConstants, PartListener {
 			}
 
 		}
+	}
+	
+	//Text Shape Part
+	public void Part(String text, int textColor, PFont textFont)  {
+		initWithDefaultValues();
+		this.text = text;
+		this.textColor = textColor;
+		this.textFont = textFont;
 	}
 
 	public Part(PartBuilder builder) {
@@ -164,7 +178,7 @@ public class Part implements PrototypeConstants, PartListener {
 		return newPart;
 	}
 
-	//Pre-Built Part
+	//Pre-Built child Part
 	public void part(Part newPart) {
 		newPart.parent(this);
 		parts.add(newPart);
@@ -554,7 +568,6 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 	*/
 	//End
-	
 	
 	
 	void drawChildren() {
