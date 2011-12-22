@@ -67,8 +67,7 @@ public class Part implements PrototypeConstants, PartListener {
 	int color;
 	
 	//Part values REDO
-	private PartValue value;
-	
+	private PartValue value;	
 
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
@@ -236,11 +235,13 @@ public class Part implements PrototypeConstants, PartListener {
 	//Text childPart
 	public Part part(String text, int textColor, PFont textFont, Behavior... behaviors)  {
 		Part newPart = new Part(text, textColor, textFont, behaviors);
+		newPart.parent(this);
 		parts.add(newPart);
 		return newPart;
 	}
 	public Part part(String text, int textColor, PFont textFont, int width, Behavior... behaviors)  {
 		Part newPart = new Part(text, textColor, textFont, width, behaviors);
+		newPart.parent(this);
 		parts.add(newPart);
 		return newPart;
 	}
@@ -336,8 +337,8 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 
 	private void calcBox() {
-		this.boundingBox.left = -this.pivotX() * this.width();
-		this.boundingBox.top = -this.pivotY() * this.height();
+		this.boundingBox.left = 0 - this.pivotX() * this.width();
+		this.boundingBox.top = 0 - this.pivotY() * this.height();
 		this.boundingBox.right =  this.boundingBox.left + this.width();
 		this.boundingBox.bottom = this.boundingBox.top + this.height();
 	}
@@ -352,7 +353,6 @@ public class Part implements PrototypeConstants, PartListener {
 	private void worldToLocal() {
 		float translateX = (this.parent == null) ? this.x() : (int)(this.x() + (this.parent.width() * this.relX() + this.parent.left()));
 		float translateY = (this.parent == null) ? this.y() : (int)(this.y() + (this.parent.height() * this.relY() + this.parent.top()));
-
 		Prototype.stage.pushMatrix();
 		Prototype.stage.translate(translateX, translateY);
 		if(this.rotation() != 0) {

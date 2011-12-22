@@ -57,5 +57,13 @@ public class SmartFloat implements SmartNumber {
 		this.min = value;
 		this.max = value;
 	}
+	
+	public float min() {
+		return min;
+	}
+	
+	public float max() {
+		return max;
+	}
 
 }

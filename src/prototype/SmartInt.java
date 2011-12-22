@@ -69,5 +69,13 @@ public class SmartInt implements SmartNumber {
 		this.min = PApplet.round(value);
 		this.max = PApplet.round(value);
 	}
+	
+	public int min() {
+		return min;
+	}
+	
+	public int max() {
+		return max;
+	}
 
 }

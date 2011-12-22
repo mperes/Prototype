@@ -9,14 +9,17 @@ import prototype.behaviors.mouse.ToggleValue;
 
 public class Radio extends Part implements PrototypeConstants, WidgetsConstants {
 	
-	private Part check;
-	private Part label;
+	public Part check;
+	public Part label;
 	
 	public Radio(String label) {
 		super((DEFAULT_TOGGLE_CONTAINER));
 		this.check = this.part(DEFAULT_TOGGLE_CHECK_HOVER, new ToggleValue());
-		this.label = this.part(
-		new PartBuilder(TEXT).text(label).color(DEFAULT_TEXT_COLOR).font(Prototype.fontH1).relY(0.5f).pivotY(0.5f));
+		//this.label = this.part(
+		//new PartBuilder(TEXT).text(label).color(DEFAULT_TEXT_COLOR).font(Prototype.fontH1).relY(0.5f).pivotY(0.5f));
+		this.label = this.part(label, DEFAULT_TEXT_COLOR, Prototype.fontH1);
+		this.label.relY.value(0.5f);
+		this.label.pivotY(0.5f);
 		this.label.x(this.width()*1.5f);
 				
 		this.value(false);
