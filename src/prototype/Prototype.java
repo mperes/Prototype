@@ -10,6 +10,7 @@ import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
+import prototype.behaviors.mouse.MouseBehavior;
 
 public class Prototype implements PrototypeConstants {
 	static PImage pivot;
@@ -144,7 +145,7 @@ public class Prototype implements PrototypeConstants {
 		for (Behavior b : part.behaviors.values()) {
 			if(b.type() == MOUSE) {
 				((MouseBehavior)b).mouseEvent(event);
-				if(((MouseBehavior)b).parent.mouseInside()) {
+				if(((MouseBehavior)b).parent().mouseInside()) {
 					over = true;
 				}
 			}
@@ -155,5 +156,8 @@ public class Prototype implements PrototypeConstants {
 	public void checkOffScreenParts(int value) {
 		checkOffScreenParts = value;
 	}
+	
+	public static PApplet stage() {
+		return stage;
+	}
 }
-//
