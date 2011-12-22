@@ -65,13 +65,17 @@ public class Part implements PrototypeConstants, PartListener {
 	
 	//Belongs to TextPart only
 	int color;
+	
+	//Part values REDO
+	private PartValue value;
+	
 
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
 	{
 		WIDTH, HEIGHT, X, Y, RELX, RELY, SCALEX,
 		SCALEY,PIVOTX, PIVOTY, ROTATION, ALPHA,
-		VISIBLE, ENABLED, SHOWPIVOT, NOVALUE;  
+		VISIBLE, ENABLED, SHOWPIVOT, VALUE, NOVALUE;  
 	}
 
 	//Image Part
@@ -285,6 +289,8 @@ public class Part implements PrototypeConstants, PartListener {
 		updated = true;
 		scaled = true;
 		alphaChanged = true;
+		
+		value = new PartValue();
 	}
 
 	private void initBuilderBehaviors() {
@@ -325,6 +331,8 @@ public class Part implements PrototypeConstants, PartListener {
 		updated = true;
 		scaled = true;
 		alphaChanged = true;
+		
+		value = new PartValue();
 	}
 
 	private void calcBox() {
@@ -929,4 +937,9 @@ public class Part implements PrototypeConstants, PartListener {
 
 	public Part parent() { return this.parent; }
 	protected void parent(Part parent) { this.parent = parent; }
+	
+	final public PartValue value() { return this.value; }
+	final public void value(boolean asBol) { this.value.value(asBol); propagatePartUpdate( new PartUpdateEvent(this, Field.VALUE) ); }
+	final public void value(float asFloat) { this.value.value(asFloat); propagatePartUpdate( new PartUpdateEvent(this, Field.VALUE) ); }
+	final public void value(String asString) { this.value.value(asString); propagatePartUpdate( new PartUpdateEvent(this, Field.VALUE) ); }
 }

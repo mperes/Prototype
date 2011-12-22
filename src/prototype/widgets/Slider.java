@@ -4,15 +4,18 @@ import processing.core.PApplet;
 import prototype.Part;
 import prototype.PartBuilder;
 import prototype.PartUpdateEvent;
+import prototype.PrototypeConstants;
 import prototype.behaviors.mouse.Drag;
 
-public class Slider extends Part {
+public class Slider extends Part implements PrototypeConstants, WidgetsConstants {
 	
 	private Part progress;
 	private Part knob;
 	private Part knobHighlight;
+	private float min;
+	private float max;
 	
-	public Slider(int width) {
+	public Slider(float min, float max, int width) {
 		super(
 			new PartBuilder(IMAGE).
 			texture(DEFAULT_SLIDER_CONTAINER).
@@ -43,6 +46,10 @@ public class Slider extends Part {
 		this.progress.width(this.knob.x());
 		
 		this.knob.addListener(this);
+		
+		this.min = min;
+		this.max = max;
+		//this.value(min);
 	}
 	
 	@Override
@@ -51,8 +58,13 @@ public class Slider extends Part {
 		case X:
 			this.progress.width(this.knob.x());
 			this.knobHighlight.alpha(  PApplet.map(this.knob.x(), this.knob.width(), this.knob.width()+15, 0, 1) );
-			//println( round(map(event.part.getX(), event.part.getWidth(), progressBarW, 0, 100)) + "%");
+			this.value(PApplet.map(this.progress.width(), this.knob.width(), this.width(), 0, 100));
 			break;
 		}
 	}
+	
+	public float min() { return this.min; }
+	public void min(float value) { this.min = value; }
+	public float max() { return this.max; }
+	public void max(float value) { this.max = value; }
 }
