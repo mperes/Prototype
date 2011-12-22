@@ -6,7 +6,8 @@ import prototype.*;
 import prototype.widgets.*;
 
 Prototype prototype;
-Slider slider;
+Part slider;
+Part radio;
 
 static final int SLIDER_WIDTH = 300;
 
@@ -18,12 +19,22 @@ void setup() {
   prototype = Prototype.createPrototype(this);
   
   //Slider widget receives (float min, float max, int width)
-  slider = new Slider(0, 500, SLIDER_WIDTH);
-  prototype.part(slider);
+  slider = prototype.part(new Slider(0, 500, SLIDER_WIDTH));
+  
+  radio = prototype.part(new Radio("I love this job"));
+  Part radio2 = prototype.part(new Radio("I am kidding..."));
+   Part radio3 = prototype.part(new Radio("I dont know"));
   
   slider.x(50);
   slider.y(50);
-  slider.width(500);
+  radio.x(50);
+  radio.y(100);
+    radio2.x(50);
+  radio2.y(130);
+      radio3.x(50);
+  radio3.y(160);
+  
+  //toggle.alpha(.3);
 }
 
 void draw() {

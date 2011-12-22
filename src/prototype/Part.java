@@ -374,7 +374,9 @@ public class Part implements PrototypeConstants, PartListener {
 			pivotModelY = Prototype.stage.modelY(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0);
 		}
 		calcBoxWorld();
-		
+	}
+	
+	private void updateAlphaStack() {
 		//Alpha multiplication
 		if(parent != null) {
 			if(parent.parent != null) {
@@ -402,6 +404,9 @@ public class Part implements PrototypeConstants, PartListener {
 			this.worldToLocal();
 			if(updated || parentUpdated) {
 				this.updateLocalModel();
+			}
+			if(updated || parentUpdated || alphaChanged) {
+				this.updateAlphaStack();
 			}
 			switch(this.type) {
 			case IMAGE:
@@ -451,7 +456,7 @@ public class Part implements PrototypeConstants, PartListener {
 		dynamicTexture.draw();
 		Prototype.stage.popMatrix();
 	}
-
+	
 	//Scale Grid functions using Vertex Buffer. Only on Processing 2.0
 	
 	void drawPlane(float width, float height, float pivotX, float pivotY, PImage texture) {
@@ -571,6 +576,7 @@ public class Part implements PrototypeConstants, PartListener {
 		Prototype.stage.shape(partModel);
 		Prototype.stage.popMatrix();
 	}
+	
 	
 	
 	//Scale Grid functions using Immediate Mode. Works on any version of Processing.
@@ -902,6 +908,11 @@ public class Part implements PrototypeConstants, PartListener {
 	public void alpha(float value) {
 		alphaChanged = true;
 		this.alpha.value(value);
+		propagatePartUpdate( new PartUpdateEvent(this, Field.ALPHA) );
+	}
+	public void alpha(boolean value) {
+		alphaChanged = true;
+		this.alpha.value((value) ? 1: 0);
 		propagatePartUpdate( new PartUpdateEvent(this, Field.ALPHA) );
 	}
 

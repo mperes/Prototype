@@ -22,6 +22,8 @@ public class Prototype implements PrototypeConstants {
 	
 	private static Prototype instance;
 	static int checkOffScreenParts;
+	public static PFont fontH1;
+	public static PFont fontH2;
 
 	private Prototype(PApplet stage) {		
 		Prototype.stage = stage;
@@ -35,6 +37,9 @@ public class Prototype implements PrototypeConstants {
 		stage.registerDraw(this);
 		Prototype.stage.registerMouseEvent(this);
 		checkOffScreenParts = 15;
+		
+		fontH1 = Prototype.stage.loadFont("default/fonts/default_h1.vlw");
+		fontH2 = Prototype.stage.loadFont("default/fonts/default_h2.vlw");
 	}
 	
 	public static Prototype createPrototype(PApplet stage) {
