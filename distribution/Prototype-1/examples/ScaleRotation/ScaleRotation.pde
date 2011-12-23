@@ -1,6 +1,10 @@
 import processing.opengl.*;
 import javax.media.opengl.GL;
+
 import prototype.*;
+import prototype.behaviors.mouse.*;
+
+
 
 //Necessary to make straight OpenGL calls.
 PGraphicsOpenGL pgl;
@@ -39,10 +43,10 @@ void setup() {
   //In the example bellow, I am using a anonnymous class, you can also
   //define  a class that implements DynamicImage (see Anchor tab) also.
   blueSquare = prototype.part(300, 200,
-  new DynamicImage() {
+  new ShapeRender() {
     public void draw() {
       noStroke();
-      fill(#10b0e4, 200);
+      fill(#10b0e4);
       smooth();
       rect(0, 0, 300, 200);
     }
@@ -57,7 +61,7 @@ void setup() {
   //to operate a mirror on the part model.
   anchorTopLeft = blueSquare.part(
   new PartBuilder(Prototype.SHAPE).
-    texture(new Anchor()).
+    states(new Anchor()).
     pivotX(0.5f).
     pivotY(0.5f).
     width(12).
@@ -67,41 +71,41 @@ void setup() {
     behaviors(new ScaleBehavior())
     );
 
-  anchorTopRight = blueSquare.part(
-  new PartBuilder(Prototype.SHAPE).
-    texture(new Anchor()).
-    pivotX(0.5f).
-    pivotY(0.5f).
-    width(12).
-    height(12).
-    relX(1.0f).
-    scaleY(-1).
-    behaviors(new ScaleBehavior())
-    );
-
-  anchorBottomRight = blueSquare.part(
-  new PartBuilder(Prototype.SHAPE).
-    texture(new Anchor()).
-    pivotX(0.5f).
-    pivotY(0.5f).
-    width(12).
-    height(12).
-    relX(1.0f).
-    relY(1.0f).
-    behaviors(new ScaleBehavior())
-    );
-
-  anchorBottomLeft = blueSquare.part(
-  new PartBuilder(Prototype.SHAPE).
-    texture(new Anchor()).
-    pivotX(0.5f).
-    pivotY(0.5f).
-    width(12).
-    height(12).
-    relY(1.0f).
-    scaleX(-1).
-    behaviors(new ScaleBehavior())
-    );
+//  anchorTopRight = blueSquare.part(
+//  new PartBuilder(Prototype.SHAPE).
+//    states(new Anchor()).
+//    pivotX(0.5f).
+//    pivotY(0.5f).
+//    width(12).
+//    height(12).
+//    relX(1.0f).
+//    scaleY(-1).
+//    behaviors(new ScaleBehavior())
+//    );
+//
+//  anchorBottomRight = blueSquare.part(
+//  new PartBuilder(Prototype.SHAPE).
+//    states(new Anchor()).
+//    pivotX(0.5f).
+//    pivotY(0.5f).
+//    width(12).
+//    height(12).
+//    relX(1.0f).
+//    relY(1.0f).
+//    behaviors(new ScaleBehavior())
+//    );
+//
+//  anchorBottomLeft = blueSquare.part(
+//  new PartBuilder(Prototype.SHAPE).
+//    states(new Anchor()).
+//    pivotX(0.5f).
+//    pivotY(0.5f).
+//    width(12).
+//    height(12).
+//    relY(1.0f).
+//    scaleX(-1).
+//    behaviors(new ScaleBehavior())
+//    );
       
   //Adds the ChangePivot Behavior to the blueSquare part.
   blueSquare.addBehavior(new ChangePivot());

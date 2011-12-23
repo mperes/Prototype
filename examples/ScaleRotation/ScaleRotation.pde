@@ -1,6 +1,10 @@
 import processing.opengl.*;
 import javax.media.opengl.GL;
+
 import prototype.*;
+import prototype.behaviors.mouse.*;
+
+
 
 //Necessary to make straight OpenGL calls.
 PGraphicsOpenGL pgl;
@@ -39,10 +43,10 @@ void setup() {
   //In the example bellow, I am using a anonnymous class, you can also
   //define  a class that implements DynamicImage (see Anchor tab) also.
   blueSquare = prototype.part(300, 200,
-  new DynamicImage() {
+  new ShapeRender() {
     public void draw() {
       noStroke();
-      fill(#10b0e4, 200);
+      fill(#10b0e4);
       smooth();
       rect(0, 0, 300, 200);
     }
@@ -57,7 +61,7 @@ void setup() {
   //to operate a mirror on the part model.
   anchorTopLeft = blueSquare.part(
   new PartBuilder(Prototype.SHAPE).
-    texture(new Anchor()).
+    states(new Anchor()).
     pivotX(0.5f).
     pivotY(0.5f).
     width(12).
@@ -68,8 +72,8 @@ void setup() {
     );
 
   anchorTopRight = blueSquare.part(
-  new PartBuilder(Prototype.SHAPE).
-    texture(new Anchor()).
+ new PartBuilder(Prototype.SHAPE).
+    states(new Anchor()).
     pivotX(0.5f).
     pivotY(0.5f).
     width(12).
@@ -81,7 +85,7 @@ void setup() {
 
   anchorBottomRight = blueSquare.part(
   new PartBuilder(Prototype.SHAPE).
-    texture(new Anchor()).
+    states(new Anchor()).
     pivotX(0.5f).
     pivotY(0.5f).
     width(12).
@@ -93,7 +97,7 @@ void setup() {
 
   anchorBottomLeft = blueSquare.part(
   new PartBuilder(Prototype.SHAPE).
-    texture(new Anchor()).
+    states(new Anchor()).
     pivotX(0.5f).
     pivotY(0.5f).
     width(12).

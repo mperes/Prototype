@@ -179,7 +179,11 @@ public class Part implements PrototypeConstants, PartListener {
 			if(builder.width() == 0 || builder.height() == 0 || builder.dynamicStates() == null || builder.dynamicStates().length == 0) {
 				throw new RuntimeException( "Invalid shape part.");
 			}
-			this.dynamicTexture = builder.dynamicStates();
+			this.dynamicTexture = new ShapeRender[builder.dynamicStates().length];
+			for(int s = 0; s < builder.dynamicStates().length; s++) {	
+				this.dynamicTexture[s] = builder.dynamicStates()[s];
+				this.dynamicTexture[s].parent = this;
+			}
 			break;
 		case TEXT:
 			if(builder.text() == "" || builder.font() == null) {

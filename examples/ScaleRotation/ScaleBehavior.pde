@@ -1,5 +1,10 @@
 //A very basic behavior.
 class ScaleBehavior extends MouseOverBehavior {
+  
+  ScaleBehavior() {
+    super();
+  }
+  
   public void onDrag(MouseEvent e) {
     float xDiff = (this.parent.localMouseX()-this.parent.plocalMouseX())*2;
     float yDiff = (this.parent.localMouseY()-this.parent.plocalMouseY())*2;
