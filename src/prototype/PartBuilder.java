@@ -25,6 +25,7 @@ public class PartBuilder implements PrototypeConstants {
 	private boolean visible;
 	private boolean enabled;
 	private boolean showPivot;
+	private boolean passThrough;
 	
 	//Image parts
 	private String[] texture;
@@ -59,6 +60,7 @@ public class PartBuilder implements PrototypeConstants {
 		this.visible = true;
 		this.enabled = true;
 		this.showPivot = false;
+		this.passThrough = false;
 		
 		//Shape parts
 		width = 0;
@@ -127,6 +129,9 @@ public class PartBuilder implements PrototypeConstants {
 
 	public boolean showPivot() { return this.showPivot; }
 	public PartBuilder showPivot(boolean value) { this.showPivot = value; return this; }
+	
+	public boolean passThrough() { return this.passThrough; }
+	public PartBuilder passThrough(boolean value) { this.passThrough = value; return this; }
 	
 	public String[] states() { return this.texture; }
 	public ShapeRender[] dynamicStates() { return this.dynamicTexture; }

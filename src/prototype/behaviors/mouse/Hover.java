@@ -13,6 +13,5 @@ public class Hover extends MouseOverBehavior {
 	}
 	public void onRollOut(MouseEvent e) {
 		this.parent.state(States.DEFAULT);
-		
 	}
 }

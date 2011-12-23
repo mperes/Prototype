@@ -151,7 +151,9 @@ public class Prototype implements PrototypeConstants {
 			if(b.type() == MOUSE) {
 				((MouseBehavior)b).mouseEvent(event);
 				if(((MouseBehavior)b).parent().mouseInside()) {
-					over = true;
+					if(b.parent().passThrough() == false) {
+						over = true;
+					}
 				}
 			}
 		}

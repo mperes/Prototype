@@ -34,13 +34,14 @@ public class Slider extends Part implements PrototypeConstants, WidgetsConstants
 			new PartBuilder(IMAGE).
 			states(DEFAULT_SLIDER_KNOB).
 			pivotX(1).
-			behaviors(new Drag())
+			behaviors(new Drag()).
+			passThrough(true)
 		);
 		this.knobHighlight = this.knob.part(DEFAULT_SLIDER_KNOB_HIGHLIGHT);
 		this.width(width);
 		//this.height(height);
 
-		this.knobHighlight.alpha(0);
+		//this.knobHighlight.alpha(0);
 		this.knob.x.constrain(this.knob.width(), width);
 		this.knob.y.constrain(0);
 		this.progress.width.constrain(0, width);
@@ -50,7 +51,10 @@ public class Slider extends Part implements PrototypeConstants, WidgetsConstants
 		
 		this.min = min;
 		this.max = max;
-		//this.value(min);
+		//Todo?
+		this.value(min);
+		
+		knob.x(50);
 	}
 	
 	@Override

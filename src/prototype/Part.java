@@ -58,7 +58,7 @@ public class Part implements PrototypeConstants, PartListener {
 	private float[][][] gridVertexs;
 
 	//TODO
-	//boolean passThrough;
+	private boolean passThrough;
 	private boolean alphaChanged;
 	private boolean updated;
 	private boolean scaled;
@@ -307,6 +307,7 @@ public class Part implements PrototypeConstants, PartListener {
 		alphaChanged = true;
 		stateChanged = true;
 		state = 0;
+		passThrough = builder.passThrough();
 		
 		value = new PartValue();
 	}
@@ -351,6 +352,7 @@ public class Part implements PrototypeConstants, PartListener {
 		alphaChanged = true;
 		stateChanged = true;
 		state = 0;
+		passThrough = false;
 		
 		value = new PartValue();
 	}
@@ -484,7 +486,7 @@ public class Part implements PrototypeConstants, PartListener {
 		if(widthToScale() != 1 || heightToScale() != 1) {
 			Prototype.stage.scale(widthToScale(), heightToScale());
 		}
-		if(partModel == null || alphaChanged || stateChanged) {
+		if(partModel == null || alphaChanged || stateChanged || stateChanged) {
 			Prototype.stage.mergeShapes(true);
 			partModel = Prototype.stage.beginRecord();
 			Prototype.stage.noStroke();
@@ -504,7 +506,7 @@ public class Part implements PrototypeConstants, PartListener {
 	void scale9Grid(PImage texture, Box grid) {
 		
 		//Creates models based on the scale grid and sends to the GPU (Happens only once);
-		if(scaled || alphaChanged) {
+		if(scaled || alphaChanged || stateChanged) {
 			Prototype.stage.textureMode(PConstants.IMAGE);
 			if(grid.left == 0) {
 				
@@ -962,6 +964,9 @@ public class Part implements PrototypeConstants, PartListener {
 		this.showPivot = state;
 		propagatePartUpdate( new PartUpdateEvent(this, Field.SHOWPIVOT) );
 	}
+	
+	public boolean passThrough() { return this.passThrough; }
+	public void passThrough(boolean value) { this.passThrough = value; }
 	
 	public int safeState() { 
 		switch (this.type) {
