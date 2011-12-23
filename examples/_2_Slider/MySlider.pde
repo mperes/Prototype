@@ -1,3 +1,5 @@
+import prototype.behaviors.mouse.*;
+
 public class MySlider extends Part {
 
   private Part progress;
@@ -10,7 +12,7 @@ public class MySlider extends Part {
     //Shorter version of scaleGrid(15, 15, 15, 15).
     super(
     new PartBuilder(Prototype.IMAGE).
-      texture("container.png").
+      states("container.png").
       scaleGrid(15, 0)
       );
       
@@ -19,7 +21,7 @@ public class MySlider extends Part {
     //Values for the pivotX and pivotY can vary from 0-1.
     this.progress = this.part(
     new PartBuilder(Prototype.IMAGE).
-      texture("progress.png").
+      states("progress.png").
       scaleGrid(15, 0).
       relY(0.5f).
       pivotY(0.5f)
@@ -29,7 +31,7 @@ public class MySlider extends Part {
     //New stuff here is that we add a drag behavior to the part.
     this.knob = this.part(
     new PartBuilder(Prototype.IMAGE).
-      texture("knob.png").
+      states("knob.png").
       pivotX(1).
       behaviors(new Drag())
       );

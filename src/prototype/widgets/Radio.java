@@ -20,8 +20,8 @@ public class Radio extends Part implements PrototypeConstants, WidgetsConstants 
 			states(DEFAULT_TOGGLE_CHECK,DEFAULT_TOGGLE_CHECK_HOVER).
 			behaviors(new ToggleValue(), new Hover())
 		);
-		this.label = this.part(label, DEFAULT_TEXT_COLOR, Prototype.fontH1);
-		this.label.relY.value(0.5f);
+		this.label = this.part(label, DEFAULT_TEXT_DARK, Prototype.fontH1);
+		this.label.relY(0.5f);
 		this.label.pivotY(0.5f);
 		this.label.x(this.width()*1.5f);
 				
@@ -31,9 +31,35 @@ public class Radio extends Part implements PrototypeConstants, WidgetsConstants 
 		this.check.addListener(this);
 	}
 	
-	public Radio(String caption, boolean initialState) {
+	public Radio(String label, boolean initialState) {
 		super((DEFAULT_TOGGLE_CONTAINER));
-		this.check = this.part(DEFAULT_TOGGLE_CHECK_HOVER, new ToggleValue());
+		this.check = this.part(
+			new PartBuilder(IMAGE).
+			states(DEFAULT_TOGGLE_CHECK,DEFAULT_TOGGLE_CHECK_HOVER).
+			behaviors(new ToggleValue(), new Hover())
+		);
+		
+		this.label = this.part(label, DEFAULT_TEXT_DARK, Prototype.fontH1);
+		this.label.relY(0.5f);
+		this.label.pivotY(0.5f);
+		this.label.x(this.width()*1.5f);
+
+		this.check.addListener(this);
+		this.check.value(initialState);
+	}
+	
+	public Radio(String label, boolean initialState, int width) {
+		super((DEFAULT_TOGGLE_CONTAINER));
+		this.check = this.part(
+			new PartBuilder(IMAGE).
+			states(DEFAULT_TOGGLE_CHECK,DEFAULT_TOGGLE_CHECK_HOVER).
+			behaviors(new ToggleValue(), new Hover())
+		);
+		int textWidth = width - (int)(this.width()*1.5f);
+		this.label = this.part(label, DEFAULT_TEXT_DARK, Prototype.fontH1, textWidth);
+		this.label.relY(0.5f);
+		this.label.pivotY(0.5f);
+		this.label.x(this.width()*1.5f);
 
 		this.check.addListener(this);
 		this.check.value(initialState);

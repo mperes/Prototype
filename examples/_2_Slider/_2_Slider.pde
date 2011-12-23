@@ -1,3 +1,5 @@
+import prototype.*;
+
 //This is a little demo of a component built using the prototype libray. The code for this widget
 //was already put in te library and can be invoked by adding a new Part of the subclass Slide.
 

@@ -2,9 +2,6 @@ package prototype;
 
 public interface PrototypeConstants {
 	
-	//Config
-	public static final int DEFAULT_TEXT_COLOR = 50;
-	
 	//Part types
 	public static final int TYPES = 3;
 	public static final int SHAPE = 0;

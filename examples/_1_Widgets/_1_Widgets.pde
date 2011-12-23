@@ -6,8 +6,12 @@ import prototype.*;
 import prototype.widgets.*;
 
 Prototype prototype;
+WidgetListener listener;
 Part slider;
 Part radio;
+Part radio2;
+Part radio3;
+Part button;
 
 static final int SLIDER_WIDTH = 300;
 
@@ -21,21 +25,36 @@ void setup() {
   //Slider widget receives (float min, float max, int width)
   slider = prototype.part(new Slider(0, 500, SLIDER_WIDTH));
 
-  radio = prototype.part(new Radio("I love this job"));
-  Part radio2 = prototype.part(new Radio("I am kidding..."));
-  Part radio3 = prototype.part(new Radio("I dont know"));
+  radio = prototype.part(new Radio("I got download Prototype Library", true));
+  radio2 = prototype.part(new Radio("Or maybe not"));
+  radio3 = prototype.part(new Radio("I am actually not sure of what I want", false, 150));
+  
+  button = prototype.part(new Button("Nice button"));
 
   slider.x(50);
   slider.y(50);
   radio.x(50);
-  radio.y(100);
+  radio.y(130);
   radio2.x(50);
-  radio2.y(130);
+  radio2.y(160);
   radio3.x(50);
-  radio3.y(160);
+  radio3.y(190);
+  
+  button.x(50);
+  button.y(260);
+  
+  listener = new WidgetListener();
+  
+  slider.addListener(listener);
+  radio.addListener(listener);
+  radio2.addListener(listener);
+  radio3.addListener(listener);
+  button.addListener(listener);
 }
 
 void draw() {
   background(#9e9e9e);
+  //println(slider.value().asInt());
+  //println(radio.value().asBol());
 }
 

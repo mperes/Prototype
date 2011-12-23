@@ -478,7 +478,7 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 	
 	//Scale Grid functions using Vertex Buffer. Only on Processing 2.0
-	/*
+	
 	void drawPlane(float width, float height, float pivotX, float pivotY, PImage texture) {
 		Prototype.stage.pushMatrix();
 		if(widthToScale() != 1 || heightToScale() != 1) {
@@ -596,7 +596,7 @@ public class Part implements PrototypeConstants, PartListener {
 		Prototype.stage.shape(partModel);
 		Prototype.stage.popMatrix();
 	}
-	*/
+	/*
 	
 	
 	//Scale Grid functions using Immediate Mode. Works on any version of Processing.
@@ -671,7 +671,7 @@ public class Part implements PrototypeConstants, PartListener {
 		
 		Prototype.stage.popMatrix();
 	}
-	
+	*/
 	//End
 	
 	
