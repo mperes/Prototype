@@ -27,12 +27,12 @@ public class PartBuilder implements PrototypeConstants {
 	private boolean showPivot;
 	
 	//Image parts
-	private String texture;
+	private String[] texture;
 	
 	//Shape parts
 	private int width;
 	private int height;
-	private ShapeRender dynamicTexture;
+	private ShapeRender[] dynamicTexture;
 	
 	private String text;
 	private int color;
@@ -59,9 +59,6 @@ public class PartBuilder implements PrototypeConstants {
 		this.visible = true;
 		this.enabled = true;
 		this.showPivot = false;
-		
-		//Image parts
-		this.texture = "";
 		
 		//Shape parts
 		width = 0;
@@ -131,10 +128,10 @@ public class PartBuilder implements PrototypeConstants {
 	public boolean showPivot() { return this.showPivot; }
 	public PartBuilder showPivot(boolean value) { this.showPivot = value; return this; }
 	
-	public String texture() { return this.texture; }
-	public ShapeRender dynamicTexture() { return this.dynamicTexture; }
-	public PartBuilder texture(String value) { this.texture = value; return this; }
-	public PartBuilder texture(ShapeRender value) { this.dynamicTexture = value; return this; }
+	public String[] states() { return this.texture; }
+	public ShapeRender[] dynamicStates() { return this.dynamicTexture; }
+	public PartBuilder states(String...strings) { this.texture = strings; return this; }
+	public PartBuilder states(ShapeRender...renders) { this.dynamicTexture = renders; return this; }
 	
 	public int collisionMethod() { return this.collisionMethod; }
 	public PartBuilder collisionMethod(int value) {

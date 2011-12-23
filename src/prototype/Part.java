@@ -9,7 +9,6 @@ import processing.core.PFont;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
-import processing.opengl.PShape3D;
 
 public class Part implements PrototypeConstants, PartListener {	
 	private Part parent;
@@ -51,39 +50,44 @@ public class Part implements PrototypeConstants, PartListener {
 	protected PMatrix3D localModel;
 
 	//Belongs to ImagePart only
-	public PImage texture;
-	private ShapeRender dynamicTexture;
-	private float[][][] gridVertexs;
+	public PImage[] texture;
+	private PShape partModel;
+	private ShapeRender[] dynamicTexture;
+
 	int gridStyle;
+	private float[][][] gridVertexs;
 
 	//TODO
 	//boolean passThrough;
 	private boolean alphaChanged;
 	private boolean updated;
 	private boolean scaled;
-	private PShape partModel;
+	private boolean stateChanged;
 	
 	//Belongs to TextPart only
 	int color;
 	
 	//Part values REDO
-	private PartValue value;	
+	private PartValue value;
+	private int state;
+	
 
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
 	{
 		WIDTH, HEIGHT, X, Y, RELX, RELY, SCALEX,
 		SCALEY,PIVOTX, PIVOTY, ROTATION, ALPHA,
-		VISIBLE, ENABLED, SHOWPIVOT, VALUE, NOVALUE;  
+		VISIBLE, ENABLED, SHOWPIVOT, VALUE, STATE, NOVALUE;  
 	}
 
 	//Image Part
 	public Part (String texturePath, Behavior... behaviors) {
 		this.type = IMAGE;
-		this.texture = Prototype.loadTexture(texturePath);
+		this.texture = new PImage[1];
+		this.texture[0] = Prototype.loadTexture(texturePath);
 		this.initWithDefaultValues();
-		this.width(this.texture.width);
-		this.height(this.texture.height);
+		this.width(this.texture[0].width);
+		this.height(this.texture[0].height);
 		this.initialWidth = this.width();
 		this.initialHeight = this.height();
 		for(Behavior b : behaviors) {
@@ -100,8 +104,9 @@ public class Part implements PrototypeConstants, PartListener {
 	//Shape Part
 	public Part (int width, int height, ShapeRender imageRecipe, Behavior... behaviors) {
 		this.type = SHAPE;
-		this.dynamicTexture = imageRecipe;
-		this.dynamicTexture.parent = this;
+		this.dynamicTexture = new ShapeRender[1];
+		this.dynamicTexture[0] = imageRecipe;
+		this.dynamicTexture[0].parent = this;
 		this.initWithDefaultValues();
 		this.width(width);
 		this.height(height);
@@ -129,7 +134,8 @@ public class Part implements PrototypeConstants, PartListener {
 		this.height(textRender.height);
 		this.initialWidth = this.width();
 		this.initialHeight = this.height();
-		this.dynamicTexture = textRender;
+		this.dynamicTexture = new ShapeRender[1];
+		this.dynamicTexture[0] = textRender;
 		for(Behavior b : behaviors) {
 			if(!this.behaviors.containsKey(Utils.className(b))) {
 				b.initBehavior(this);
@@ -151,7 +157,8 @@ public class Part implements PrototypeConstants, PartListener {
 		this.height(textRender.height);
 		this.initialWidth = this.width();
 		this.initialHeight = this.height();
-		this.dynamicTexture = textRender;
+		this.dynamicTexture = new ShapeRender[1];
+		this.dynamicTexture[0] = textRender;
 		for(Behavior b : behaviors) {
 			if(!this.behaviors.containsKey(Utils.className(b))) {
 				b.initBehavior(this);
@@ -169,10 +176,10 @@ public class Part implements PrototypeConstants, PartListener {
 		//Error checking & individual part setup
 		switch (this.type) {
 		case SHAPE:
-			if(builder.width() == 0 || builder.height() == 0 || builder.dynamicTexture() == null) {
+			if(builder.width() == 0 || builder.height() == 0 || builder.dynamicStates() == null || builder.dynamicStates().length == 0) {
 				throw new RuntimeException( "Invalid shape part.");
 			}
-			this.dynamicTexture = builder.dynamicTexture();
+			this.dynamicTexture = builder.dynamicStates();
 			break;
 		case TEXT:
 			if(builder.text() == "" || builder.font() == null) {
@@ -189,19 +196,23 @@ public class Part implements PrototypeConstants, PartListener {
 			this.height(textRender.height);
 			this.initialWidth = this.width();
 			this.initialHeight = this.height();
-			this.dynamicTexture = textRender;
+			this.dynamicTexture = new ShapeRender[1];
+			this.dynamicTexture[0] = textRender;
 			break;
 		case IMAGE:
-			if(builder.texture() == "") {
+			if(builder.states().length == 0 || builder.states() == null) {
 				throw new RuntimeException( "Invalid shape part.");
 			}
 			if(builder.scaleGrid() != null) {
 				this.scaleGrid = builder.scaleGrid();
 				//this.faces = new float[3][3][8];
 			}
-			this.texture = Prototype.loadTexture(builder.texture());
-			this.width(this.texture.width);
-			this.height(this.texture.height);
+			this.texture = new PImage[builder.states().length];
+			for(int s = 0; s < builder.states().length; s++) {	
+				this.texture[s] = Prototype.loadTexture(builder.states()[s]);
+			}
+			this.width(this.texture[0].width);
+			this.height(this.texture[0].height);
 			this.initialWidth = this.width();
 			this.initialHeight = this.height();
 			break;
@@ -290,6 +301,8 @@ public class Part implements PrototypeConstants, PartListener {
 		updated = true;
 		scaled = true;
 		alphaChanged = true;
+		stateChanged = true;
+		state = 0;
 		
 		value = new PartValue();
 	}
@@ -332,6 +345,8 @@ public class Part implements PrototypeConstants, PartListener {
 		updated = true;
 		scaled = true;
 		alphaChanged = true;
+		stateChanged = true;
+		state = 0;
 		
 		value = new PartValue();
 	}
@@ -424,15 +439,16 @@ public class Part implements PrototypeConstants, PartListener {
 			updated = false;
 			scaled = false;
 			alphaChanged = false;
+			stateChanged = false;
 		}
 	}
 
 	private void drawImage() {
 		Prototype.stage.tint(255, 255*alphaStack());
 		if(this.scaleGrid != null) {
-			scale9Grid(this.texture, this.scaleGrid);
+			scale9Grid(this.texture[safeState()], this.scaleGrid);
 		} else {
-			drawPlane(this.initialWidth, this.initialHeight, this.pivotX(), this.pivotY(), this.texture);
+			drawPlane(this.initialWidth, this.initialHeight, this.pivotX(), this.pivotY(), this.texture[safeState()]);
 		}
 	}
 
@@ -442,7 +458,7 @@ public class Part implements PrototypeConstants, PartListener {
 		if(this.widthToScale() != 1 || this.heightToScale() != 1) {
 			Prototype.stage.scale(this.widthToScale(), this.heightToScale());
 		}
-		dynamicTexture.draw();
+		dynamicTexture[safeState()].draw();
 		Prototype.stage.popMatrix();
 	}
 	
@@ -453,18 +469,18 @@ public class Part implements PrototypeConstants, PartListener {
 			Prototype.stage.scale(this.widthToScale(), this.heightToScale());
 		}
 		Prototype.stage.fill(color, 255*alphaStack());
-		dynamicTexture.draw();
+		dynamicTexture[safeState()].draw();
 		Prototype.stage.popMatrix();
 	}
 	
 	//Scale Grid functions using Vertex Buffer. Only on Processing 2.0
-	
+	/*
 	void drawPlane(float width, float height, float pivotX, float pivotY, PImage texture) {
 		Prototype.stage.pushMatrix();
 		if(widthToScale() != 1 || heightToScale() != 1) {
 			Prototype.stage.scale(widthToScale(), heightToScale());
 		}
-		if(partModel == null || alphaChanged) {
+		if(partModel == null || alphaChanged || stateChanged) {
 			Prototype.stage.mergeShapes(true);
 			partModel = Prototype.stage.beginRecord();
 			Prototype.stage.noStroke();
@@ -576,12 +592,12 @@ public class Part implements PrototypeConstants, PartListener {
 		Prototype.stage.shape(partModel);
 		Prototype.stage.popMatrix();
 	}
-	
+	*/
 	
 	
 	//Scale Grid functions using Immediate Mode. Works on any version of Processing.
 	//This functions ins more CPU intensive.
-	/*
+	
 	void drawPlane(float width, float height, float pivotX, float pivotY, PImage texture) {
 		Prototype.stage.pushMatrix();
 		if(widthToScale() != 1 || heightToScale() != 1) {
@@ -651,7 +667,7 @@ public class Part implements PrototypeConstants, PartListener {
 		
 		Prototype.stage.popMatrix();
 	}
-	*/
+	
 	//End
 	
 	
@@ -743,8 +759,8 @@ public class Part implements PrototypeConstants, PartListener {
 			int offSetMouseX = x + Math.round(this.width() * this.pivotX());
 			int offSetMouseY = y + Math.round(this.height() * this.pivotY());
 			//this.diffuseMap.loadPixels();
-			if (this.texture.pixels[PApplet.constrain( offSetMouseX + offSetMouseY * this.width(), 0, this.texture.pixels.length-1)] == 0x00000000) {
-				this.texture.updatePixels();
+			if (this.texture[safeState()].pixels[PApplet.constrain( offSetMouseX + offSetMouseY * this.width(), 0, this.texture[safeState()].pixels.length-1)] == 0x00000000) {
+				this.texture[safeState()].updatePixels();
 				return false;
 			}
 			//this.diffuseMap.updatePixels();
@@ -804,6 +820,8 @@ public class Part implements PrototypeConstants, PartListener {
 	}
 
 	protected void propagatePartUpdate(PartUpdateEvent event) {
+		//TODO Self listener?
+		this.partUpdated(event);
 		for(PartListener listener : listeners) {
 			listener.partUpdated(event);
 		}
@@ -940,6 +958,24 @@ public class Part implements PrototypeConstants, PartListener {
 		this.showPivot = state;
 		propagatePartUpdate( new PartUpdateEvent(this, Field.SHOWPIVOT) );
 	}
+	
+	public int safeState() { 
+		switch (this.type) {
+		case SHAPE:
+			return state % dynamicTexture.length;
+		case TEXT:
+			return state % dynamicTexture.length;
+		case IMAGE:
+			return state % texture.length;
+		}
+		throw new RuntimeException( "Invalid part type.");
+	}
+	public void state(int value) {
+		state = value;
+		stateChanged = true;
+		propagatePartUpdate( new PartUpdateEvent(this, Field.STATE) );
+	}
+	public int state() { return this.state; }
 
 	public float left() { calcBox(); return boundingBox.left; }
 	public float top() { calcBox(); return boundingBox.top; }

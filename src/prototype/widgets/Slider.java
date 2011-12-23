@@ -6,6 +6,7 @@ import prototype.PartBuilder;
 import prototype.PartUpdateEvent;
 import prototype.PrototypeConstants;
 import prototype.behaviors.mouse.Drag;
+import prototype.behaviors.mouse.Hover;
 
 public class Slider extends Part implements PrototypeConstants, WidgetsConstants {
 	
@@ -18,24 +19,24 @@ public class Slider extends Part implements PrototypeConstants, WidgetsConstants
 	public Slider(float min, float max, int width) {
 		super(
 			new PartBuilder(IMAGE).
-			texture(DEFAULT_SLIDER_CONTAINER).
-			scaleGrid(15, 0)
+			states(DEFAULT_SLIDER_CONTAINER).
+			scaleGrid(15, 0).
+			behaviors(new Hover())
 		);
 		this.progress = this.part(
 			new PartBuilder(IMAGE).
-			texture(DEFAULT_SLIDER_PROGRESS).
+			states(DEFAULT_SLIDER_PROGRESS, DEFAULT_SLIDER_PROGRESS_HOVER).
 			scaleGrid(15, 0).
 			relY(0.5f).
 			pivotY(0.5f)
 		);
 		this.knob = this.part(
 			new PartBuilder(IMAGE).
-			texture(DEFAULT_SLIDER_KNOB).
+			states(DEFAULT_SLIDER_KNOB).
 			pivotX(1).
 			behaviors(new Drag())
 		);
 		this.knobHighlight = this.knob.part(DEFAULT_SLIDER_KNOB_HIGHLIGHT);
-	
 		this.width(width);
 		//this.height(height);
 
@@ -54,12 +55,21 @@ public class Slider extends Part implements PrototypeConstants, WidgetsConstants
 	
 	@Override
 	public void partUpdated(PartUpdateEvent event) {
-		switch(event.field) {
-		case X:
-			this.progress.width(this.knob.x());
-			this.knobHighlight.alpha(  PApplet.map(this.knob.x(), this.knob.width(), this.knob.width()+15, 0, 1) );
-			this.value(PApplet.map(this.progress.width(), this.knob.width(), this.width(), 0, 100));
-			break;
+		if(event.part == knob) {
+			switch(event.field) {
+			case X:
+				this.progress.width(this.knob.x());
+				this.knobHighlight.alpha(  PApplet.map(this.knob.x(), this.knob.width(), this.knob.width()+15, 0, 1) );
+				this.value(PApplet.map(this.progress.width(), this.knob.width(), this.width(), 0, 100));
+				break;
+			}
+		} else if (event.part == this) {
+			switch(event.field) {
+			case STATE:
+				this.progress.state(this.state());
+				this.knobHighlight.visible(this.state() == 1);
+				break;
+			}
 		}
 	}
 	
