@@ -47,4 +47,19 @@ abstract public class Utils {
 		String fullClassName = o.getClass().getName();
 		return fullClassName.substring(fullClassName.lastIndexOf(".")+1);
 	}
+	
+	public static int getPartsHeight(Part[] parts) {
+		int dimension = 0;
+		for(Part part : parts) {
+			dimension += part.height();
+		}
+		return dimension;
+	}
+	public static int getPartsWidth(Part[] parts) {
+		int dimension = 0;
+		for(Part part : parts) {
+			dimension = (part.width() > dimension) ? part.width() : dimension;
+		}
+		return dimension;
+	}
 }

@@ -994,6 +994,10 @@ public class Part implements PrototypeConstants, PartListener {
 	public Part parent() { return this.parent; }
 	protected void parent(Part parent) { this.parent = parent; }
 	
+	public ArrayList<Part> children() {
+		return this.parts;
+	}
+	
 	final public PartValue value() { return this.value; }
 	final public void value(boolean asBol) { this.value.value(asBol); propagatePartUpdate( new PartUpdateEvent(this, Field.VALUE) ); }
 	final public void value(float asFloat) { this.value.value(asFloat); propagatePartUpdate( new PartUpdateEvent(this, Field.VALUE) ); }

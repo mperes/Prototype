@@ -30,6 +30,14 @@ class WidgetListener implements PartListener {
         break;
       }
     }
+    else if(event.part == group) {
+      switch(event.field) {
+      case VALUE:
+        println("Radio Group: " + event.part.value().asInt());
+        println("-----------------------------");
+        break;
+      }
+    }
   }
 }
 
