@@ -2,8 +2,12 @@
 //To see how to build you own widgets, look at the sample code at the examples.
 
 import processing.opengl.*;
+import javax.media.opengl.GL;
 import prototype.*;
 import prototype.widgets.*;
+
+PGraphicsOpenGL pgl;
+GL gl;
 
 Prototype prototype;
 WidgetListener listener;
@@ -21,8 +25,9 @@ void setup() {
 
   //Its is necessary to initialize an Prototype instance before using the library.
   //Think of it like a canvas where your prototype is gonna run.
-  prototype = Prototype.createPrototype(this);
+ // prototype = Prototype.createPrototype(this);
 
+/*
   //Slider widget receives (float min, float max, int width)
   slider = prototype.part(new Slider(0, 500, SLIDER_WIDTH));
 
@@ -64,14 +69,42 @@ void setup() {
   group.x(300);
   group.y(130);
   group.addListener(listener);
+  */
   
 }
 
 void draw() {
-  background(#9e9e9e);
+  //background(#9e9e9e);
+  clearGL(#9e9e9e);
+  beginMask(50, 50, 150, 150);
+  fill(255, 0, 0);
+  noStroke();
+  rect(100, 100, width, height);
+  endMask();
   //println(group.value().asInt());
   //println(group.height() +" "+ group.width());
   //println(slider.value().asInt());
   //println(radio.value().asBol());
 }
 
+void clearGL(int c) {  
+  background(255);
+}
+
+void beginMask(int x, int y, int w, int h) {
+  resetMatrix();
+  pgl = (PGraphicsOpenGL) g;
+  gl = pgl.beginGL();
+  //gl.glDisable(GL.GL_DEPTH_TEST);
+  //setOrtho();
+  //gl.glLoadIdentity();
+  gl.glScissor(50, 70, 150, 150);
+  gl.glEnable(GL.GL_SCISSOR_TEST);
+}
+
+void endMask() {
+  gl.glDisable(GL.GL_SCISSOR_TEST);
+  //unsetOrtho();
+  //gl.glEnable(GL.GL_DEPTH_TEST);
+  pgl.endGL();
+}
