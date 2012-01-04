@@ -15,7 +15,7 @@ public class Part implements PrototypeConstants, PartListener {
 	ArrayList<Part> parts;
 	Map<String, Behavior> behaviors;
 	ArrayList<PartListener> listeners;
-	private final int type;
+	protected final int type;
 
 	private int initialWidth;
 	private int initialHeight;
@@ -52,17 +52,17 @@ public class Part implements PrototypeConstants, PartListener {
 	//Belongs to ImagePart only
 	public PImage[] texture;
 	private PShape partModel;
-	private ShapeRender[] dynamicTexture;
+	protected ShapeRender[] dynamicTexture;
 
 	int gridStyle;
 	private float[][][] gridVertexs;
 
 	//TODO
 	private boolean passThrough;
-	private boolean alphaChanged;
-	private boolean updated;
-	private boolean scaled;
-	private boolean stateChanged;
+	protected boolean alphaChanged;
+	protected boolean updated;
+	protected boolean scaled;
+	protected boolean stateChanged;
 	
 	//Belongs to TextPart only
 	int color;
@@ -71,7 +71,6 @@ public class Part implements PrototypeConstants, PartListener {
 	private PartValue value;
 	private int state;
 	
-
 	//Properties, used for listeners. Change here if you want to extend Part.
 	public enum Field
 	{
@@ -371,7 +370,7 @@ public class Part implements PrototypeConstants, PartListener {
 		this.boundingBoxWorld.bottom = this.boundingBox.top + this.height();
 	}
 
-	private void worldToLocal() {
+	protected void worldToLocal() {
 		float translateX = (this.parent == null) ? this.x() : (int)(this.x() + (this.parent.width() * this.relX() + this.parent.left()));
 		float translateY = (this.parent == null) ? this.y() : (int)(this.y() + (this.parent.height() * this.relY() + this.parent.top()));
 		Prototype.stage.pushMatrix();
@@ -384,11 +383,11 @@ public class Part implements PrototypeConstants, PartListener {
 		}
 	}
 
-	private void localToWorld() {
+	protected void localToWorld() {
 		Prototype.stage.popMatrix();
 	}
 
-	private void updateLocalModel() {
+	protected void updateLocalModel() {
 		this.localModel = Utils.getCurrentModel().get();
 		if(this.showPivot()) {
 			pivotModelX = Prototype.stage.modelX(boundingBox.left + pivotX() * width(), boundingBox.top + pivotY() * height(), 0);
@@ -397,7 +396,7 @@ public class Part implements PrototypeConstants, PartListener {
 		calcBoxWorld();
 	}
 	
-	private void updateAlphaStack() {
+	protected void updateAlphaStack() {
 		//Alpha multiplication
 		if(parent != null) {
 			if(parent.parent != null) {
@@ -449,7 +448,7 @@ public class Part implements PrototypeConstants, PartListener {
 		}
 	}
 
-	private void drawImage() {
+	protected void drawImage() {
 		Prototype.stage.tint(255, 255*alphaStack());
 		if(this.scaleGrid != null) {
 			scale9Grid(this.texture[safeState()], this.scaleGrid);
@@ -458,7 +457,7 @@ public class Part implements PrototypeConstants, PartListener {
 		}
 	}
 
-	private void drawShape() {
+	protected void drawShape() {
 		Prototype.stage.pushMatrix();
 		Prototype.stage.translate(-this.width()*this.pivotX(), -this.height()*this.pivotY());
 		if(this.widthToScale() != 1 || this.heightToScale() != 1) {
@@ -468,7 +467,7 @@ public class Part implements PrototypeConstants, PartListener {
 		Prototype.stage.popMatrix();
 	}
 	
-	private void drawText() {
+	protected void drawText() {
 		Prototype.stage.pushMatrix();
 		Prototype.stage.translate(-this.width()*this.pivotX(), -this.height()*this.pivotY());
 		if(this.widthToScale() != 1 || this.heightToScale() != 1) {
@@ -996,7 +995,7 @@ public class Part implements PrototypeConstants, PartListener {
 	
 	public ArrayList<Part> children() {
 		return this.parts;
-	}
+	}	
 	
 	final public PartValue value() { return this.value; }
 	final public void value(boolean asBol) { this.value.value(asBol); propagatePartUpdate( new PartUpdateEvent(this, Field.VALUE) ); }

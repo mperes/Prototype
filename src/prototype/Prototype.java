@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.media.opengl.GL;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
+import processing.opengl.PGraphicsOpenGL;
 import prototype.behaviors.mouse.MouseBehavior;
 
 public class Prototype implements PrototypeConstants {
@@ -24,6 +27,10 @@ public class Prototype implements PrototypeConstants {
 	static int checkOffScreenParts;
 	public static PFont fontH1;
 	public static PFont fontH2;
+	
+	//OpenGL Stuff
+	public static PGraphicsOpenGL pgl;
+	public static GL gl;
 
 	private Prototype(PApplet stage) {		
 		Prototype.stage = stage;
@@ -40,6 +47,11 @@ public class Prototype implements PrototypeConstants {
 		
 		fontH1 = Prototype.stage.loadFont("default/fonts/default_h1.vlw");
 		fontH2 = Prototype.stage.loadFont("default/fonts/default_h2.vlw");
+		
+		 pgl = (PGraphicsOpenGL) stage.g;
+		 gl = pgl.beginGL();
+		 gl.glDepthMask(false);
+		 pgl.endGL();
 	}
 	
 	public static Prototype createPrototype(PApplet stage) {
