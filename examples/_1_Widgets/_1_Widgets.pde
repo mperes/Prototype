@@ -5,6 +5,7 @@ import processing.opengl.*;
 import javax.media.opengl.GL;
 import prototype.*;
 import prototype.widgets.*;
+import prototype.behaviors.mouse.*;
 
 PGraphicsOpenGL pgl;
 GL gl;
@@ -19,6 +20,7 @@ Part button;
 Part group;
 
 Part myMask;
+Part myList;
 
 static final int SLIDER_WIDTH = 300;
 
@@ -29,8 +31,38 @@ void setup() {
   //Think of it like a canvas where your prototype is gonna run.
   prototype = Prototype.createPrototype(this);
   
-  myMask = prototype.part(new Mask(0, 0, 30, 20));
-  myMask.part(new Slider(0, 500, SLIDER_WIDTH));
+  myMask = prototype.part(new Mask(0, 0, 300, 400));
+  
+  myList = new TextList(
+      300, 10, #FFFFFF,
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across",
+      "a", "able", "about", "account", "acid", "across"
+    );
+    
+ myList.addBehavior(new Drag());
+ 
+ myList.x.constrain(0, 0);
+ myList.y.constrain(-myList.height()+myMask.height(), 0);
+  
+  myMask.part(myList);
+  
+   myMask.x(50);
+   myMask.y(50);
+   
+   listener = new WidgetListener();
+   myList.addListener(listener);
+  
+  //myMask.part(new Slider(0, 500, SLIDER_WIDTH));
 
   /*
   //Slider widget receives (float min, float max, int width)
@@ -53,8 +85,6 @@ void setup() {
    
    button.x(50);
    button.y(260);
-   
-   listener = new WidgetListener();
    
    slider.addListener(listener);
    radio.addListener(listener);

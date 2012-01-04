@@ -38,6 +38,14 @@ class WidgetListener implements PartListener {
         break;
       }
     }
+  else if(event.part == myList) {
+      switch(event.field) {
+      case VALUE:
+        println("List: " + event.part.value().asInt());
+        println("-----------------------------");
+        break;
+      }
+    }
   }
 }
 

@@ -19,6 +19,7 @@ Part button;
 Part group;
 
 Part myMask;
+Part myList;
 
 static final int SLIDER_WIDTH = 300;
 
@@ -29,8 +30,18 @@ void setup() {
   //Think of it like a canvas where your prototype is gonna run.
   prototype = Prototype.createPrototype(this);
   
-  myMask = prototype.part(new Mask(0, 0, 30, 20));
-  myMask.part(new Slider(0, 500, SLIDER_WIDTH));
+  myList = prototype.part(
+    new TextList(
+      300, 10, #FFFFFF,
+      "a", "able", "about", "account", "acid", "across"
+    )
+  );
+  
+   myList.x(50);
+   myList.addListener(listener);
+  
+  //myMask = prototype.part(new Mask(0, 0, 30, 20));
+  //myMask.part(new Slider(0, 500, SLIDER_WIDTH));
 
   /*
   //Slider widget receives (float min, float max, int width)
@@ -53,8 +64,6 @@ void setup() {
    
    button.x(50);
    button.y(260);
-   
-   listener = new WidgetListener();
    
    slider.addListener(listener);
    radio.addListener(listener);
@@ -101,57 +110,5 @@ void draw() {
   //println(slider.value().asInt());
   //println(radio.value().asBol());
   */
-}
-
-void clearGL(int c) {  
-  background(255);
-}
-
-void beginMask(int x, int y, int w, int h) {
-  pgl = (PGraphicsOpenGL) g;
-  gl = pgl.beginGL();
-  gl.glColorMask(false, false, false, false); 
-  gl.glDepthMask(true);
-  //translate(0, 0, 10);
-  fill(255, 255);
-  noStroke();
-  rect(x, y, w, h);
-  gl.glDepthMask(false);
-  gl.glColorMask(true, true, true, true);
-  //translate(0, 0, 12); 
-  gl.glDepthFunc(GL.GL_EQUAL);
-  /*
-  gl.glDisable(GL.GL_DEPTH_TEST);
-  gl.glEnable(GL.GL_BLEND);
-  gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_ZERO);
-  fill(255, 0);
-  noStroke();
-  rect(x, y, w, h);
-  gl.glBlendFunc(GL.GL_ONE_MINUS_DST_ALPHA, GL.GL_ONE);
-  //pgl.endGL();
-  */
-}
-
-void endMask() {
-  //gl.glEnable(GL.GL_DEPTH_TEST);
-  //gl.glDisable(GL.GL_BLEND);
-  pgl.endGL();
-}
-
-void clip(float x1, float y1, float x2, float y2) {
-  pgl = (PGraphicsOpenGL) g;
-  gl = pgl.beginGL();
-  flush();
-  gl.glEnable(GL.GL_SCISSOR_TEST);
-
-  float h = y2 - y1;
-  gl.glScissor((int)x1, (int)(height - y1 - h), (int)(x2 - x1), (int)h);
-}
-
-public void noClip() {
-  pgl = (PGraphicsOpenGL) g;
-  gl = pgl.beginGL();
-  flush();
-  gl.glDisable(GL.GL_SCISSOR_TEST);
 }
 
